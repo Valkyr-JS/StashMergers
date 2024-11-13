@@ -1,4 +1,6 @@
 import MergeDropdownButton from "./components/MergeDropdownButton";
+import SearchModal from "./components/SearchModal";
+import { mergeButtonRootID } from "./constants";
 import "./styles.scss";
 
 const { PluginApi } = window;
@@ -15,12 +17,12 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   // Check if the merge button has already rendered to avoid re-rendering on
   // scroll.
   const mergeBtnExists =
-    document.querySelector("#stash-merge-performers-btn-root") !== null;
+    document.querySelector("#" + mergeButtonRootID) !== null;
 
   if (elDetailsEdit && !mergeBtnExists) {
-    // Create the root for React
+    // Create the root for the buttons
     const elButtonRoot = document.createElement("div");
-    elButtonRoot.setAttribute("id", "stash-merge-performers-btn-root");
+    elButtonRoot.setAttribute("id", mergeButtonRootID);
 
     // If the delete button has been found, set the button root before it.
     // Otherwise, add it to the end of the .details-edit container.
@@ -33,11 +35,15 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     ReactDOM.render(<MergeDropdownButton />, elButtonRoot);
   }
 
-  // Create the Merge button in JS. There's little point in adding React here
-  // for this.
-  const elMergeButton = document.createElement("button");
-  elMergeButton;
+  /* -------------------------------------------- Modal ------------------------------------------- */
+
+  const [showModal, setShowModal] = React.useState(false);
 
   // Return the component
-  return [<Original {...props} />];
+  return [
+    <>
+      <Original {...props} />
+      <SearchModal show={showModal} setShow={setShowModal} />
+    </>,
+  ];
 });
