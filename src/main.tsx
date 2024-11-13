@@ -6,8 +6,7 @@ import "./styles.scss";
 const { PluginApi } = window;
 const { React, ReactDOM } = PluginApi;
 
-// Replace the performer details panel at the top of the performer page with one
-// that has yellow text and an additional component.
+// Wait for the performer details panel to load, as this contains the
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -61,7 +60,8 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     );
   }
 
-  // Return the component
+  /* ------------------------------------------ Component ----------------------------------------- */
+
   return [
     <>
       <Original {...props} />

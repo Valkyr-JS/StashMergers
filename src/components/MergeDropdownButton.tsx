@@ -25,7 +25,10 @@ const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = (props) => {
 export default MergeDropdownButton;
 
 interface MergeDropdownButtonProps {
+  /** The click handler for the "Merge from..." button. */
   mergeFromClickHandler: React.MouseEventHandler<HTMLAnchorElement>;
+
+  /** The click handler for the "Merge into..." button. */
   mergeIntoClickHandler: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
