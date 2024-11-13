@@ -1,6 +1,9 @@
 const { PluginApi } = window;
 const { React } = PluginApi;
+const { Icon } = window.PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
+const { faRightToBracket, faRightFromBracket } =
+  window.PluginApi.libraries.FontAwesomeSolid;
 
 const SearchModal: React.FC<SearchModalProps> = (props) => {
   /** Handler for hiding the modal. */
@@ -9,9 +12,15 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
     props.clearMergeDirection();
   };
 
+  const modalIcon =
+    props.mergeDirection === "from" ? faRightToBracket : faRightFromBracket;
+
   return (
     <Modal show={props.show} onHide={handleHideModal}>
-      <Modal.Header>Modal header</Modal.Header>
+      <Modal.Header>
+        <Icon icon={modalIcon} />
+        <span>Merge {props.mergeDirection}</span>
+      </Modal.Header>
       <Modal.Body>Modal body</Modal.Body>
       <Modal.Footer>Modal footer</Modal.Footer>
     </Modal>
