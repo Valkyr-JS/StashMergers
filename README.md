@@ -1,4 +1,4 @@
-# Stash Plugin Template
+# Stash Merge Performers
 
 A template for creating plugins for Stash using the native plugin API.
 

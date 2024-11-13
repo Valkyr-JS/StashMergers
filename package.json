@@ -1,7 +1,7 @@
 {
-  "name": "stashplugintemplate",
+  "name": "stashmergeperformers",
   "version": "0.1.0",
-  "description": "A template for creating plugins for Stash using the native plugin API.",
+  "description": "A plugin to enable merging two performers together in Stash.",
   "main": "./src/main.ts",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Valkyr-JS/StashPluginTemplate.git"
+    "url": "git+https://github.com/Valkyr-JS/StashMergePerformers.git"
   },
   "author": "Valkyr-JS",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Valkyr-JS/StashPluginTemplate/issues"
+    "url": "https://github.com/Valkyr-JS/StashMergePerformers/issues"
   },
-  "homepage": "https://github.com/Valkyr-JS/StashPluginTemplate#readme",
+  "homepage": "https://github.com/Valkyr-JS/StashMergePerformers#readme",
   "dependencies": {
     "react-intl": "^6.6.8",
     "sass": "^1.77.6",

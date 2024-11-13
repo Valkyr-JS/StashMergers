@@ -1,5 +1,6 @@
 const { React } = window.PluginApi;
 
+//@ts-ignore - Can remove once imported
 const MyDetailItem: React.FC<IMyDetailItem> = (props) => {
   const itemClassname = props.title.split(" ").join("").toLowerCase();
   return (
