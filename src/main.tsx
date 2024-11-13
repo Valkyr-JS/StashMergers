@@ -9,6 +9,26 @@ const { React, ReactDOM } = PluginApi;
 // Replace the performer details panel at the top of the performer page with one
 // that has yellow text and an additional component.
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
+  /* -------------------------------------------- Modal ------------------------------------------- */
+
+  const [showModal, setShowModal] = React.useState(false);
+
+  /** Handler for clicking the "Merge from..." button. */
+  const handleMergeFromClick: React.MouseEventHandler<
+    HTMLAnchorElement
+  > = () => {
+    setShowModal(true);
+  };
+
+  /** Handler for clicking the "Merge into..." button. */
+  const handleMergeIntoClick: React.MouseEventHandler<
+    HTMLAnchorElement
+  > = () => {
+    setShowModal(true);
+  };
+
+  /* ------------------------------------ Merge dropdown button ----------------------------------- */
+
   // Find .details-edit which contains the editing buttons under the performer
   // details.
   const elDetailsEdit = document.querySelector(".details-edit");
@@ -32,12 +52,14 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 
     // Deprecated in React but still available via the Plugin API at time of
     // development.
-    ReactDOM.render(<MergeDropdownButton />, elButtonRoot);
+    ReactDOM.render(
+      <MergeDropdownButton
+        mergeFromClickHandler={handleMergeFromClick}
+        mergeIntoClickHandler={handleMergeIntoClick}
+      />,
+      elButtonRoot
+    );
   }
-
-  /* -------------------------------------------- Modal ------------------------------------------- */
-
-  const [showModal, setShowModal] = React.useState(false);
 
   // Return the component
   return [
