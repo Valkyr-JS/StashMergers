@@ -1,7 +1,5 @@
-import type {
-  IconDefinition,
-  SizeProp,
-} from "@fortawesome/fontawesome-svg-core";
+import type { IconDefinition } from "@fortawesome/free-regular-svg-icons";
+import type { SizeProp } from "@fortawesome/fontawesome-svg-core";
 import * as FontAwesomeRegular from "@fortawesome/free-regular-svg-icons";
 import * as FontAwesomeSolid from "@fortawesome/free-solid-svg-icons";
 import type { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

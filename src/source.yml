@@ -3,5 +3,7 @@ description: A plugin to enable merging two performers together in Stash.
 url: https://github.com/Valkyr-JS/StashMergePerformers
 version: 0.1.0
 ui:
+  css:
+    - StashMergePerformers.css
   javascript:
     - StashMergePerformers.js
