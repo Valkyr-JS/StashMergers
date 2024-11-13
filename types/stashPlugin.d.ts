@@ -95,6 +95,7 @@ interface IPluginApi {
 interface StashPluginComponents {
   HoverPopover: (props: IHoverPopover) => React.JSX.Element;
   Icon: (props: IIcon) => FontAwesomeIcon;
+  PerformerDetailsPanel: (props: IPerformerDetailsPanel) => React.JSX.Element;
   "PerformerDetailsPanel.DetailGroup": (
     props: IPerformerDetailsPanelDetailGroup
   ) => React.JSX.Element;
@@ -109,6 +110,10 @@ interface PatchableComponents {
 
 interface PatchableComponentsAfter {
   (
+    component: "PerformerDetailsPanel",
+    fn: (props: IPerformerDetailsPanel) => React.JSX.Element[]
+  ): void;
+  (
     component: "PerformerDetailsPanel.DetailGroup",
     fn: (props: IPerformerDetailsPanelDetailGroup) => React.JSX.Element[]
   ): void;
@@ -116,12 +121,24 @@ interface PatchableComponentsAfter {
 
 interface PatchableComponentsBefore {
   (
+    component: "PerformerDetailsPanel",
+    fn: (props: IPerformerDetailsPanel) => React.JSX.Element[]
+  ): void;
+  (
     component: "PerformerDetailsPanel.DetailGroup",
     fn: (props: IPerformerDetailsPanelDetailGroup) => React.JSX.Element[]
   ): void;
 }
 
 interface PatchableComponentsInstead {
+  (
+    component: "PerformerDetailsPanel",
+    fn: (
+      props: IPerformerDetailsPanel,
+      _: object,
+      Original: React.JSX
+    ) => React.JSX.Element[]
+  ): void;
   (
     component: "PerformerDetailsPanel.DetailGroup",
     fn: (
@@ -170,6 +187,12 @@ interface PatchableComponentsInstead {
       Original: React.JSX
     ) => React.JSX.Element[]
   ): void;
+}
+
+interface IPerformerDetailsPanel extends React.PropsWithChildren {
+  collapsed: boolean;
+  fullWidth: boolean;
+  performer: Performer;
 }
 
 interface IPerformerDetailsPanelDetailGroup extends React.PropsWithChildren {
