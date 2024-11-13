@@ -1,6 +1,7 @@
+import MergeDropdownButton from "./components/MergeDropdownButton";
+
 const { PluginApi } = window;
 const { React, ReactDOM } = PluginApi;
-const { DropdownButton } = PluginApi.libraries.Bootstrap;
 
 // Replace the performer details panel at the top of the performer page with one
 // that has yellow text and an additional component.
@@ -20,17 +21,7 @@ PluginApi.patch.instead(
 
     // Button
     const MergeButton = () => {
-      return (
-        <button
-          aria-haspopup
-          aria-expanded="false"
-          type="button"
-          className="dropdown-toggle btn btn-secondary"
-          onClick={() => console.log("Click the merge")}
-        >
-          Merge...
-        </button>
-      );
+      return <MergeDropdownButton />;
     };
 
     if (elDetailsEdit) {
