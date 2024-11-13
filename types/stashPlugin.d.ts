@@ -1,11 +1,10 @@
-import type {
-  IconDefinition,
-  SizeProp,
-} from "@fortawesome/fontawesome-svg-core";
+import type { IconDefinition } from "@fortawesome/free-regular-svg-icons";
+import type { SizeProp } from "@fortawesome/fontawesome-svg-core";
 import * as FontAwesomeRegular from "@fortawesome/free-regular-svg-icons";
 import * as FontAwesomeSolid from "@fortawesome/free-solid-svg-icons";
 import type { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type React from "@types/react";
+import type ReactDOM from "@types/react-dom";
 import type ReactRouterDOM from "@types/react-router-dom";
 import Mousetrap from "mousetrap";
 import * as ReactIntl from "react-intl";
@@ -96,6 +95,7 @@ interface IPluginApi {
 interface StashPluginComponents {
   HoverPopover: (props: IHoverPopover) => React.JSX.Element;
   Icon: (props: IIcon) => FontAwesomeIcon;
+  PerformerDetailsPanel: (props: IPerformerDetailsPanel) => React.JSX.Element;
   "PerformerDetailsPanel.DetailGroup": (
     props: IPerformerDetailsPanelDetailGroup
   ) => React.JSX.Element;
@@ -110,6 +110,10 @@ interface PatchableComponents {
 
 interface PatchableComponentsAfter {
   (
+    component: "PerformerDetailsPanel",
+    fn: (props: IPerformerDetailsPanel) => React.JSX.Element[]
+  ): void;
+  (
     component: "PerformerDetailsPanel.DetailGroup",
     fn: (props: IPerformerDetailsPanelDetailGroup) => React.JSX.Element[]
   ): void;
@@ -117,12 +121,24 @@ interface PatchableComponentsAfter {
 
 interface PatchableComponentsBefore {
   (
+    component: "PerformerDetailsPanel",
+    fn: (props: IPerformerDetailsPanel) => React.JSX.Element[]
+  ): void;
+  (
     component: "PerformerDetailsPanel.DetailGroup",
     fn: (props: IPerformerDetailsPanelDetailGroup) => React.JSX.Element[]
   ): void;
 }
 
 interface PatchableComponentsInstead {
+  (
+    component: "PerformerDetailsPanel",
+    fn: (
+      props: IPerformerDetailsPanel,
+      _: object,
+      Original: React.JSX
+    ) => React.JSX.Element[]
+  ): void;
   (
     component: "PerformerDetailsPanel.DetailGroup",
     fn: (
@@ -171,6 +187,12 @@ interface PatchableComponentsInstead {
       Original: React.JSX
     ) => React.JSX.Element[]
   ): void;
+}
+
+interface IPerformerDetailsPanel extends React.PropsWithChildren {
+  collapsed: boolean;
+  fullWidth: boolean;
+  performer: Performer;
 }
 
 interface IPerformerDetailsPanelDetailGroup extends React.PropsWithChildren {
