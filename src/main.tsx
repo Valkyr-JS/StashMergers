@@ -12,7 +12,12 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   const elDetailsEdit = document.querySelector(".details-edit");
   const elDeleteButton = elDetailsEdit?.querySelector("button.delete");
 
-  if (elDetailsEdit) {
+  // Check if the merge button has already rendered to avoid re-rendering on
+  // scroll.
+  const mergeBtnExists =
+    document.querySelector("#stash-merge-performers-btn-root") !== null;
+
+  if (elDetailsEdit && !mergeBtnExists) {
     // Create the root for React
     const elButtonRoot = document.createElement("div");
     elButtonRoot.setAttribute("id", "stash-merge-performers-btn-root");
