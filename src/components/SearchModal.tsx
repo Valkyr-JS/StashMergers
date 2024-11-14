@@ -12,13 +12,30 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   const modalIcon =
     props.mergeDirection === "from" ? faRightToBracket : faRightFromBracket;
 
+  const searchPerformerType =
+    props.mergeDirection === "from" ? "Source" : "Destination";
+
   return (
     <Modal show={props.show} onHide={() => null}>
       <Modal.Header>
         <Icon icon={modalIcon} />
         <span>Merge {props.mergeDirection}</span>
       </Modal.Header>
-      <Modal.Body>Modal body</Modal.Body>
+      <Modal.Body>
+        <div className="form-container row px-3">
+          <div className="col-12 col-lg-6 col-xl-12">
+            <div className="form-group row">
+              <label
+                htmlFor={searchPerformerType.toLowerCase()}
+                className="form-label col-form-label col-xl-12 col-sm-3"
+              >
+                {searchPerformerType}
+              </label>
+              <div className="col-xl-12 col-sm-9">React select</div>
+            </div>
+          </div>
+        </div>
+      </Modal.Body>
       <Modal.Footer>
         <div style={{ marginLeft: "auto" }}>
           <button
