@@ -8,6 +8,7 @@ import type ReactDOM from "@types/react-dom";
 import type ReactRouterDOM from "@types/react-router-dom";
 import Mousetrap from "mousetrap";
 import * as ReactIntl from "react-intl";
+import * as ReactBootstrap from "react-bootstrap";
 
 declare global {
   interface Window {
@@ -98,6 +99,9 @@ interface StashPluginComponents {
   PerformerDetailsPanel: (props: IPerformerDetailsPanel) => React.JSX.Element;
   "PerformerDetailsPanel.DetailGroup": (
     props: IPerformerDetailsPanelDetailGroup
+  ) => React.JSX.Element;
+  PerformerSelect: (
+    props: IFilterProps & IFilterValueProps<Performer>
   ) => React.JSX.Element;
   SceneCard: (props: ISceneCardProps) => React.JSX.Element;
 }
@@ -230,4 +234,20 @@ interface IIcon {
   className?: string;
   color?: string;
   size?: SizeProp;
+}
+
+interface IFilterProps {
+  noSelectionString?: string;
+  className?: string;
+  active?: boolean;
+  isMulti?: boolean;
+  isClearable?: boolean;
+  isDisabled?: boolean;
+  creatable?: boolean;
+  menuPortalTarget?: HTMLElement | null;
+}
+
+interface IFilterValueProps<T> {
+  values?: T[];
+  onSelect?: (item: T[]) => void;
 }

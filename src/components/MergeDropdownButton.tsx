@@ -7,14 +7,18 @@ const { DropdownButton } = PluginApi.libraries.Bootstrap;
 const { faRightToBracket, faRightFromBracket } =
   window.PluginApi.libraries.FontAwesomeSolid;
 
-const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = (_props) => {
+const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = (props) => {
   return (
-    <DropdownButton id="merge-performer-dropdown-button" title="Merge...">
-      <DropdownMenuItem onClick={() => console.log("Click merge from...")}>
+    <DropdownButton
+      id="merge-performer-dropdown-button"
+      title="Merge..."
+      variant="secondary"
+    >
+      <DropdownMenuItem onClick={props.mergeFromClickHandler}>
         <Icon icon={faRightToBracket} />
         Merge from...
       </DropdownMenuItem>
-      <DropdownMenuItem onClick={() => console.log("Click merge into...")}>
+      <DropdownMenuItem onClick={props.mergeIntoClickHandler}>
         <Icon icon={faRightFromBracket} />
         Merge into...
       </DropdownMenuItem>
@@ -24,7 +28,13 @@ const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = (_props) => {
 
 export default MergeDropdownButton;
 
-interface MergeDropdownButtonProps {}
+interface MergeDropdownButtonProps {
+  /** The click handler for the "Merge from..." button. */
+  mergeFromClickHandler: React.MouseEventHandler<HTMLAnchorElement>;
+
+  /** The click handler for the "Merge into..." button. */
+  mergeIntoClickHandler: React.MouseEventHandler<HTMLAnchorElement>;
+}
 
 /* ---------------------------------------------------------------------------------------------- */
 /*                                  Dropdown menu item component                                  */
@@ -42,7 +52,7 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
       role="button"
       onClick={(e) => {
         e.preventDefault();
-        onClick();
+        onClick(e);
       }}
       {...props}
     />
@@ -54,5 +64,6 @@ interface DropdownMenuItemProps
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
     HTMLAnchorElement
   > {
-  onClick: () => void;
+  /** The required click event for the menu item. */
+  onClick: React.MouseEventHandler<HTMLAnchorElement>;
 }
