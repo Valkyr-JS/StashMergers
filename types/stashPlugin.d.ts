@@ -99,6 +99,9 @@ interface StashPluginComponents {
   "PerformerDetailsPanel.DetailGroup": (
     props: IPerformerDetailsPanelDetailGroup
   ) => React.JSX.Element;
+  PerformerSelect: (
+    props: IFilterProps & IFilterValueProps<Performer>
+  ) => React.JSX.Element;
   SceneCard: (props: ISceneCardProps) => React.JSX.Element;
 }
 
@@ -230,4 +233,20 @@ interface IIcon {
   className?: string;
   color?: string;
   size?: SizeProp;
+}
+
+interface IFilterProps {
+  noSelectionString?: string;
+  className?: string;
+  active?: boolean;
+  isMulti?: boolean;
+  isClearable?: boolean;
+  isDisabled?: boolean;
+  creatable?: boolean;
+  menuPortalTarget?: HTMLElement | null;
+}
+
+interface IFilterValueProps<T> {
+  values?: T[];
+  onSelect?: (item: T[]) => void;
 }
