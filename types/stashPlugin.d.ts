@@ -8,6 +8,7 @@ import type ReactDOM from "@types/react-dom";
 import type ReactRouterDOM from "@types/react-router-dom";
 import Mousetrap from "mousetrap";
 import * as ReactIntl from "react-intl";
+import * as ReactBootstrap from "react-bootstrap";
 
 declare global {
   interface Window {

@@ -9,7 +9,11 @@ const { faRightToBracket, faRightFromBracket } =
 
 const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = (props) => {
   return (
-    <DropdownButton id="merge-performer-dropdown-button" title="Merge...">
+    <DropdownButton
+      id="merge-performer-dropdown-button"
+      title="Merge..."
+      variant="secondary"
+    >
       <DropdownMenuItem onClick={props.mergeFromClickHandler}>
         <Icon icon={faRightToBracket} />
         Merge from...
