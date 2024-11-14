@@ -60,7 +60,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   /* ------------------------------------------ Component ----------------------------------------- */
 
   return (
-    <Modal show={props.show} onHide={() => null}>
+    <Modal className="merge-performers-search-modal" show={props.show}>
       <Modal.Header>
         <Icon icon={modalIcon} />
         <span>Merge {props.mergeDirection}</span>

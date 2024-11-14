@@ -1,3 +1,10 @@
-#merge-performers-btn-root .dropdown-item {
-  align-items: center;
+#merge-performers-btn-root {
+  .dropdown-item {
+    align-items: center;
+  }
+}
+
+.merge-performers-search-modal .modal-body {
+  // Fix the options list positioning
+  min-height: 500px;
 }
