@@ -1,4 +1,5 @@
 import MergeDropdownButton from "./components/MergeDropdownButton";
+import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
 import { mergeButtonRootID } from "./constants";
 import "./styles.scss";
@@ -8,18 +9,21 @@ const { React, ReactDOM } = PluginApi;
 
 // Wait for the performer details panel to load, as this contains the
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
-  /* -------------------------------------------- Modal ------------------------------------------- */
+  /* ---------------------------------------- Search modal ---------------------------------------- */
 
-  const [showModal, setShowModal] = React.useState(false);
+  const [showSearchModal, setShowSearchModal] = React.useState(false);
   const [mergeDirection, setMergeDirection] =
     React.useState<MergeDirection>("from");
+  const [selectedPerformer, setSelectedPerformer] = React.useState<
+    Performer | undefined
+  >();
 
   /** Handler for clicking the "Merge from..." button. */
   const handleMergeFromClick: React.MouseEventHandler<
     HTMLAnchorElement
   > = () => {
     setMergeDirection("from");
-    setShowModal(true);
+    setShowSearchModal(true);
   };
 
   /** Handler for clicking the "Merge into..." button. */
@@ -27,8 +31,12 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     HTMLAnchorElement
   > = () => {
     setMergeDirection("into");
-    setShowModal(true);
+    setShowSearchModal(true);
   };
+
+  /* ----------------------------------------- Merge modal ---------------------------------------- */
+
+  const [showMergeModal, setShowMergeModal] = React.useState(false);
 
   /* ------------------------------------ Merge dropdown button ----------------------------------- */
 
@@ -71,9 +79,20 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
       <Original {...props} />
       <SearchModal
         mergeDirection={mergeDirection}
-        show={showModal}
-        setShow={setShowModal}
+        selectedPerformer={selectedPerformer}
+        setSelectedPerformer={setSelectedPerformer}
+        setShow={setShowSearchModal}
+        setShowMergeModal={setShowMergeModal}
+        show={showSearchModal}
       />
+      {selectedPerformer ? (
+        <MergeModal
+          mergeDirection={mergeDirection}
+          performerSlim={selectedPerformer}
+          show={showMergeModal}
+          setShow={setShowMergeModal}
+        />
+      ) : null}
     </>,
   ];
 });

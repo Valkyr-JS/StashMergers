@@ -18,10 +18,6 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
 
   const [componentsReady, setComponentsReady] = React.useState(false);
 
-  const [selectedPerformer, setSelectedPerformer] = React.useState<
-    Performer | undefined
-  >();
-
   // ? Short-term workaround for the above bug. Use a timeout to wait for the
   // PluginApi to fully load before continuing.
   setTimeout(() => setComponentsReady(true), 100);
@@ -35,10 +31,10 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
     if (performers.length) {
-      setSelectedPerformer(performers[0]);
+      props.setSelectedPerformer(performers[0]);
       console.log("Selected performer:", performers[0]);
     } else {
-      setSelectedPerformer(undefined);
+      props.setSelectedPerformer(undefined);
       console.log("Selected performer cleared");
     }
   };
@@ -48,7 +44,13 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   /** Handler for closing the modal. */
   const handleCloseModal = () => {
     props.setShow(false);
-    setSelectedPerformer(undefined);
+    props.setSelectedPerformer(undefined);
+  };
+
+  /** Handler for clicking the confirm button. */
+  const handleConfirmButtonClick = () => {
+    props.setShow(false);
+    props.setShowMergeModal(true);
   };
 
   const modalIcon =
@@ -77,11 +79,13 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
               </label>
               <div className="col-xl-12 col-sm-9">
                 <PerformerSelect
-                  active={!!selectedPerformer?.id}
+                  active={!!props.selectedPerformer?.id}
                   creatable={false}
                   isClearable={true}
                   onSelect={handleSelect}
-                  values={selectedPerformer ? [selectedPerformer] : []}
+                  values={
+                    props.selectedPerformer ? [props.selectedPerformer] : []
+                  }
                 />
               </div>
             </div>
@@ -99,8 +103,8 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           </button>
           <button
             className="ml-2 btn btn-primary"
-            disabled={!selectedPerformer}
-            onClick={handleCloseModal}
+            disabled={!props.selectedPerformer}
+            onClick={handleConfirmButtonClick}
             type="button"
           >
             Confirm
@@ -117,9 +121,18 @@ interface SearchModalProps {
   /** The type of modal this is. */
   mergeDirection: MergeDirection;
 
-  /** Whether to display the modal. */
-  show: boolean;
+  selectedPerformer: Performer | undefined;
+
+  setSelectedPerformer: React.Dispatch<
+    React.SetStateAction<Performer | undefined>
+  >;
 
   /** Set whether to display the modal. */
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+
+  /** Set whether to display the merge modal. */
+  setShowMergeModal: React.Dispatch<React.SetStateAction<boolean>>;
+
+  /** Whether to display the modal. */
+  show: boolean;
 }
