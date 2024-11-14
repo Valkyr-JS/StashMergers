@@ -12,10 +12,7 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 
   const [showModal, setShowModal] = React.useState(false);
   const [mergeDirection, setMergeDirection] =
-    React.useState<MergeDirection | null>(null);
-
-  /** Handler for clearing the merge direction state. */
-  const handleClearMergeDirection = () => setMergeDirection(null);
+    React.useState<MergeDirection>("from");
 
   /** Handler for clicking the "Merge from..." button. */
   const handleMergeFromClick: React.MouseEventHandler<
@@ -69,20 +66,14 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 
   /* ------------------------------------------ Component ----------------------------------------- */
 
-  const sModal =
-    mergeDirection === null ? null : (
+  return [
+    <>
+      <Original {...props} />
       <SearchModal
-        clearMergeDirection={handleClearMergeDirection}
         mergeDirection={mergeDirection}
         show={showModal}
         setShow={setShowModal}
       />
-    );
-
-  return [
-    <>
-      <Original {...props} />
-      {sModal}
     </>,
   ];
 });

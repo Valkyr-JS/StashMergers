@@ -6,23 +6,33 @@ const { faRightToBracket, faRightFromBracket } =
   window.PluginApi.libraries.FontAwesomeSolid;
 
 const SearchModal: React.FC<SearchModalProps> = (props) => {
-  /** Handler for hiding the modal. */
-  const handleHideModal = () => {
-    props.setShow(false);
-    props.clearMergeDirection();
-  };
+  /** Handler for closing the modal. */
+  const handleCloseModal = () => props.setShow(false);
 
   const modalIcon =
     props.mergeDirection === "from" ? faRightToBracket : faRightFromBracket;
 
   return (
-    <Modal show={props.show} onHide={handleHideModal}>
+    <Modal show={props.show} onHide={() => null}>
       <Modal.Header>
         <Icon icon={modalIcon} />
         <span>Merge {props.mergeDirection}</span>
       </Modal.Header>
       <Modal.Body>Modal body</Modal.Body>
-      <Modal.Footer>Modal footer</Modal.Footer>
+      <Modal.Footer>
+        <div style={{ marginLeft: "auto" }}>
+          <button
+            className="btn btn-secondary"
+            onClick={handleCloseModal}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button disabled type="button" className="ml-2 btn btn-primary">
+            Confirm
+          </button>
+        </div>
+      </Modal.Footer>
     </Modal>
   );
 };
@@ -30,9 +40,6 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
 export default SearchModal;
 
 interface SearchModalProps {
-  /** Clear the current merge direction  */
-  clearMergeDirection: () => void;
-
   /** The type of modal this is. */
   mergeDirection: MergeDirection;
 
