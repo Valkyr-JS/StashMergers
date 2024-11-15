@@ -1,3 +1,5 @@
+import { default as cx } from "classnames";
+
 const { PluginApi } = window;
 const { React } = PluginApi;
 const { Icon } = window.PluginApi.components;
@@ -7,7 +9,11 @@ const SelectInputButton: React.FC<SelectInputButtonProps> = (props) => {
   /** Button click handler */
   const handleButtonClick = () => props.setSelected(props.performerPosition);
 
-  const iconClasses = props.selected ? "text-success" : "text-muted";
+  const iconClasses = cx("fa-fw", {
+    "text-success": props.selected,
+    "text-muted": !props.selected,
+  });
+
   const iconType = props.selected ? faCheck : faXmark;
 
   return (
