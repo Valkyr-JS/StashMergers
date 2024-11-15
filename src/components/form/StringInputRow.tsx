@@ -7,6 +7,15 @@ const { React } = PluginApi;
 
 const FormNameRow: React.FC<StringInputRow> = (props) => {
   const name = props.label.toLowerCase().split(" ").join("-");
+
+  const handleSourceChange: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    if (props.setSourceValue) props.setSourceValue(e.target.value);
+  };
+
+  const isReadOnly = props.setSourceValue === undefined;
+
   return (
     <FormRowWrapper label={props.label}>
       <FormInputGroup>
@@ -32,8 +41,9 @@ const FormNameRow: React.FC<StringInputRow> = (props) => {
         <input
           className="bg-secondary text-white border-secondary form-control"
           name={"source-performer-" + name}
-          onChange={(e) => props.setSourceValue(e.target.value)}
+          onChange={handleSourceChange}
           placeholder={props.placeholder}
+          readOnly={isReadOnly}
           value={props.sourceValue}
         />
       </FormInputGroup>
@@ -59,8 +69,9 @@ interface StringInputRow {
   /** Sets whether the destination or source value should be used on update. */
   setSelectedInput: React.Dispatch<React.SetStateAction<PerformerPosition>>;
 
-  /** Sets the value of the source input. */
-  setSourceValue: React.Dispatch<React.SetStateAction<string>>;
+  /** Sets the value of the source input. If not provided, the input is marked
+   * as read-only. */
+  setSourceValue?: React.Dispatch<React.SetStateAction<string>>;
 
   /** The input value for the source performer. */
   sourceValue: Performer["name"];

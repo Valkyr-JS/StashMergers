@@ -14,7 +14,6 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   /* -------------------------------------------- Data -------------------------------------------- */
 
   // Name
-  const [pName, setPName] = React.useState(props.sourcePerformer.name);
   const [selectedName, setSelectedName] =
     React.useState<PerformerPosition>("source");
 
@@ -58,8 +57,7 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               placeholder="Name"
               selectedInput={selectedName}
               setSelectedInput={setSelectedName}
-              setSourceValue={setPName}
-              sourceValue={pName}
+              sourceValue={props.sourcePerformer.name}
             />
           </form>
         </div>
