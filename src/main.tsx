@@ -38,6 +38,16 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 
   const [showMergeModal, setShowMergeModal] = React.useState(false);
 
+  const destinationPerformer: Performer =
+    !!selectedPerformer && mergeDirection === "into"
+      ? selectedPerformer
+      : props.performer;
+
+  const sourcePerformer: Performer =
+    !!selectedPerformer && mergeDirection === "from"
+      ? selectedPerformer
+      : props.performer;
+
   /* ------------------------------------ Merge dropdown button ----------------------------------- */
 
   // Find .details-edit which contains the editing buttons under the performer
@@ -87,10 +97,11 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
       />
       {selectedPerformer ? (
         <MergeModal
+          destinationPerformer={destinationPerformer}
           mergeDirection={mergeDirection}
-          performerSlim={selectedPerformer}
-          show={showMergeModal}
           setShow={setShowMergeModal}
+          show={showMergeModal}
+          sourcePerformer={sourcePerformer}
         />
       ) : null}
     </>,

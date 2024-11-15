@@ -5,7 +5,7 @@ import SelectInputButton from "./SelectInputButton";
 const { PluginApi } = window;
 const { React } = PluginApi;
 
-const FormNameRow: React.FC<FormNameRowProps> = (_props) => {
+const FormNameRow: React.FC<FormNameRowProps> = (props) => {
   const [selectedInput, setSelectedInput] =
     React.useState<PerformerPosition>("source");
 
@@ -21,7 +21,7 @@ const FormNameRow: React.FC<FormNameRowProps> = (_props) => {
           placeholder="Name"
           readOnly={true}
           className="bg-secondary text-white border-secondary form-control"
-          value="Destination name"
+          value={props.destinationName}
         />
       </FormInputGroup>
       <FormInputGroup>
@@ -33,7 +33,7 @@ const FormNameRow: React.FC<FormNameRowProps> = (_props) => {
         <input
           placeholder="Name"
           className="bg-secondary text-white border-secondary form-control"
-          value="Source name"
+          value={props.sourceName}
         />
       </FormInputGroup>
     </FormRowWrapper>
@@ -42,4 +42,10 @@ const FormNameRow: React.FC<FormNameRowProps> = (_props) => {
 
 export default FormNameRow;
 
-interface FormNameRowProps {}
+interface FormNameRowProps {
+  /** Name for the destination performer */
+  destinationName: Performer["name"];
+
+  /** Name for the source performer */
+  sourceName: Performer["name"];
+}

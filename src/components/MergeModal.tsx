@@ -8,7 +8,9 @@ const { Modal } = PluginApi.libraries.Bootstrap;
 const { faPencil } = window.PluginApi.libraries.FontAwesomeSolid;
 
 const MergeModal: React.FC<MergeModalProps> = (props) => {
-  console.log("performer slim data:", props.performerSlim);
+  console.log("source performer:", props.sourcePerformer);
+  console.log("destination performer:", props.destinationPerformer);
+
   /* -------------------------------------------- Modal ------------------------------------------- */
 
   /** Handler for closing the modal. */
@@ -45,7 +47,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
                 </div>
               </div>
             </div>
-            <FormNameRow />
+            <FormNameRow
+              destinationName={props.destinationPerformer.name}
+              sourceName={props.sourcePerformer.name}
+            />
           </form>
         </div>
       </Modal.Body>
@@ -74,14 +79,18 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
 export default MergeModal;
 
 interface MergeModalProps {
+  /** Current data for the destination performer */
+  destinationPerformer: Performer;
+
   /** The type of modal this is. */
   mergeDirection: MergeDirection;
-
-  performerSlim: Performer;
 
   /** Whether to display the modal. */
   show: boolean;
 
   /** Set whether to display the modal. */
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+
+  /** Current data for the source performer */
+  sourcePerformer: Performer;
 }
