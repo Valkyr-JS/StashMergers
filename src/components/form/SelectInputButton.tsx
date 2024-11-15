@@ -11,13 +11,15 @@ const SelectInputButton: React.FC<SelectInputButtonProps> = (props) => {
   const iconType = props.selected ? faCheck : faXmark;
 
   return (
-    <button
-      type="button"
-      className="btn btn-secondary"
-      onClick={handleButtonClick}
-    >
-      <Icon icon={iconType} className={iconClasses} />
-    </button>
+    <div className="input-group-prepend">
+      <button
+        type="button"
+        className="btn btn-secondary"
+        onClick={handleButtonClick}
+      >
+        <Icon icon={iconType} className={iconClasses} />
+      </button>
+    </div>
   );
 };
 
