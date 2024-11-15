@@ -11,12 +11,17 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   console.log("source performer:", props.sourcePerformer);
   console.log("destination performer:", props.destinationPerformer);
 
+  /* -------------------------------------------- Data -------------------------------------------- */
+
+  // Name
+  const [pName, setPName] = React.useState(props.sourcePerformer.name);
+  const [selectedName, setSelectedName] =
+    React.useState<PerformerPosition>("source");
+
   /* -------------------------------------------- Modal ------------------------------------------- */
 
   /** Handler for closing the modal. */
-  const handleCloseModal = () => {
-    props.setShow(false);
-  };
+  const handleCloseModal = () => props.setShow(false);
 
   const dialogClasses = cx("modal-dialog", "scrape-dialog", "modal-lg");
 
@@ -49,7 +54,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
             </div>
             <FormNameRow
               destinationName={props.destinationPerformer.name}
-              sourceName={props.sourcePerformer.name}
+              selectedInput={selectedName}
+              setSelectedInput={setSelectedName}
+              setSourceName={setPName}
+              sourceName={pName}
             />
           </form>
         </div>

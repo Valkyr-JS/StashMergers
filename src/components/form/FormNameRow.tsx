@@ -6,33 +6,33 @@ const { PluginApi } = window;
 const { React } = PluginApi;
 
 const FormNameRow: React.FC<FormNameRowProps> = (props) => {
-  const [selectedInput, setSelectedInput] =
-    React.useState<PerformerPosition>("source");
-
   return (
     <FormRowWrapper label="Name">
       <FormInputGroup>
         <SelectInputButton
-          selected={selectedInput === "destination"}
+          selected={props.selectedInput === "destination"}
           performerPosition="destination"
-          setSelected={setSelectedInput}
+          setSelected={props.setSelectedInput}
         />
         <input
+          className="bg-secondary text-white border-secondary form-control"
+          name="destination-performer-name"
           placeholder="Name"
           readOnly={true}
-          className="bg-secondary text-white border-secondary form-control"
           value={props.destinationName}
         />
       </FormInputGroup>
       <FormInputGroup>
         <SelectInputButton
-          selected={selectedInput === "source"}
+          selected={props.selectedInput === "source"}
           performerPosition="source"
-          setSelected={setSelectedInput}
+          setSelected={props.setSelectedInput}
         />
         <input
-          placeholder="Name"
           className="bg-secondary text-white border-secondary form-control"
+          name="source-performer-name"
+          onChange={(e) => props.setSourceName(e.target.value)}
+          placeholder="Name"
           value={props.sourceName}
         />
       </FormInputGroup>
@@ -45,6 +45,14 @@ export default FormNameRow;
 interface FormNameRowProps {
   /** Name for the destination performer */
   destinationName: Performer["name"];
+
+  /** Dictates whether the destination or source name should be used. */
+  selectedInput: PerformerPosition;
+
+  /** Sets whether the destination or source name should be used. */
+  setSelectedInput: React.Dispatch<React.SetStateAction<PerformerPosition>>;
+
+  setSourceName: React.Dispatch<React.SetStateAction<string>>;
 
   /** Name for the source performer */
   sourceName: Performer["name"];
