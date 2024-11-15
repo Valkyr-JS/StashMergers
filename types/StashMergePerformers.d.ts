@@ -7,3 +7,7 @@ interface MyPluginConfig {}
  * * `"into"`: The current performer is the source
  */
 type MergeDirection = "from" | "into";
+
+/** The position of the performer as the source or destination. The source is
+ * merge into the destination. */
+type PerformerPosition = "destination" | "source";
