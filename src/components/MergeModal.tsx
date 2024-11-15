@@ -1,5 +1,5 @@
 import { default as cx } from "classnames";
-import FormNameRow from "./form/FormNameRow";
+import FormNameRow from "./form/StringInputRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -53,11 +53,13 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               </div>
             </div>
             <FormNameRow
-              destinationName={props.destinationPerformer.name}
+              destinationValue={props.destinationPerformer.name}
+              label="Name"
+              placeholder="Name"
               selectedInput={selectedName}
               setSelectedInput={setSelectedName}
-              setSourceName={setPName}
-              sourceName={pName}
+              setSourceValue={setPName}
+              sourceValue={pName}
             />
           </form>
         </div>

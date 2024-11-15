@@ -5,9 +5,10 @@ import SelectInputButton from "./SelectInputButton";
 const { PluginApi } = window;
 const { React } = PluginApi;
 
-const FormNameRow: React.FC<FormNameRowProps> = (props) => {
+const FormNameRow: React.FC<StringInputRow> = (props) => {
+  const name = props.label.toLowerCase().split(" ").join("-");
   return (
-    <FormRowWrapper label="Name">
+    <FormRowWrapper label={props.label}>
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}
@@ -16,10 +17,10 @@ const FormNameRow: React.FC<FormNameRowProps> = (props) => {
         />
         <input
           className="bg-secondary text-white border-secondary form-control"
-          name="destination-performer-name"
-          placeholder="Name"
+          name={"destination-performer-" + name}
+          placeholder={props.placeholder}
           readOnly={true}
-          value={props.destinationName}
+          value={props.destinationValue}
         />
       </FormInputGroup>
       <FormInputGroup>
@@ -30,10 +31,10 @@ const FormNameRow: React.FC<FormNameRowProps> = (props) => {
         />
         <input
           className="bg-secondary text-white border-secondary form-control"
-          name="source-performer-name"
-          onChange={(e) => props.setSourceName(e.target.value)}
-          placeholder="Name"
-          value={props.sourceName}
+          name={"source-performer-" + name}
+          onChange={(e) => props.setSourceValue(e.target.value)}
+          placeholder={props.placeholder}
+          value={props.sourceValue}
         />
       </FormInputGroup>
     </FormRowWrapper>
@@ -42,18 +43,25 @@ const FormNameRow: React.FC<FormNameRowProps> = (props) => {
 
 export default FormNameRow;
 
-interface FormNameRowProps {
-  /** Name for the destination performer */
-  destinationName: Performer["name"];
+interface StringInputRow {
+  /** The input value for the destination performer. */
+  destinationValue: Performer["name"];
 
-  /** Dictates whether the destination or source name should be used. */
+  /** The row label. */
+  label: string;
+
+  /** The input placeholder. */
+  placeholder: string;
+
+  /** Dictates whether the destination or source value should be used on update. */
   selectedInput: PerformerPosition;
 
-  /** Sets whether the destination or source name should be used. */
+  /** Sets whether the destination or source value should be used on update. */
   setSelectedInput: React.Dispatch<React.SetStateAction<PerformerPosition>>;
 
-  setSourceName: React.Dispatch<React.SetStateAction<string>>;
+  /** Sets the value of the source input. */
+  setSourceValue: React.Dispatch<React.SetStateAction<string>>;
 
-  /** Name for the source performer */
-  sourceName: Performer["name"];
+  /** The input value for the source performer. */
+  sourceValue: Performer["name"];
 }
