@@ -5,16 +5,24 @@ import SelectInputButton from "./SelectInputButton";
 const { PluginApi } = window;
 const { React } = PluginApi;
 
-const FormNameRow: React.FC<StringInputRow> = (props) => {
-  const name = props.label.toLowerCase().split(" ").join("-");
-
+const StringInputRow: React.FC<StringInputRow> = (props) => {
+  /** On change handler for the source input. */
   const handleSourceChange: React.ChangeEventHandler<HTMLInputElement> = (
     e
   ) => {
+    console.log("setsourcevalue");
     if (props.setSourceValue) props.setSourceValue(e.target.value);
   };
 
+  // If setting the source value is not available, mark the input as read-only.
   const isReadOnly = props.setSourceValue === undefined;
+
+  const name = props.label.toLowerCase().split(" ").join("-");
+
+  // If the values for destination and source are identical, don't render the
+  // row.
+  console.log(props.destinationValue, props.sourceValue);
+  if (props.destinationValue === props.sourceValue) return null;
 
   return (
     <FormRowWrapper label={props.label}>
@@ -51,11 +59,11 @@ const FormNameRow: React.FC<StringInputRow> = (props) => {
   );
 };
 
-export default FormNameRow;
+export default StringInputRow;
 
 interface StringInputRow {
   /** The input value for the destination performer. */
-  destinationValue: Performer["name"];
+  destinationValue: string;
 
   /** The row label. */
   label: string;
@@ -71,8 +79,10 @@ interface StringInputRow {
 
   /** Sets the value of the source input. If not provided, the input is marked
    * as read-only. */
-  setSourceValue?: React.Dispatch<React.SetStateAction<string>>;
+  setSourceValue?: React.Dispatch<
+    React.SetStateAction<Maybe<string> | undefined>
+  >;
 
   /** The input value for the source performer. */
-  sourceValue: Performer["name"];
+  sourceValue: string;
 }

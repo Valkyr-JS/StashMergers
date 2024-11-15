@@ -1,5 +1,5 @@
 import { default as cx } from "classnames";
-import FormNameRow from "./form/StringInputRow";
+import StringInputRow from "./form/StringInputRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -16,6 +16,18 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   // Name
   const [selectedName, setSelectedName] =
     React.useState<PerformerPosition>("source");
+
+  // Disambiguation
+  const [selectedDisambiguation, setSelectedDisambiguation] =
+    React.useState<PerformerPosition>("source");
+  const [pDisambiguation, setPDisambiguation] = React.useState<
+    Performer["disambiguation"]
+  >(props.sourcePerformer.disambiguation);
+
+  // Update values on source performer change
+  React.useEffect(() => {
+    setPDisambiguation(props.sourcePerformer.disambiguation);
+  }, [props.sourcePerformer]);
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -51,13 +63,22 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
                 </div>
               </div>
             </div>
-            <FormNameRow
+            <StringInputRow
               destinationValue={props.destinationPerformer.name}
               label="Name"
               placeholder="Name"
               selectedInput={selectedName}
               setSelectedInput={setSelectedName}
               sourceValue={props.sourcePerformer.name}
+            />
+            <StringInputRow
+              destinationValue={props.destinationPerformer.disambiguation ?? ""}
+              label="Disambiguation"
+              placeholder="Disambiguation"
+              selectedInput={selectedDisambiguation}
+              setSelectedInput={setSelectedDisambiguation}
+              setSourceValue={setPDisambiguation}
+              sourceValue={pDisambiguation ?? ""}
             />
           </form>
         </div>
