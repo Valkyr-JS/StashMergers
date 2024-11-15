@@ -5,7 +5,7 @@ import { mergeButtonRootID } from "./constants";
 import "./styles.scss";
 
 const { PluginApi } = window;
-const { React, ReactDOM } = PluginApi;
+const { GQL, React, ReactDOM } = PluginApi;
 
 // Wait for the performer details panel to load, as this contains the
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
@@ -38,14 +38,28 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 
   const [showMergeModal, setShowMergeModal] = React.useState(false);
 
+  /**
+   * ? Get the full set of selected performer data. Stash throws a bunch of
+   * invalid hook errors when trying to wrap this in anything, like a check for
+   * `selectedPerformer`. So The current performer is provided as a fallback.
+   * It's never visibly used, though.
+   */
+  const qPerformer = GQL.useFindPerformerQuery({
+    variables: { id: selectedPerformer?.id ?? props.performer.id },
+  });
+
   const destinationPerformer: Performer =
-    !!selectedPerformer && mergeDirection === "into"
-      ? selectedPerformer
+    !!qPerformer.data &&
+    qPerformer.data.findPerformer &&
+    mergeDirection === "into"
+      ? qPerformer.data.findPerformer
       : props.performer;
 
   const sourcePerformer: Performer =
-    !!selectedPerformer && mergeDirection === "from"
-      ? selectedPerformer
+    !!qPerformer.data &&
+    qPerformer.data.findPerformer &&
+    mergeDirection === "from"
+      ? qPerformer.data.findPerformer
       : props.performer;
 
   /* ------------------------------------ Merge dropdown button ----------------------------------- */
@@ -95,7 +109,7 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
         setShowMergeModal={setShowMergeModal}
         show={showSearchModal}
       />
-      {selectedPerformer ? (
+      {qPerformer.data && qPerformer.data.findPerformer ? (
         <MergeModal
           destinationPerformer={destinationPerformer}
           mergeDirection={mergeDirection}
