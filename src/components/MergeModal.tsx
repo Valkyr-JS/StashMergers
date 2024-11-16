@@ -30,8 +30,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
   // Only launch the modal if there is valid performer data for both sides.
   if (!sourcePerformer || !destinationPerformer) return null;
 
-  const { birthdate, death_date, disambiguation, ethnicity, hair_color } =
-    sourcePerformer;
+  const {
+    birthdate,
+    death_date,
+    disambiguation,
+    ethnicity,
+    eye_color,
+    hair_color,
+  } = sourcePerformer;
 
   /* -------------------------------------------- Name -------------------------------------------- */
 
@@ -114,6 +120,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pHairColor, setPHairColor] =
     React.useState<Performer["hair_color"]>(hair_color);
 
+  /* ------------------------------------------ Eye color ----------------------------------------- */
+
+  const [selectedEyeColor, setSelectedEyeColor] =
+    React.useState<PerformerPosition>(eye_color ? "source" : "destination");
+
+  const [pEyeColor, setPEyeColor] =
+    React.useState<Performer["eye_color"]>(eye_color);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -124,6 +138,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPDeathDate(death_date);
     setPEthnicity(ethnicity);
     setPHairColor(hair_color);
+    setPEyeColor(eye_color);
 
     /** Update selected position */
     setSelectedName("source");
@@ -132,6 +147,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedDeathDate(death_date ? "source" : "destination");
     setSelectedEthnicity(ethnicity ? "source" : "destination");
     setSelectedHairColor(hair_color ? "source" : "destination");
+    setSelectedEyeColor(eye_color ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -169,6 +185,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedEthnicity === "source" && pEthnicity
           ? pEthnicity
           : destinationPerformer.ethnicity,
+      eye_color:
+        selectedEyeColor === "source" && pEyeColor
+          ? pEyeColor
+          : destinationPerformer.eye_color,
       hair_color:
         selectedHairColor === "source" && pHairColor
           ? pHairColor
@@ -288,6 +308,18 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedHairColor}
               setSourceValue={setPHairColor}
               sourceValue={pHairColor ?? ""}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.eye_color ?? ""}
+              label={intl.formatMessage({ id: "eye_color" })}
+              placeholder={intl.formatMessage({ id: "eye_color" })}
+              render={
+                !!eye_color && eye_color !== destinationPerformer.eye_color
+              }
+              selectedInput={selectedEyeColor}
+              setSelectedInput={setSelectedEyeColor}
+              setSourceValue={setPEyeColor}
+              sourceValue={pEyeColor ?? ""}
             />
           </form>
         </div>
