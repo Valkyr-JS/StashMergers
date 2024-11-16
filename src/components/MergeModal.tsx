@@ -1,5 +1,6 @@
 import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
+import { fetchData } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -32,9 +33,43 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   /* -------------------------------------------- Modal ------------------------------------------- */
 
   /** Handler for closing the modal. */
-  const handleCloseModal = () => props.setShow(false);
+  const handleClose = () => props.setShow(false);
 
   const dialogClasses = cx("modal-dialog", "scrape-dialog", "modal-lg");
+
+  /** Handler for clicking the confirm button. */
+  const handleConfirm = () => {
+    // Get the updated data
+    const updatedData: PerformerUpdateInput = {
+      id: props.destinationPerformer.id,
+      name:
+        selectedName === "source"
+          ? props.sourcePerformer.name
+          : props.destinationPerformer.name,
+      disambiguation:
+        selectedDisambiguation === "source"
+          ? pDisambiguation
+          : props.destinationPerformer.disambiguation,
+    };
+
+    // Update the destination performer data
+    const query = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
+    fetchData(query, { input: updatedData }).then((res) => console.log(res));
+
+    // Replace source performer ID with destination performer ID in scenes
+
+    // Replace source performer ID with destination performer ID in images
+
+    // Replace source performer ID with destination performer ID in galleries
+
+    // Delete the source performer from the database
+
+    // If the current performer is the source, navigate to the destination
+    // performer page
+
+    // Otherwise, close the modal
+    handleClose();
+  };
 
   /* ------------------------------------------ Component ----------------------------------------- */
 
@@ -87,14 +122,14 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
         <div style={{ marginLeft: "auto" }}>
           <button
             className="btn btn-secondary"
-            onClick={handleCloseModal}
+            onClick={handleClose}
             type="button"
           >
             Cancel
           </button>
           <button
             className="ml-2 btn btn-primary"
-            onClick={handleCloseModal}
+            onClick={handleConfirm}
             type="button"
           >
             Confirm
