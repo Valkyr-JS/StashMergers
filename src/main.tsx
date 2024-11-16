@@ -38,15 +38,11 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 
   const [showMergeModal, setShowMergeModal] = React.useState(false);
 
-  const destinationPerformer: Performer =
-    selectedPerformer && mergeDirection === "into"
-      ? selectedPerformer
-      : props.performer;
+  const destinationPerformer =
+    mergeDirection === "into" ? selectedPerformer : props.performer;
 
-  const sourcePerformer: Performer =
-    selectedPerformer && mergeDirection === "from"
-      ? selectedPerformer
-      : props.performer;
+  const sourcePerformer =
+    mergeDirection === "from" ? selectedPerformer : props.performer;
 
   /* ------------------------------------ Merge dropdown button ----------------------------------- */
 

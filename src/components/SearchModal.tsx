@@ -25,10 +25,8 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   setTimeout(() => setComponentsReady(true), 100);
 
   if (!componentsReady) return null;
-  console.log("rendering SearchModal");
 
   const { PerformerSelect } = window.PluginApi.components;
-  console.log("PerformerSelect:", PerformerSelect);
 
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
@@ -45,12 +43,10 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
       }`;
 
       fetchData<{ data: { findPerformer: Performer } }>(query).then((res) => {
-        console.log("res", res);
         if (res?.data) props.setSelectedPerformer(res.data.findPerformer);
       });
     } else {
       props.setSelectedPerformer(undefined);
-      console.log("Selected performer cleared");
     }
   };
 

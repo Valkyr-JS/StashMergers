@@ -8,12 +8,26 @@ const { Icon } = window.PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faPencil } = window.PluginApi.libraries.FontAwesomeSolid;
 
-const MergeModal: React.FC<MergeModalProps> = (props) => {
-  console.log("source performer:", props.sourcePerformer);
-  console.log("destination performer:", props.destinationPerformer);
+const MergeModal: React.FC<MergeModalProps> = ({
+  destinationPerformer,
+  sourcePerformer,
+  ...props
+}) => {
+  console.log("source performer:", sourcePerformer);
+  console.log("destination performer:", destinationPerformer);
 
-  const { birthdate, death_date, disambiguation, ethnicity } =
-    props.sourcePerformer;
+  // Only launch the modal if there is valid performer data for both sides.
+  if (!sourcePerformer || !destinationPerformer) return null;
+
+  const { birthdate, death_date, disambiguation, ethnicity, name } =
+    sourcePerformer;
+
+  const destinationNamewithDis = destinationPerformer.disambiguation
+    ? `${destinationPerformer.name} (${destinationPerformer.disambiguation})`
+    : destinationPerformer.name;
+  const sourceNamewithDis = disambiguation
+    ? `${name} (${disambiguation})`
+    : name;
 
   /* -------------------------------------------- Name -------------------------------------------- */
 
@@ -90,11 +104,21 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
 
   /* ------------------------------------------- General ------------------------------------------ */
 
-  // Update values on source performer change
+  // Updates on source performer change
   React.useEffect(() => {
-    setPDisambiguation(props.sourcePerformer.disambiguation);
-    setPBirthdate(props.sourcePerformer.birthdate);
-  }, [props.sourcePerformer]);
+    // Update source values
+    setPDisambiguation(disambiguation);
+    setPBirthdate(birthdate);
+    setPDeathDate(death_date);
+    setPEthnicity(ethnicity);
+
+    /** Update selected position */
+    setSelectedName("source");
+    setSelectedDisambiguation(disambiguation ? "source" : "destination");
+    setSelectedBirthdate(birthdate ? "source" : "destination");
+    setSelectedDeathDate(death_date ? "source" : "destination");
+    setSelectedEthnicity(ethnicity ? "source" : "destination");
+  }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
   const canSubmit = validBirthdate && validDeathDate;
@@ -110,27 +134,27 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   const handleConfirm = () => {
     // Get the updated data
     const updatedData: PerformerUpdateInput = {
-      id: props.destinationPerformer.id,
+      id: destinationPerformer.id,
       name:
         selectedName === "source"
-          ? props.sourcePerformer.name
-          : props.destinationPerformer.name,
+          ? sourcePerformer.name
+          : destinationPerformer.name,
       birthdate:
         selectedBirthdate === "source" && !!pBirthdate
           ? new Date(pBirthdate).toISOString().split("T")[0]
-          : props.destinationPerformer.birthdate,
+          : destinationPerformer.birthdate,
       death_date:
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
-          : props.destinationPerformer.death_date,
+          : destinationPerformer.death_date,
       disambiguation:
         selectedDisambiguation === "source" && pDisambiguation
           ? pDisambiguation
-          : props.destinationPerformer.disambiguation,
+          : destinationPerformer.disambiguation,
       ethnicity:
         selectedEthnicity === "source" && pEthnicity
           ? pEthnicity
-          : props.destinationPerformer.ethnicity,
+          : destinationPerformer.ethnicity,
     };
 
     // Update the destination performer data
@@ -162,7 +186,9 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
     >
       <Modal.Header>
         <Icon icon={faPencil} />
-        <span>Merge {props.mergeDirection}</span>
+        <span>
+          Merge {sourceNamewithDis} into {destinationNamewithDis}
+        </span>
       </Modal.Header>
       <Modal.Body>
         <div className="dialog-container">
@@ -180,33 +206,29 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               </div>
             </div>
             <StringInputRow
-              destinationValue={props.destinationPerformer.name}
+              destinationValue={destinationPerformer.name}
               label="Name"
               placeholder="Name"
               selectedInput={selectedName}
               setSelectedInput={setSelectedName}
-              sourceValue={props.sourcePerformer.name}
+              sourceValue={sourcePerformer.name}
             />
             <StringInputRow
-              destinationValue={props.destinationPerformer.disambiguation ?? ""}
+              destinationValue={destinationPerformer.disambiguation ?? ""}
               label="Disambiguation"
               placeholder="Disambiguation"
-              render={
-                !!disambiguation &&
-                disambiguation !== props.destinationPerformer.disambiguation
-              }
+              render={disambiguation !== destinationPerformer.disambiguation}
               selectedInput={selectedDisambiguation}
               setSelectedInput={setSelectedDisambiguation}
               setSourceValue={setPDisambiguation}
               sourceValue={pDisambiguation ?? ""}
             />
             <StringInputRow
-              destinationValue={props.destinationPerformer.birthdate ?? ""}
+              destinationValue={destinationPerformer.birthdate ?? ""}
               label="Birthdate"
               placeholder="YYYY-MM-DD"
               render={
-                !!birthdate &&
-                birthdate !== props.destinationPerformer.birthdate
+                !!birthdate && birthdate !== destinationPerformer.birthdate
               }
               selectedInput={selectedBirthdate}
               setSelectedInput={setSelectedBirthdate}
@@ -215,12 +237,11 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               validation={validateBirthdate}
             />
             <StringInputRow
-              destinationValue={props.destinationPerformer.death_date ?? ""}
+              destinationValue={destinationPerformer.death_date ?? ""}
               label="Death date"
               placeholder="YYYY-MM-DD"
               render={
-                !!death_date &&
-                death_date !== props.destinationPerformer.death_date
+                !!death_date && death_date !== destinationPerformer.death_date
               }
               selectedInput={selectedDeathDate}
               setSelectedInput={setSelectedDeathDate}
@@ -229,12 +250,11 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               validation={validateDeathDate}
             />
             <StringInputRow
-              destinationValue={props.destinationPerformer.ethnicity ?? ""}
+              destinationValue={destinationPerformer.ethnicity ?? ""}
               label="Ethnicity"
               placeholder="Ethnicity"
               render={
-                !!ethnicity &&
-                ethnicity !== props.destinationPerformer.ethnicity
+                !!ethnicity && ethnicity !== destinationPerformer.ethnicity
               }
               selectedInput={selectedEthnicity}
               setSelectedInput={setSelectedEthnicity}
@@ -271,7 +291,7 @@ export default MergeModal;
 
 interface MergeModalProps {
   /** Current data for the destination performer */
-  destinationPerformer: Performer;
+  destinationPerformer?: Performer;
 
   /** The type of modal this is. */
   mergeDirection: MergeDirection;
@@ -283,5 +303,5 @@ interface MergeModalProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 
   /** Current data for the source performer */
-  sourcePerformer: Performer;
+  sourcePerformer?: Performer;
 }

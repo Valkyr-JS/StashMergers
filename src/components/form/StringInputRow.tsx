@@ -21,12 +21,6 @@ const StringInputRow: React.FC<StringInputRow> = (props) => {
 
   if (props.render === false) return null;
 
-  // // If the values for destination and source are identical, or source is
-  // // falsy, don't render the row.
-  // console.log(props.destinationValue, props.sourceValue);
-  // if (!props.sourceValue || props.destinationValue === props.sourceValue)
-  //   return null;
-
   return (
     <FormRowWrapper label={props.label}>
       <FormInputGroup>
