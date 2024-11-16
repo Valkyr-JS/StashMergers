@@ -20,7 +20,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   /* --------------------------------------- Disambiguation --------------------------------------- */
 
   const [selectedDisambiguation, setSelectedDisambiguation] =
-    React.useState<PerformerPosition>("source");
+    React.useState<PerformerPosition>(
+      props.sourcePerformer.disambiguation ? "source" : "destination"
+    );
+
   const [pDisambiguation, setPDisambiguation] = React.useState<
     Performer["disambiguation"]
   >(props.sourcePerformer.disambiguation);
@@ -28,7 +31,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
   const [selectedBirthdate, setSelectedBirthdate] =
-    React.useState<PerformerPosition>("source");
+    React.useState<PerformerPosition>(
+      props.sourcePerformer.birthdate ? "source" : "destination"
+    );
+
   const [pBirthdate, setPBirthdate] = React.useState<Performer["birthdate"]>(
     props.sourcePerformer.birthdate
   );

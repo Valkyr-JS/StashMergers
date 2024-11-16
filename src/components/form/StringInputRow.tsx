@@ -19,10 +19,11 @@ const StringInputRow: React.FC<StringInputRow> = (props) => {
 
   const name = props.label.toLowerCase().split(" ").join("-");
 
-  // If the values for destination and source are identical, don't render the
-  // row.
+  // If the values for destination and source are identical, or source is
+  // falsy, don't render the row.
   console.log(props.destinationValue, props.sourceValue);
-  if (props.destinationValue === props.sourceValue) return null;
+  if (!props.sourceValue || props.destinationValue === props.sourceValue)
+    return null;
 
   return (
     <FormRowWrapper label={props.label}>
