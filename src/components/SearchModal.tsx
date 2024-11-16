@@ -1,3 +1,5 @@
+import { fetchData } from "../helpers";
+
 const { PluginApi } = window;
 const { React } = PluginApi;
 const { Icon } = window.PluginApi.components;
@@ -31,8 +33,12 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
     if (performers.length) {
-      props.setSelectedPerformer(performers[0]);
-      console.log("Selected performer:", performers[0]);
+      const query = `query FetchSelectedPerformer { findPerformer(id: ${performers[0].id}) { id name disambiguation } }`;
+
+      fetchData<{ data: { findPerformer: Performer } }>(query).then((res) => {
+        console.log(res);
+        if (res?.data) props.setSelectedPerformer(res.data.findPerformer);
+      });
     } else {
       props.setSelectedPerformer(undefined);
       console.log("Selected performer cleared");
