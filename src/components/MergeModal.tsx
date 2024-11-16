@@ -1,6 +1,6 @@
 import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
-import { fetchData } from "../helpers";
+import { fetchData, validateDateString } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -40,23 +40,11 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   );
   const [validBirthdate, setValidBirthdate] = React.useState(true);
 
-  const validateBirthdate = (val: string) => {
-    // Check date string is valid
-    const isDate = !!Date.parse(val);
-
-    // Check each segment of the date is a valid length
-    const yyyyIs4 = val.split("-")[0].length === 4;
-    const mmIs2 =
-      val.split("-").length > 1 ? val.split("-")[1].length === 2 : true;
-    const ddIs2 =
-      val.split("-").length > 2 ? val.split("-")[2].length === 2 : true;
-
-    setValidBirthdate(
+  const validateBirthdate = (val: string) =>
+    setValidDeathDate(
       // Ignore validation if destination source is selected
-      selectedBirthdate === "destination" ||
-        (isDate && yyyyIs4 && mmIs2 && ddIs2)
+      selectedBirthdate === "destination" || validateDateString(val)
     );
-  };
 
   // Ignore validation for birthdate if changed back to destination performer.
   // useEffect required as the change isn't picked up after validateBirthdate is
@@ -67,6 +55,33 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
       : validateBirthdate(pBirthdate ?? "");
   }, [selectedBirthdate]);
 
+  /* ----------------------------------------- Death date ----------------------------------------- */
+
+  const [selectedDeathDate, setSelectedDeathDate] =
+    React.useState<PerformerPosition>(
+      props.sourcePerformer.death_date ? "source" : "destination"
+    );
+
+  const [pDeathDate, setPDeathDate] = React.useState<Performer["death_date"]>(
+    props.sourcePerformer.death_date
+  );
+  const [validDeathDate, setValidDeathDate] = React.useState(true);
+
+  const validateDeathDate = (val: string) =>
+    setValidDeathDate(
+      // Ignore validation if destination source is selected
+      selectedDeathDate === "destination" || validateDateString(val)
+    );
+
+  // Ignore validation for death date if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateDeathDate is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedDeathDate === "destination"
+      ? setValidDeathDate(true)
+      : validateDeathDate(pDeathDate ?? "");
+  }, [selectedDeathDate]);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Update values on source performer change
@@ -75,7 +90,8 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
     setPBirthdate(props.sourcePerformer.birthdate);
   }, [props.sourcePerformer]);
 
-  const canSubmit = validBirthdate;
+  // Enable confirm button if all fields with validation pass.
+  const canSubmit = validBirthdate && validDeathDate;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -169,12 +185,22 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
             <StringInputRow
               destinationValue={props.destinationPerformer.birthdate ?? ""}
               label="Birthdate"
-              placeholder="Birthdate"
+              placeholder="YYYY-MM-DD"
               selectedInput={selectedBirthdate}
               setSelectedInput={setSelectedBirthdate}
               setSourceValue={setPBirthdate}
               sourceValue={pBirthdate ?? ""}
               validation={validateBirthdate}
+            />
+            <StringInputRow
+              destinationValue={props.destinationPerformer.death_date ?? ""}
+              label="Death date"
+              placeholder="YYYY-MM-DD"
+              selectedInput={selectedDeathDate}
+              setSelectedInput={setSelectedDeathDate}
+              setSourceValue={setPDeathDate}
+              sourceValue={pDeathDate ?? ""}
+              validation={validateDeathDate}
             />
           </form>
         </div>
