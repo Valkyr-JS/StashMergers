@@ -12,31 +12,64 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   console.log("source performer:", props.sourcePerformer);
   console.log("destination performer:", props.destinationPerformer);
 
-  /* -------------------------------------------- Data -------------------------------------------- */
+  /* -------------------------------------------- Name -------------------------------------------- */
 
-  // Name
   const [selectedName, setSelectedName] =
     React.useState<PerformerPosition>("source");
 
-  // Disambiguation
+  /* --------------------------------------- Disambiguation --------------------------------------- */
+
   const [selectedDisambiguation, setSelectedDisambiguation] =
     React.useState<PerformerPosition>("source");
   const [pDisambiguation, setPDisambiguation] = React.useState<
     Performer["disambiguation"]
   >(props.sourcePerformer.disambiguation);
 
-  // Birthdate
+  /* ------------------------------------------ Birthdate ----------------------------------------- */
+
   const [selectedBirthdate, setSelectedBirthdate] =
     React.useState<PerformerPosition>("source");
   const [pBirthdate, setPBirthdate] = React.useState<Performer["birthdate"]>(
     props.sourcePerformer.birthdate
   );
+  const [validBirthdate, setValidBirthdate] = React.useState(true);
+
+  const validateBirthdate = (val: string) => {
+    // Check date string is valid
+    const isDate = !!Date.parse(val);
+
+    // Check each segment of the date is a valid length
+    const yyyyIs4 = val.split("-")[0].length === 4;
+    const mmIs2 =
+      val.split("-").length > 1 ? val.split("-")[1].length === 2 : true;
+    const ddIs2 =
+      val.split("-").length > 2 ? val.split("-")[2].length === 2 : true;
+
+    setValidBirthdate(
+      // Ignore validation if destination source is selected
+      selectedBirthdate === "destination" ||
+        (isDate && yyyyIs4 && mmIs2 && ddIs2)
+    );
+  };
+
+  // Ignore validation for birthdate if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateBirthdate is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedBirthdate === "destination"
+      ? setValidBirthdate(true)
+      : validateBirthdate(pBirthdate ?? "");
+  }, [selectedBirthdate]);
+
+  /* ------------------------------------------- General ------------------------------------------ */
 
   // Update values on source performer change
   React.useEffect(() => {
     setPDisambiguation(props.sourcePerformer.disambiguation);
     setPBirthdate(props.sourcePerformer.birthdate);
   }, [props.sourcePerformer]);
+
+  const canSubmit = validBirthdate;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -60,7 +93,7 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
           : props.destinationPerformer.disambiguation,
       birthdate:
         selectedBirthdate === "source" && !!pBirthdate
-          ? pBirthdate
+          ? new Date(pBirthdate).toISOString().split("T")[0]
           : props.destinationPerformer.birthdate,
     };
 
@@ -135,6 +168,7 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               setSelectedInput={setSelectedBirthdate}
               setSourceValue={setPBirthdate}
               sourceValue={pBirthdate ?? ""}
+              validation={validateBirthdate}
             />
           </form>
         </div>
@@ -150,6 +184,7 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
           </button>
           <button
             className="ml-2 btn btn-primary"
+            disabled={!canSubmit}
             onClick={handleConfirm}
             type="button"
           >

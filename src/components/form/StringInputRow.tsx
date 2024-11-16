@@ -10,8 +10,8 @@ const StringInputRow: React.FC<StringInputRow> = (props) => {
   const handleSourceChange: React.ChangeEventHandler<HTMLInputElement> = (
     e
   ) => {
-    console.log("setsourcevalue");
     if (props.setSourceValue) props.setSourceValue(e.target.value);
+    if (props.validation) props.validation(e.target.value);
   };
 
   // If setting the source value is not available, mark the input as read-only.
@@ -85,4 +85,7 @@ interface StringInputRow {
 
   /** The input value for the source performer. */
   sourceValue: string;
+
+  /** A function that processes the string to check if it's valid. */
+  validation?: (val: string) => void;
 }
