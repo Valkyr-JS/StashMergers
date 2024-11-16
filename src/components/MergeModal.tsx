@@ -82,6 +82,17 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
       : validateDeathDate(pDeathDate ?? "");
   }, [selectedDeathDate]);
 
+  /* ------------------------------------------ Ethnicity ----------------------------------------- */
+
+  const [selectedEthnicity, setSelectedEthnicity] =
+    React.useState<PerformerPosition>(
+      props.sourcePerformer.ethnicity ? "source" : "destination"
+    );
+
+  const [pEthnicity, setPEthnicity] = React.useState<Performer["ethnicity"]>(
+    props.sourcePerformer.ethnicity
+  );
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Update values on source performer change
@@ -117,6 +128,14 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
         selectedBirthdate === "source" && !!pBirthdate
           ? new Date(pBirthdate).toISOString().split("T")[0]
           : props.destinationPerformer.birthdate,
+      death_date:
+        selectedDeathDate === "source" && !!pDeathDate
+          ? new Date(pDeathDate).toISOString().split("T")[0]
+          : props.destinationPerformer.death_date,
+      ethnicity:
+        selectedEthnicity === "source" && pEthnicity
+          ? pEthnicity
+          : props.destinationPerformer.ethnicity,
     };
 
     // Update the destination performer data
@@ -201,6 +220,15 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               setSourceValue={setPDeathDate}
               sourceValue={pDeathDate ?? ""}
               validation={validateDeathDate}
+            />
+            <StringInputRow
+              destinationValue={props.destinationPerformer.ethnicity ?? ""}
+              label="Ethnicity"
+              placeholder="Ethnicity"
+              selectedInput={selectedEthnicity}
+              setSelectedInput={setSelectedEthnicity}
+              setSourceValue={setPEthnicity}
+              sourceValue={pEthnicity ?? ""}
             />
           </form>
         </div>
