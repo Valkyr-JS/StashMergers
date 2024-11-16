@@ -25,9 +25,17 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
     Performer["disambiguation"]
   >(props.sourcePerformer.disambiguation);
 
+  // Birthdate
+  const [selectedBirthdate, setSelectedBirthdate] =
+    React.useState<PerformerPosition>("source");
+  const [pBirthdate, setPBirthdate] = React.useState<Performer["birthdate"]>(
+    props.sourcePerformer.birthdate
+  );
+
   // Update values on source performer change
   React.useEffect(() => {
     setPDisambiguation(props.sourcePerformer.disambiguation);
+    setPBirthdate(props.sourcePerformer.birthdate);
   }, [props.sourcePerformer]);
 
   /* -------------------------------------------- Modal ------------------------------------------- */
@@ -47,9 +55,13 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
           ? props.sourcePerformer.name
           : props.destinationPerformer.name,
       disambiguation:
-        selectedDisambiguation === "source"
+        selectedDisambiguation === "source" && pDisambiguation
           ? pDisambiguation
           : props.destinationPerformer.disambiguation,
+      birthdate:
+        selectedBirthdate === "source" && !!pBirthdate
+          ? pBirthdate
+          : props.destinationPerformer.birthdate,
     };
 
     // Update the destination performer data
@@ -114,6 +126,15 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               setSelectedInput={setSelectedDisambiguation}
               setSourceValue={setPDisambiguation}
               sourceValue={pDisambiguation ?? ""}
+            />
+            <StringInputRow
+              destinationValue={props.destinationPerformer.birthdate ?? ""}
+              label="Birthdate"
+              placeholder="Birthdate"
+              selectedInput={selectedBirthdate}
+              setSelectedInput={setSelectedBirthdate}
+              setSourceValue={setPBirthdate}
+              sourceValue={pBirthdate ?? ""}
             />
           </form>
         </div>

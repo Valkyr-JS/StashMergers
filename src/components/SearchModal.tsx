@@ -33,7 +33,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
     if (performers.length) {
-      const query = `query FetchSelectedPerformer { findPerformer(id: ${performers[0].id}) { id name disambiguation } }`;
+      const query = `query FetchSelectedPerformer { findPerformer(id: ${performers[0].id}) { id name disambiguation birthdate } }`;
 
       fetchData<{ data: { findPerformer: Performer } }>(query).then((res) => {
         console.log(res);
