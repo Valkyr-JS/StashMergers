@@ -4,9 +4,10 @@ import { fetchData, validateDateString } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = window.PluginApi.components;
+const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
-const { faPencil } = window.PluginApi.libraries.FontAwesomeSolid;
+const { faPencil } = PluginApi.libraries.FontAwesomeSolid;
+const { useIntl } = PluginApi.libraries.Intl;
 
 const MergeModal: React.FC<MergeModalProps> = ({
   destinationPerformer,
@@ -16,18 +17,20 @@ const MergeModal: React.FC<MergeModalProps> = ({
   console.log("source performer:", sourcePerformer);
   console.log("destination performer:", destinationPerformer);
 
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
+
+  const heading = intl.formatMessage({
+    id:
+      props.mergeDirection === "from"
+        ? "actions.merge_from"
+        : "actions.merge_into",
+  });
+
   // Only launch the modal if there is valid performer data for both sides.
   if (!sourcePerformer || !destinationPerformer) return null;
 
-  const { birthdate, death_date, disambiguation, ethnicity, name } =
-    sourcePerformer;
-
-  const destinationNamewithDis = destinationPerformer.disambiguation
-    ? `${destinationPerformer.name} (${destinationPerformer.disambiguation})`
-    : destinationPerformer.name;
-  const sourceNamewithDis = disambiguation
-    ? `${name} (${disambiguation})`
-    : name;
+  const { birthdate, death_date, disambiguation, ethnicity } = sourcePerformer;
 
   /* -------------------------------------------- Name -------------------------------------------- */
 
@@ -186,9 +189,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     >
       <Modal.Header>
         <Icon icon={faPencil} />
-        <span>
-          Merge {sourceNamewithDis} into {destinationNamewithDis}
-        </span>
+        <span>{heading}</span>
       </Modal.Header>
       <Modal.Body>
         <div className="dialog-container">
@@ -197,26 +198,26 @@ const MergeModal: React.FC<MergeModalProps> = ({
               <div className="col-lg-9 offset-lg-3">
                 <div className="row">
                   <label className="form-label col-form-label col-6">
-                    Destination
+                    {intl.formatMessage({ id: "dialogs.merge.destination" })}
                   </label>
                   <label className="form-label col-form-label col-6">
-                    Source
+                    {intl.formatMessage({ id: "dialogs.merge.source" })}
                   </label>
                 </div>
               </div>
             </div>
             <StringInputRow
               destinationValue={destinationPerformer.name}
-              label="Name"
-              placeholder="Name"
+              label={intl.formatMessage({ id: "name" })}
+              placeholder={intl.formatMessage({ id: "name" })}
               selectedInput={selectedName}
               setSelectedInput={setSelectedName}
               sourceValue={sourcePerformer.name}
             />
             <StringInputRow
               destinationValue={destinationPerformer.disambiguation ?? ""}
-              label="Disambiguation"
-              placeholder="Disambiguation"
+              label={intl.formatMessage({ id: "disambiguation" })}
+              placeholder={intl.formatMessage({ id: "disambiguation" })}
               render={disambiguation !== destinationPerformer.disambiguation}
               selectedInput={selectedDisambiguation}
               setSelectedInput={setSelectedDisambiguation}
@@ -225,8 +226,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
             />
             <StringInputRow
               destinationValue={destinationPerformer.birthdate ?? ""}
-              label="Birthdate"
-              placeholder="YYYY-MM-DD"
+              label={intl.formatMessage({ id: "birthdate" })}
+              placeholder={intl.formatMessage({ id: "date_format" })}
               render={
                 !!birthdate && birthdate !== destinationPerformer.birthdate
               }
@@ -238,8 +239,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
             />
             <StringInputRow
               destinationValue={destinationPerformer.death_date ?? ""}
-              label="Death date"
-              placeholder="YYYY-MM-DD"
+              label={intl.formatMessage({ id: "death_date" })}
+              placeholder={intl.formatMessage({ id: "date_format" })}
               render={
                 !!death_date && death_date !== destinationPerformer.death_date
               }
@@ -251,8 +252,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
             />
             <StringInputRow
               destinationValue={destinationPerformer.ethnicity ?? ""}
-              label="Ethnicity"
-              placeholder="Ethnicity"
+              label={intl.formatMessage({ id: "ethnicity" })}
+              placeholder={intl.formatMessage({ id: "ethnicity" })}
               render={
                 !!ethnicity && ethnicity !== destinationPerformer.ethnicity
               }
@@ -271,7 +272,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
             onClick={handleClose}
             type="button"
           >
-            Cancel
+            {intl.formatMessage({ id: "actions.cancel" })}
           </button>
           <button
             className="ml-2 btn btn-primary"
@@ -279,7 +280,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
             onClick={handleConfirm}
             type="button"
           >
-            Confirm
+            {intl.formatMessage({ id: "actions.confirm" })}
           </button>
         </div>
       </Modal.Footer>

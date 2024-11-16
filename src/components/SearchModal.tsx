@@ -2,12 +2,23 @@ import { fetchData } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = window.PluginApi.components;
+const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faRightToBracket, faRightFromBracket } =
-  window.PluginApi.libraries.FontAwesomeSolid;
+  PluginApi.libraries.FontAwesomeSolid;
+const { useIntl } = PluginApi.libraries.Intl;
 
 const SearchModal: React.FC<SearchModalProps> = (props) => {
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
+
+  const heading = intl.formatMessage({
+    id:
+      props.mergeDirection === "from"
+        ? "actions.merge_from"
+        : "actions.merge_into",
+  });
+
   /* ------------------------------------- Performer selection ------------------------------------ */
 
   /**
@@ -67,8 +78,12 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   const modalIcon =
     props.mergeDirection === "from" ? faRightToBracket : faRightFromBracket;
 
-  const searchPerformerType =
-    props.mergeDirection === "from" ? "Source" : "Destination";
+  const searchPerformerType = intl.formatMessage({
+    id:
+      props.mergeDirection === "from"
+        ? "dialogs.merge.source"
+        : "dialogs.merge.destination",
+  });
 
   /* ------------------------------------------ Component ----------------------------------------- */
 
@@ -76,7 +91,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
     <Modal className="merge-performers-search-modal" show={props.show}>
       <Modal.Header>
         <Icon icon={modalIcon} />
-        <span>Merge {props.mergeDirection}</span>
+        <span>{heading}</span>
       </Modal.Header>
       <Modal.Body>
         <div className="form-container row px-3">
@@ -110,7 +125,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
             onClick={handleCloseModal}
             type="button"
           >
-            Cancel
+            {intl.formatMessage({ id: "actions.cancel" })}
           </button>
           <button
             className="ml-2 btn btn-primary"
@@ -118,7 +133,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
             onClick={handleConfirmButtonClick}
             type="button"
           >
-            Confirm
+            {intl.formatMessage({ id: "actions.confirm" })}
           </button>
         </div>
       </Modal.Footer>

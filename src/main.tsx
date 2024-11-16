@@ -6,9 +6,13 @@ import "./styles.scss";
 
 const { PluginApi } = window;
 const { React, ReactDOM } = PluginApi;
+const { useIntl } = PluginApi.libraries.Intl;
 
 // Wait for the performer details panel to load, as this contains the
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
+
   /* ---------------------------------------- Search modal ---------------------------------------- */
 
   const [showSearchModal, setShowSearchModal] = React.useState(false);
@@ -71,6 +75,7 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     // development.
     ReactDOM.render(
       <MergeDropdownButton
+        intl={intl}
         mergeFromClickHandler={handleMergeFromClick}
         mergeIntoClickHandler={handleMergeIntoClick}
       />,
