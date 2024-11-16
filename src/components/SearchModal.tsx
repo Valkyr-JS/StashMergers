@@ -45,7 +45,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
       }`;
 
       fetchData<{ data: { findPerformer: Performer } }>(query).then((res) => {
-        console.log(res);
+        console.log("res", res);
         if (res?.data) props.setSelectedPerformer(res.data.findPerformer);
       });
     } else {

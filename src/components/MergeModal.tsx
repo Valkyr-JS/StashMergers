@@ -12,6 +12,9 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   console.log("source performer:", props.sourcePerformer);
   console.log("destination performer:", props.destinationPerformer);
 
+  const { birthdate, death_date, disambiguation, ethnicity } =
+    props.sourcePerformer;
+
   /* -------------------------------------------- Name -------------------------------------------- */
 
   const [selectedName, setSelectedName] =
@@ -21,23 +24,20 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
 
   const [selectedDisambiguation, setSelectedDisambiguation] =
     React.useState<PerformerPosition>(
-      props.sourcePerformer.disambiguation ? "source" : "destination"
+      disambiguation ? "source" : "destination"
     );
 
-  const [pDisambiguation, setPDisambiguation] = React.useState<
-    Performer["disambiguation"]
-  >(props.sourcePerformer.disambiguation);
+  const [pDisambiguation, setPDisambiguation] =
+    React.useState<Performer["disambiguation"]>(disambiguation);
 
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
   const [selectedBirthdate, setSelectedBirthdate] =
-    React.useState<PerformerPosition>(
-      props.sourcePerformer.birthdate ? "source" : "destination"
-    );
+    React.useState<PerformerPosition>(birthdate ? "source" : "destination");
 
-  const [pBirthdate, setPBirthdate] = React.useState<Performer["birthdate"]>(
-    props.sourcePerformer.birthdate
-  );
+  const [pBirthdate, setPBirthdate] =
+    React.useState<Performer["birthdate"]>(birthdate);
+
   const [validBirthdate, setValidBirthdate] = React.useState(true);
 
   const validateBirthdate = (val: string) =>
@@ -58,13 +58,11 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   /* ----------------------------------------- Death date ----------------------------------------- */
 
   const [selectedDeathDate, setSelectedDeathDate] =
-    React.useState<PerformerPosition>(
-      props.sourcePerformer.death_date ? "source" : "destination"
-    );
+    React.useState<PerformerPosition>(death_date ? "source" : "destination");
 
-  const [pDeathDate, setPDeathDate] = React.useState<Performer["death_date"]>(
-    props.sourcePerformer.death_date
-  );
+  const [pDeathDate, setPDeathDate] =
+    React.useState<Performer["death_date"]>(death_date);
+
   const [validDeathDate, setValidDeathDate] = React.useState(true);
 
   const validateDeathDate = (val: string) =>
@@ -85,13 +83,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
   /* ------------------------------------------ Ethnicity ----------------------------------------- */
 
   const [selectedEthnicity, setSelectedEthnicity] =
-    React.useState<PerformerPosition>(
-      props.sourcePerformer.ethnicity ? "source" : "destination"
-    );
+    React.useState<PerformerPosition>(ethnicity ? "source" : "destination");
 
-  const [pEthnicity, setPEthnicity] = React.useState<Performer["ethnicity"]>(
-    props.sourcePerformer.ethnicity
-  );
+  const [pEthnicity, setPEthnicity] =
+    React.useState<Performer["ethnicity"]>(ethnicity);
 
   /* ------------------------------------------- General ------------------------------------------ */
 
@@ -120,10 +115,6 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
         selectedName === "source"
           ? props.sourcePerformer.name
           : props.destinationPerformer.name,
-      disambiguation:
-        selectedDisambiguation === "source" && pDisambiguation
-          ? pDisambiguation
-          : props.destinationPerformer.disambiguation,
       birthdate:
         selectedBirthdate === "source" && !!pBirthdate
           ? new Date(pBirthdate).toISOString().split("T")[0]
@@ -132,6 +123,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
           : props.destinationPerformer.death_date,
+      disambiguation:
+        selectedDisambiguation === "source" && pDisambiguation
+          ? pDisambiguation
+          : props.destinationPerformer.disambiguation,
       ethnicity:
         selectedEthnicity === "source" && pEthnicity
           ? pEthnicity
@@ -196,6 +191,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               destinationValue={props.destinationPerformer.disambiguation ?? ""}
               label="Disambiguation"
               placeholder="Disambiguation"
+              render={
+                !!disambiguation &&
+                disambiguation !== props.destinationPerformer.disambiguation
+              }
               selectedInput={selectedDisambiguation}
               setSelectedInput={setSelectedDisambiguation}
               setSourceValue={setPDisambiguation}
@@ -205,6 +204,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               destinationValue={props.destinationPerformer.birthdate ?? ""}
               label="Birthdate"
               placeholder="YYYY-MM-DD"
+              render={
+                !!birthdate &&
+                birthdate !== props.destinationPerformer.birthdate
+              }
               selectedInput={selectedBirthdate}
               setSelectedInput={setSelectedBirthdate}
               setSourceValue={setPBirthdate}
@@ -215,6 +218,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               destinationValue={props.destinationPerformer.death_date ?? ""}
               label="Death date"
               placeholder="YYYY-MM-DD"
+              render={
+                !!death_date &&
+                death_date !== props.destinationPerformer.death_date
+              }
               selectedInput={selectedDeathDate}
               setSelectedInput={setSelectedDeathDate}
               setSourceValue={setPDeathDate}
@@ -225,6 +232,10 @@ const MergeModal: React.FC<MergeModalProps> = (props) => {
               destinationValue={props.destinationPerformer.ethnicity ?? ""}
               label="Ethnicity"
               placeholder="Ethnicity"
+              render={
+                !!ethnicity &&
+                ethnicity !== props.destinationPerformer.ethnicity
+              }
               selectedInput={selectedEthnicity}
               setSelectedInput={setSelectedEthnicity}
               setSourceValue={setPEthnicity}

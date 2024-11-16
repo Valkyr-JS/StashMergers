@@ -19,11 +19,13 @@ const StringInputRow: React.FC<StringInputRow> = (props) => {
 
   const name = props.label.toLowerCase().split(" ").join("-");
 
-  // If the values for destination and source are identical, or source is
-  // falsy, don't render the row.
-  console.log(props.destinationValue, props.sourceValue);
-  if (!props.sourceValue || props.destinationValue === props.sourceValue)
-    return null;
+  if (props.render === false) return null;
+
+  // // If the values for destination and source are identical, or source is
+  // // falsy, don't render the row.
+  // console.log(props.destinationValue, props.sourceValue);
+  // if (!props.sourceValue || props.destinationValue === props.sourceValue)
+  //   return null;
 
   return (
     <FormRowWrapper label={props.label}>
@@ -71,6 +73,9 @@ interface StringInputRow {
 
   /** The input placeholder. */
   placeholder: string;
+
+  /** Whether to render the component or not. */
+  render?: boolean;
 
   /** Dictates whether the destination or source value should be used on update. */
   selectedInput: PerformerPosition;
