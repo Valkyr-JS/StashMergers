@@ -62,6 +62,10 @@ interface IPluginApi {
       data: { findTags: Query["findTags"] };
       loading: boolean;
     };
+    usePerformerUpdateMutation(args: { variables: PerformerUpdateInput }): {
+      data: Query["findPerformer"];
+      loading: boolean;
+    };
     useStatsQuery(): { data: { stats: StatsResultType } };
   };
   React: typeof React;

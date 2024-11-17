@@ -1,11 +1,24 @@
+import { fetchData } from "../helpers";
+
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = window.PluginApi.components;
+const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faRightToBracket, faRightFromBracket } =
-  window.PluginApi.libraries.FontAwesomeSolid;
+  PluginApi.libraries.FontAwesomeSolid;
+const { useIntl } = PluginApi.libraries.Intl;
 
 const SearchModal: React.FC<SearchModalProps> = (props) => {
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
+
+  const heading = intl.formatMessage({
+    id:
+      props.mergeDirection === "from"
+        ? "actions.merge_from"
+        : "actions.merge_into",
+  });
+
   /* ------------------------------------- Performer selection ------------------------------------ */
 
   /**
@@ -18,28 +31,41 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
 
   const [componentsReady, setComponentsReady] = React.useState(false);
 
-  const [selectedPerformer, setSelectedPerformer] = React.useState<
-    Performer | undefined
-  >();
-
   // ? Short-term workaround for the above bug. Use a timeout to wait for the
   // PluginApi to fully load before continuing.
   setTimeout(() => setComponentsReady(true), 100);
 
   if (!componentsReady) return null;
-  console.log("rendering SearchModal");
 
   const { PerformerSelect } = window.PluginApi.components;
-  console.log("PerformerSelect:", PerformerSelect);
 
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
     if (performers.length) {
-      setSelectedPerformer(performers[0]);
-      console.log("Selected performer:", performers[0]);
+      const query = `query FetchSelectedPerformer {
+        findPerformer(id: ${performers[0].id}) {
+          id
+          birthdate
+          career_length
+          death_date
+          disambiguation
+          ethnicity
+          eye_color
+          fake_tits
+          hair_color
+          height_cm
+          name
+          measurements
+          penis_length
+          weight
+        }
+      }`;
+
+      fetchData<{ data: { findPerformer: Performer } }>(query).then((res) => {
+        if (res?.data) props.setSelectedPerformer(res.data.findPerformer);
+      });
     } else {
-      setSelectedPerformer(undefined);
-      console.log("Selected performer cleared");
+      props.setSelectedPerformer(undefined);
     }
   };
 
@@ -48,14 +74,24 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   /** Handler for closing the modal. */
   const handleCloseModal = () => {
     props.setShow(false);
-    setSelectedPerformer(undefined);
+    props.setSelectedPerformer(undefined);
+  };
+
+  /** Handler for clicking the confirm button. */
+  const handleConfirmButtonClick = () => {
+    props.setShow(false);
+    props.setShowMergeModal(true);
   };
 
   const modalIcon =
     props.mergeDirection === "from" ? faRightToBracket : faRightFromBracket;
 
-  const searchPerformerType =
-    props.mergeDirection === "from" ? "Source" : "Destination";
+  const searchPerformerType = intl.formatMessage({
+    id:
+      props.mergeDirection === "from"
+        ? "dialogs.merge.source"
+        : "dialogs.merge.destination",
+  });
 
   /* ------------------------------------------ Component ----------------------------------------- */
 
@@ -63,7 +99,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
     <Modal className="merge-performers-search-modal" show={props.show}>
       <Modal.Header>
         <Icon icon={modalIcon} />
-        <span>Merge {props.mergeDirection}</span>
+        <span>{heading}</span>
       </Modal.Header>
       <Modal.Body>
         <div className="form-container row px-3">
@@ -77,11 +113,13 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
               </label>
               <div className="col-xl-12 col-sm-9">
                 <PerformerSelect
-                  active={!!selectedPerformer?.id}
+                  active={!!props.selectedPerformer?.id}
                   creatable={false}
                   isClearable={true}
                   onSelect={handleSelect}
-                  values={selectedPerformer ? [selectedPerformer] : []}
+                  values={
+                    props.selectedPerformer ? [props.selectedPerformer] : []
+                  }
                 />
               </div>
             </div>
@@ -95,15 +133,15 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
             onClick={handleCloseModal}
             type="button"
           >
-            Cancel
+            {intl.formatMessage({ id: "actions.cancel" })}
           </button>
           <button
             className="ml-2 btn btn-primary"
-            disabled={!selectedPerformer}
-            onClick={handleCloseModal}
+            disabled={!props.selectedPerformer}
+            onClick={handleConfirmButtonClick}
             type="button"
           >
-            Confirm
+            {intl.formatMessage({ id: "actions.confirm" })}
           </button>
         </div>
       </Modal.Footer>
@@ -117,9 +155,18 @@ interface SearchModalProps {
   /** The type of modal this is. */
   mergeDirection: MergeDirection;
 
-  /** Whether to display the modal. */
-  show: boolean;
+  selectedPerformer: Performer | undefined;
+
+  setSelectedPerformer: React.Dispatch<
+    React.SetStateAction<Performer | undefined>
+  >;
 
   /** Set whether to display the modal. */
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+
+  /** Set whether to display the merge modal. */
+  setShowMergeModal: React.Dispatch<React.SetStateAction<boolean>>;
+
+  /** Whether to display the modal. */
+  show: boolean;
 }

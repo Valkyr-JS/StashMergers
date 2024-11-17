@@ -1,25 +1,33 @@
 import MergeDropdownButton from "./components/MergeDropdownButton";
+import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
 import { mergeButtonRootID } from "./constants";
 import "./styles.scss";
 
 const { PluginApi } = window;
 const { React, ReactDOM } = PluginApi;
+const { useIntl } = PluginApi.libraries.Intl;
 
 // Wait for the performer details panel to load, as this contains the
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
-  /* -------------------------------------------- Modal ------------------------------------------- */
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
 
-  const [showModal, setShowModal] = React.useState(false);
+  /* ---------------------------------------- Search modal ---------------------------------------- */
+
+  const [showSearchModal, setShowSearchModal] = React.useState(false);
   const [mergeDirection, setMergeDirection] =
     React.useState<MergeDirection>("from");
+  const [selectedPerformer, setSelectedPerformer] = React.useState<
+    Performer | undefined
+  >();
 
   /** Handler for clicking the "Merge from..." button. */
   const handleMergeFromClick: React.MouseEventHandler<
     HTMLAnchorElement
   > = () => {
     setMergeDirection("from");
-    setShowModal(true);
+    setShowSearchModal(true);
   };
 
   /** Handler for clicking the "Merge into..." button. */
@@ -27,8 +35,18 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     HTMLAnchorElement
   > = () => {
     setMergeDirection("into");
-    setShowModal(true);
+    setShowSearchModal(true);
   };
+
+  /* ----------------------------------------- Merge modal ---------------------------------------- */
+
+  const [showMergeModal, setShowMergeModal] = React.useState(false);
+
+  const destinationPerformer =
+    mergeDirection === "into" ? selectedPerformer : props.performer;
+
+  const sourcePerformer =
+    mergeDirection === "from" ? selectedPerformer : props.performer;
 
   /* ------------------------------------ Merge dropdown button ----------------------------------- */
 
@@ -57,6 +75,7 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     // development.
     ReactDOM.render(
       <MergeDropdownButton
+        intl={intl}
         mergeFromClickHandler={handleMergeFromClick}
         mergeIntoClickHandler={handleMergeIntoClick}
       />,
@@ -71,8 +90,18 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
       <Original {...props} />
       <SearchModal
         mergeDirection={mergeDirection}
-        show={showModal}
-        setShow={setShowModal}
+        selectedPerformer={selectedPerformer}
+        setSelectedPerformer={setSelectedPerformer}
+        setShow={setShowSearchModal}
+        setShowMergeModal={setShowMergeModal}
+        show={showSearchModal}
+      />
+      <MergeModal
+        destinationPerformer={destinationPerformer}
+        mergeDirection={mergeDirection}
+        setShow={setShowMergeModal}
+        show={showMergeModal}
+        sourcePerformer={sourcePerformer}
       />
     </>,
   ];
