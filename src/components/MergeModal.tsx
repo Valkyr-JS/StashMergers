@@ -309,7 +309,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           : destinationPerformer.name,
       alias_list:
         selectedAliasList === "source" && pAliasList
-          ? pAliasList
+          ? pAliasList.filter((v) => v !== "") // Filter out empty inputs
           : destinationPerformer.alias_list,
       birthdate:
         selectedBirthdate === "source" && !!pBirthdate
@@ -427,8 +427,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
             />
             <StringListInputRow
               destinationValue={destinationPerformer.alias_list}
-              label={intl.formatMessage({ id: "alias_list" })}
-              placeholder={intl.formatMessage({ id: "alias_list" })}
+              label={intl.formatMessage({ id: "aliases" })}
+              placeholder={intl.formatMessage({ id: "aliases" })}
               selectedInput={selectedAliasList}
               setSelectedInput={setSelectedAliasList}
               setSourceValue={setPAliasList}
