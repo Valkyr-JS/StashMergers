@@ -1,6 +1,11 @@
 import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
-import { fetchData, validateDateString, validateNumString } from "../helpers";
+import {
+  compareArrays,
+  fetchData,
+  validateDateString,
+  validateNumString,
+} from "../helpers";
 import StringListInputRow from "./form/StringListInputRow";
 
 const { PluginApi } = window;
@@ -69,6 +74,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   const [pAliasList, setPAliasList] =
     React.useState<Performer["alias_list"]>(alias_list);
+
+  const aliasListIsRendered = !(
+    alias_list.length === 0 ||
+    compareArrays(destinationPerformer.alias_list, alias_list)
+  );
 
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
@@ -429,6 +439,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
               destinationValue={destinationPerformer.alias_list}
               label={intl.formatMessage({ id: "aliases" })}
               placeholder={intl.formatMessage({ id: "aliases" })}
+              render={aliasListIsRendered}
               selectedInput={selectedAliasList}
               setSelectedInput={setSelectedAliasList}
               setSourceValue={setPAliasList}

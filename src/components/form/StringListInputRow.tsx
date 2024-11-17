@@ -8,12 +8,15 @@ const { Icon } = PluginApi.components;
 const { faMinus } = PluginApi.libraries.FontAwesomeSolid;
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
+  if (props.render === false) return null;
+
   /** Add an empty string to the end of the list if needed, to ensure there is
    * always an empty input at the end of the list. Mimics Stash native
    * functionality. */
   const addEmptyFinal = (list: string[]) => {
-    if (list[list.length - 1] !== "") list.push("");
-    return list;
+    const updatedList = [...list];
+    if (updatedList[updatedList.length - 1] !== "") updatedList.push("");
+    return updatedList;
   };
 
   const sourceValues = addEmptyFinal(props.sourceValue);
@@ -90,6 +93,9 @@ interface StringListInputRowProps {
   /** The input placeholder. */
   placeholder: string;
 
+  /** Whether to render the component or not. */
+  render?: boolean;
+
   /** Dictates whether the destination or source value should be used on update. */
   selectedInput: PerformerPosition;
 
@@ -102,6 +108,10 @@ interface StringListInputRowProps {
   /** The input value array for the source performer. */
   sourceValue: string[];
 }
+
+/* ---------------------------------------------------------------------------------------------- */
+/*                                     String list input item                                     */
+/* ---------------------------------------------------------------------------------------------- */
 
 const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
   /** onChange handler */
