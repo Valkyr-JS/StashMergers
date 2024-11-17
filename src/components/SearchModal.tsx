@@ -50,6 +50,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           disambiguation
           ethnicity
           eye_color
+          fake_tits
           hair_color
           height_cm
           name

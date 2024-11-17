@@ -36,6 +36,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     disambiguation,
     ethnicity,
     eye_color,
+    fake_tits,
     hair_color,
     height_cm,
     measurements,
@@ -219,6 +220,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pMeasurements, setPMeasurements] =
     React.useState<Performer["measurements"]>(measurements);
 
+  /* ------------------------------------------ Fake tits ----------------------------------------- */
+
+  const [selectedFakeTits, setSelectedFakeTits] =
+    React.useState<PerformerPosition>(fake_tits ? "source" : "destination");
+
+  const [pFakeTits, setPFakeTits] =
+    React.useState<Performer["fake_tits"]>(fake_tits);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -234,6 +243,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPWeight(weight?.toString());
     setPPenisLength(penis_length?.toString());
     setPMeasurements(measurements);
+    setPFakeTits(fake_tits);
 
     /** Update selected position */
     setSelectedName("source");
@@ -247,6 +257,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedWeight(weight ? "source" : "destination");
     setSelectedPenisLength(penis_length ? "source" : "destination");
     setSelectedMeasurements(measurements ? "source" : "destination");
+    setSelectedFakeTits(fake_tits ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -293,6 +304,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedEyeColor === "source" && pEyeColor
           ? pEyeColor
           : destinationPerformer.eye_color,
+      fake_tits:
+        selectedFakeTits === "source" && pFakeTits
+          ? pFakeTits
+          : destinationPerformer.fake_tits,
       hair_color:
         selectedHairColor === "source" && pHairColor
           ? pHairColor
@@ -495,6 +510,18 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedMeasurements}
               setSourceValue={setPMeasurements}
               sourceValue={pMeasurements ?? ""}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.fake_tits ?? ""}
+              label={intl.formatMessage({ id: "fake_tits" })}
+              placeholder={intl.formatMessage({ id: "fake_tits" })}
+              render={
+                !!fake_tits && fake_tits !== destinationPerformer.fake_tits
+              }
+              selectedInput={selectedFakeTits}
+              setSelectedInput={setSelectedFakeTits}
+              setSourceValue={setPFakeTits}
+              sourceValue={pFakeTits ?? ""}
             />
           </form>
         </div>
