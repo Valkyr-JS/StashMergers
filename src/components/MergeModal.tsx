@@ -1,6 +1,13 @@
 import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
-import { fetchData, validateDateString, validateNumString } from "../helpers";
+import {
+  compareArrays,
+  fetchData,
+  validateArrayContainsOnlyUniques,
+  validateDateString,
+  validateNumString,
+} from "../helpers";
+import StringListInputRow from "./form/StringListInputRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -31,6 +38,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
   if (!sourcePerformer || !destinationPerformer) return null;
 
   const {
+    alias_list,
     birthdate,
     career_length,
     death_date,
@@ -44,6 +52,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
     penis_length,
     weight,
   } = sourcePerformer;
+
+  const urls = sourcePerformer.urls ?? [];
 
   /* -------------------------------------------- Name -------------------------------------------- */
 
@@ -59,6 +69,38 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   const [pDisambiguation, setPDisambiguation] =
     React.useState<Performer["disambiguation"]>(disambiguation);
+
+  /* ----------------------------------------- Alias list ----------------------------------------- */
+
+  const [selectedAliasList, setSelectedAliasList] =
+    React.useState<PerformerPosition>(alias_list ? "source" : "destination");
+
+  const [pAliasList, setPAliasList] =
+    React.useState<Performer["alias_list"]>(alias_list);
+
+  const aliasListIsRendered = !(
+    alias_list.length === 0 ||
+    compareArrays(destinationPerformer.alias_list, alias_list)
+  );
+
+  const [validAliasList, setValidAliasList] = React.useState(true);
+
+  const validateAliasList = (arr: string[]) => {
+    setValidAliasList(
+      // Ignore validation if destination source is selected
+      selectedAliasList === "destination" ||
+        validateArrayContainsOnlyUniques(arr)
+    );
+  };
+
+  // Ignore validation for alias list if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateAliasList is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedAliasList === "destination"
+      ? setValidAliasList(true)
+      : validateAliasList(pAliasList);
+  }, [selectedAliasList, pAliasList]);
 
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
@@ -237,12 +279,41 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pCareerLength, setPCareerLength] =
     React.useState<Performer["career_length"]>(career_length);
 
+  /* -------------------------------------------- URLs -------------------------------------------- */
+
+  const [selectedURLs, setSelectedURLs] = React.useState<PerformerPosition>(
+    urls ? "source" : "destination"
+  );
+
+  const [pURLs, setPURLs] = React.useState<string[]>(urls);
+
+  const urlsIsRendered = !(
+    urls.length === 0 || compareArrays(destinationPerformer.urls ?? [], urls)
+  );
+
+  const [validURLs, setValidURLs] = React.useState(true);
+
+  const validateURLs = (arr: string[]) => {
+    setValidURLs(
+      // Ignore validation if destination source is selected
+      selectedURLs === "destination" || validateArrayContainsOnlyUniques(arr)
+    );
+  };
+
+  // Ignore validation for urls if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateURLs is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedURLs === "destination" ? setValidURLs(true) : validateURLs(pURLs);
+  }, [selectedURLs, pURLs]);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
   React.useEffect(() => {
     // Update source values
     setPDisambiguation(disambiguation);
+    setPAliasList(alias_list);
     setPBirthdate(birthdate);
     setPDeathDate(death_date);
     setPEthnicity(ethnicity);
@@ -254,10 +325,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
     setPCareerLength(career_length);
+    setPURLs(urls);
 
     /** Update selected position */
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
+    setSelectedAliasList(alias_list ? "source" : "destination");
     setSelectedBirthdate(birthdate ? "source" : "destination");
     setSelectedDeathDate(death_date ? "source" : "destination");
     setSelectedEthnicity(ethnicity ? "source" : "destination");
@@ -269,15 +342,18 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
+    setSelectedURLs(urls ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
   const canSubmit =
+    validAliasList &&
     validBirthdate &&
     validDeathDate &&
     validHeightCm &&
     validWeight &&
-    validPenisLength;
+    validPenisLength &&
+    validURLs;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -295,6 +371,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedName === "source"
           ? sourcePerformer.name
           : destinationPerformer.name,
+      alias_list:
+        selectedAliasList === "source" && pAliasList
+          ? pAliasList.filter((v) => v !== "") // Filter out empty inputs
+          : destinationPerformer.alias_list,
       birthdate:
         selectedBirthdate === "source" && !!pBirthdate
           ? new Date(pBirthdate).toISOString().split("T")[0]
@@ -343,6 +423,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedWeight === "source" && pWeight
           ? +pWeight
           : destinationPerformer.weight,
+      urls:
+        selectedURLs === "source" && pURLs
+          ? pURLs.filter((v) => v !== "") // Filter out empty inputs
+          : destinationPerformer.urls,
     };
 
     // Update the destination performer data
@@ -408,6 +492,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedDisambiguation}
               setSourceValue={setPDisambiguation}
               sourceValue={pDisambiguation ?? ""}
+            />
+            <StringListInputRow
+              destinationValue={destinationPerformer.alias_list}
+              label={intl.formatMessage({ id: "aliases" })}
+              placeholder={intl.formatMessage({ id: "aliases" })}
+              render={aliasListIsRendered}
+              selectedInput={selectedAliasList}
+              setSelectedInput={setSelectedAliasList}
+              setSourceValue={setPAliasList}
+              sourceValue={pAliasList}
             />
             <StringInputRow
               destinationValue={destinationPerformer.birthdate ?? ""}
@@ -550,6 +644,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedCareerLength}
               setSourceValue={setPCareerLength}
               sourceValue={pCareerLength ?? ""}
+            />
+            <StringListInputRow
+              destinationValue={destinationPerformer.urls ?? []}
+              label={intl.formatMessage({ id: "urls" })}
+              placeholder={intl.formatMessage({ id: "urls" })}
+              render={urlsIsRendered}
+              selectedInput={selectedURLs}
+              setSelectedInput={setSelectedURLs}
+              setSourceValue={setPURLs}
+              sourceValue={pURLs}
             />
           </form>
         </div>

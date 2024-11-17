@@ -25,3 +25,13 @@ export const validateNumString = (
 
   return wholeOnly ? isWhole : isNum;
 };
+
+/** Validate that an array contains only unique values. */
+export const validateArrayContainsOnlyUniques = (arr: any[]): boolean => {
+  const unique = Array.from(new Set([...arr]));
+  return unique.length === arr.length;
+};
+
+/** Compare two arrays and return a boolean indicating whether they match. */
+export const compareArrays = (a: any[], b: any[]) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
