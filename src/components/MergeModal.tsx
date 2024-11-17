@@ -38,6 +38,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     eye_color,
     hair_color,
     height_cm,
+    penis_length,
     weight,
   } = sourcePerformer;
 
@@ -183,6 +184,32 @@ const MergeModal: React.FC<MergeModalProps> = ({
       : validateWeight(pWeight ?? "");
   }, [selectedWeight]);
 
+  /* ---------------------------------------- Penis length ---------------------------------------- */
+
+  const [selectedPenisLength, setSelectedPenisLength] =
+    React.useState<PerformerPosition>(penis_length ? "source" : "destination");
+
+  const [pPenisLength, setPPenisLength] = React.useState<
+    Maybe<string> | undefined
+  >(penis_length?.toString());
+
+  const [validPenisLength, setValidPenisLength] = React.useState(true);
+
+  const validatePenisLength = (val: string) =>
+    setValidPenisLength(
+      // Ignore validation if destination source is selected
+      selectedPenisLength === "destination" || validateNumString(val, true)
+    );
+
+  // Ignore validation for penis length if changed back to destination
+  // performer. useEffect required as the change isn't picked up after
+  // validatePenisLength is passed to the component.
+  React.useEffect(() => {
+    selectedPenisLength === "destination"
+      ? setValidPenisLength(true)
+      : validatePenisLength(pPenisLength ?? "");
+  }, [selectedPenisLength]);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -196,6 +223,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPEyeColor(eye_color);
     setPHeightCm(height_cm?.toString());
     setPWeight(weight?.toString());
+    setPPenisLength(penis_length?.toString());
 
     /** Update selected position */
     setSelectedName("source");
@@ -207,11 +235,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedEyeColor(eye_color ? "source" : "destination");
     setSelectedHeightCm(height_cm ? "source" : "destination");
     setSelectedWeight(weight ? "source" : "destination");
+    setSelectedPenisLength(penis_length ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
   const canSubmit =
-    validBirthdate && validDeathDate && validHeightCm && validWeight;
+    validBirthdate &&
+    validDeathDate &&
+    validHeightCm &&
+    validWeight &&
+    validPenisLength;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -257,6 +290,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedHeightCm === "source" && pHeightCm
           ? +pHeightCm
           : destinationPerformer.height_cm,
+      penis_length:
+        selectedPenisLength === "source" && pPenisLength
+          ? +pPenisLength
+          : destinationPerformer.penis_length,
       weight:
         selectedWeight === "source" && pWeight
           ? +pWeight
@@ -414,6 +451,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPWeight}
               sourceValue={pWeight ?? ""}
               validation={validateWeight}
+            />
+            <StringInputRow
+              destinationValue={
+                destinationPerformer.penis_length?.toString() ?? ""
+              }
+              label={intl.formatMessage({ id: "penis_length" })}
+              placeholder={intl.formatMessage({ id: "penis_length" })}
+              render={
+                !!penis_length &&
+                penis_length !== destinationPerformer.penis_length
+              }
+              selectedInput={selectedPenisLength}
+              setSelectedInput={setSelectedPenisLength}
+              setSourceValue={setPPenisLength}
+              sourceValue={pPenisLength ?? ""}
+              validation={validatePenisLength}
             />
           </form>
         </div>

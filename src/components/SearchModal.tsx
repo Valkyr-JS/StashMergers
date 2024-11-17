@@ -53,6 +53,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           hair_color
           height_cm
           name
+          penis_length
           weight
         }
       }`;
