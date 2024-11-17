@@ -13,3 +13,15 @@ export const validateDateString = (val: string): boolean => {
 
   return isDate && yyyyIs4 && mmIs2 && ddIs2;
 };
+
+/** Validate that a string contains only whole numbers. Set `wholeOnly` to true
+ * to only allow whole numbers. */
+export const validateNumString = (
+  val: string,
+  wholeOnly?: boolean
+): boolean => {
+  const isNum = !!+val;
+  const isWhole = isNum && !val.includes(".");
+
+  return wholeOnly ? isWhole : isNum;
+};

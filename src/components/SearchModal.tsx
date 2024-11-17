@@ -51,6 +51,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           ethnicity
           eye_color
           hair_color
+          height_cm
           name
         }
       }`;

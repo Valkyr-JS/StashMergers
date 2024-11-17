@@ -1,6 +1,6 @@
 import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
-import { fetchData, validateDateString } from "../helpers";
+import { fetchData, validateDateString, validateNumString } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -37,6 +37,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     ethnicity,
     eye_color,
     hair_color,
+    height_cm,
   } = sourcePerformer;
 
   /* -------------------------------------------- Name -------------------------------------------- */
@@ -128,6 +129,32 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pEyeColor, setPEyeColor] =
     React.useState<Performer["eye_color"]>(eye_color);
 
+  /* ----------------------------------------- Height (cm) ---------------------------------------- */
+
+  const [selectedHeightCm, setSelectedHeightCm] =
+    React.useState<PerformerPosition>(height_cm ? "source" : "destination");
+
+  const [pHeightCm, setPHeightCm] = React.useState<Maybe<string> | undefined>(
+    height_cm?.toString()
+  );
+
+  const [validHeightCm, setValidHeightCm] = React.useState(true);
+
+  const validateHeightCm = (val: string) =>
+    setValidHeightCm(
+      // Ignore validation if destination source is selected
+      selectedHeightCm === "destination" || validateNumString(val, true)
+    );
+
+  // Ignore validation for height if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateHeightCm is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedHeightCm === "destination"
+      ? setValidHeightCm(true)
+      : validateHeightCm(pHeightCm ?? "");
+  }, [selectedHeightCm]);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -139,6 +166,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPEthnicity(ethnicity);
     setPHairColor(hair_color);
     setPEyeColor(eye_color);
+    setPHeightCm(height_cm?.toString());
 
     /** Update selected position */
     setSelectedName("source");
@@ -148,10 +176,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedEthnicity(ethnicity ? "source" : "destination");
     setSelectedHairColor(hair_color ? "source" : "destination");
     setSelectedEyeColor(eye_color ? "source" : "destination");
+    setSelectedHeightCm(height_cm ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
-  const canSubmit = validBirthdate && validDeathDate;
+  const canSubmit = validBirthdate && validDeathDate && validHeightCm;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -193,6 +222,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedHairColor === "source" && pHairColor
           ? pHairColor
           : destinationPerformer.hair_color,
+      height_cm:
+        selectedHeightCm === "source" && pHeightCm
+          ? +pHeightCm
+          : destinationPerformer.height_cm,
     };
 
     // Update the destination performer data
@@ -320,6 +353,21 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedEyeColor}
               setSourceValue={setPEyeColor}
               sourceValue={pEyeColor ?? ""}
+            />
+            <StringInputRow
+              destinationValue={
+                destinationPerformer.height_cm?.toString() ?? ""
+              }
+              label={intl.formatMessage({ id: "height_cm" })}
+              placeholder={intl.formatMessage({ id: "height_cm" })}
+              render={
+                !!height_cm && height_cm !== destinationPerformer.height_cm
+              }
+              selectedInput={selectedHeightCm}
+              setSelectedInput={setSelectedHeightCm}
+              setSourceValue={setPHeightCm}
+              sourceValue={pHeightCm ?? ""}
+              validation={validateHeightCm}
             />
           </form>
         </div>
