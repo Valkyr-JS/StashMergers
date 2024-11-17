@@ -38,6 +38,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     eye_color,
     hair_color,
     height_cm,
+    weight,
   } = sourcePerformer;
 
   /* -------------------------------------------- Name -------------------------------------------- */
@@ -155,6 +156,33 @@ const MergeModal: React.FC<MergeModalProps> = ({
       : validateHeightCm(pHeightCm ?? "");
   }, [selectedHeightCm]);
 
+  /* ------------------------------------------- Weight ------------------------------------------- */
+
+  const [selectedWeight, setSelectedWeight] = React.useState<PerformerPosition>(
+    weight ? "source" : "destination"
+  );
+
+  const [pWeight, setPWeight] = React.useState<Maybe<string> | undefined>(
+    weight?.toString()
+  );
+
+  const [validWeight, setValidWeight] = React.useState(true);
+
+  const validateWeight = (val: string) =>
+    setValidWeight(
+      // Ignore validation if destination source is selected
+      selectedWeight === "destination" || validateNumString(val, true)
+    );
+
+  // Ignore validation for weight if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateWeight is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedWeight === "destination"
+      ? setValidWeight(true)
+      : validateWeight(pWeight ?? "");
+  }, [selectedWeight]);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -167,6 +195,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPHairColor(hair_color);
     setPEyeColor(eye_color);
     setPHeightCm(height_cm?.toString());
+    setPWeight(weight?.toString());
 
     /** Update selected position */
     setSelectedName("source");
@@ -177,10 +206,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedHairColor(hair_color ? "source" : "destination");
     setSelectedEyeColor(eye_color ? "source" : "destination");
     setSelectedHeightCm(height_cm ? "source" : "destination");
+    setSelectedWeight(weight ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
-  const canSubmit = validBirthdate && validDeathDate && validHeightCm;
+  const canSubmit =
+    validBirthdate && validDeathDate && validHeightCm && validWeight;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
@@ -226,6 +257,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedHeightCm === "source" && pHeightCm
           ? +pHeightCm
           : destinationPerformer.height_cm,
+      weight:
+        selectedWeight === "source" && pWeight
+          ? +pWeight
+          : destinationPerformer.weight,
     };
 
     // Update the destination performer data
@@ -368,6 +403,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPHeightCm}
               sourceValue={pHeightCm ?? ""}
               validation={validateHeightCm}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.weight?.toString() ?? ""}
+              label={intl.formatMessage({ id: "weight" })}
+              placeholder={intl.formatMessage({ id: "weight" })}
+              render={!!weight && weight !== destinationPerformer.weight}
+              selectedInput={selectedWeight}
+              setSelectedInput={setSelectedWeight}
+              setSourceValue={setPWeight}
+              sourceValue={pWeight ?? ""}
+              validation={validateWeight}
             />
           </form>
         </div>
