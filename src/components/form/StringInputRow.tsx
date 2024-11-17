@@ -5,7 +5,7 @@ import SelectInputButton from "./SelectInputButton";
 const { PluginApi } = window;
 const { React } = PluginApi;
 
-const StringInputRow: React.FC<StringInputRow> = (props) => {
+const StringInputRow: React.FC<StringInputRowProps> = (props) => {
   /** On change handler for the source input. */
   const handleSourceChange: React.ChangeEventHandler<HTMLInputElement> = (
     e
@@ -58,7 +58,7 @@ const StringInputRow: React.FC<StringInputRow> = (props) => {
 
 export default StringInputRow;
 
-interface StringInputRow {
+interface StringInputRowProps {
   /** The input value for the destination performer. */
   destinationValue: string;
 

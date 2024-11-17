@@ -1,6 +1,7 @@
 import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
 import { fetchData, validateDateString, validateNumString } from "../helpers";
+import StringListInputRow from "./form/StringListInputRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -31,6 +32,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
   if (!sourcePerformer || !destinationPerformer) return null;
 
   const {
+    alias_list,
     birthdate,
     career_length,
     death_date,
@@ -59,6 +61,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   const [pDisambiguation, setPDisambiguation] =
     React.useState<Performer["disambiguation"]>(disambiguation);
+
+  /* ----------------------------------------- Alias list ----------------------------------------- */
+
+  const [selectedAliasList, setSelectedAliasList] =
+    React.useState<PerformerPosition>(alias_list ? "source" : "destination");
+
+  const [pAliasList, setPAliasList] =
+    React.useState<Performer["alias_list"]>(alias_list);
 
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
@@ -243,6 +253,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
   React.useEffect(() => {
     // Update source values
     setPDisambiguation(disambiguation);
+    setPAliasList(alias_list);
     setPBirthdate(birthdate);
     setPDeathDate(death_date);
     setPEthnicity(ethnicity);
@@ -258,6 +269,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     /** Update selected position */
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
+    setSelectedAliasList(alias_list ? "source" : "destination");
     setSelectedBirthdate(birthdate ? "source" : "destination");
     setSelectedDeathDate(death_date ? "source" : "destination");
     setSelectedEthnicity(ethnicity ? "source" : "destination");
@@ -295,6 +307,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedName === "source"
           ? sourcePerformer.name
           : destinationPerformer.name,
+      alias_list:
+        selectedAliasList === "source" && pAliasList
+          ? pAliasList
+          : destinationPerformer.alias_list,
       birthdate:
         selectedBirthdate === "source" && !!pBirthdate
           ? new Date(pBirthdate).toISOString().split("T")[0]
@@ -408,6 +424,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedDisambiguation}
               setSourceValue={setPDisambiguation}
               sourceValue={pDisambiguation ?? ""}
+            />
+            <StringListInputRow
+              destinationValue={destinationPerformer.alias_list}
+              label={intl.formatMessage({ id: "alias_list" })}
+              placeholder={intl.formatMessage({ id: "alias_list" })}
+              selectedInput={selectedAliasList}
+              setSelectedInput={setSelectedAliasList}
+              sourceValue={sourcePerformer.alias_list}
             />
             <StringInputRow
               destinationValue={destinationPerformer.birthdate ?? ""}

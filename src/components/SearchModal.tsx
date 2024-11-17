@@ -45,6 +45,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
       const query = `query FetchSelectedPerformer {
         findPerformer(id: ${performers[0].id}) {
           id
+          alias_list
           birthdate
           career_length
           death_date
