@@ -3,6 +3,7 @@ import StringInputRow from "./form/StringInputRow";
 import {
   compareArrays,
   fetchData,
+  validateArrayContainsOnlyUniques,
   validateDateString,
   validateNumString,
 } from "../helpers";
@@ -81,6 +82,25 @@ const MergeModal: React.FC<MergeModalProps> = ({
     alias_list.length === 0 ||
     compareArrays(destinationPerformer.alias_list, alias_list)
   );
+
+  const [validAliasList, setValidAliasList] = React.useState(true);
+
+  const validateAliasList = (arr: string[]) => {
+    setValidAliasList(
+      // Ignore validation if destination source is selected
+      selectedAliasList === "destination" ||
+        validateArrayContainsOnlyUniques(arr)
+    );
+  };
+
+  // Ignore validation for alias list if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateAliasList is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedAliasList === "destination"
+      ? setValidAliasList(true)
+      : validateAliasList(pAliasList);
+  }, [selectedAliasList, pAliasList]);
 
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
@@ -271,6 +291,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
     urls.length === 0 || compareArrays(destinationPerformer.urls ?? [], urls)
   );
 
+  const [validURLs, setValidURLs] = React.useState(true);
+
+  const validateURLs = (arr: string[]) => {
+    setValidURLs(
+      // Ignore validation if destination source is selected
+      selectedURLs === "destination" || validateArrayContainsOnlyUniques(arr)
+    );
+  };
+
+  // Ignore validation for urls if changed back to destination performer.
+  // useEffect required as the change isn't picked up after validateURLs is
+  // passed to the component.
+  React.useEffect(() => {
+    selectedURLs === "destination" ? setValidURLs(true) : validateURLs(pURLs);
+  }, [selectedURLs, pURLs]);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -311,11 +347,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   // Enable confirm button if all fields with validation pass.
   const canSubmit =
+    validAliasList &&
     validBirthdate &&
     validDeathDate &&
     validHeightCm &&
     validWeight &&
-    validPenisLength;
+    validPenisLength &&
+    validURLs;
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
