@@ -52,6 +52,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
     weight,
   } = sourcePerformer;
 
+  const urls = sourcePerformer.urls ?? [];
+
   /* -------------------------------------------- Name -------------------------------------------- */
 
   const [selectedName, setSelectedName] =
@@ -257,6 +259,18 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pCareerLength, setPCareerLength] =
     React.useState<Performer["career_length"]>(career_length);
 
+  /* -------------------------------------------- URLs -------------------------------------------- */
+
+  const [selectedURLs, setSelectedURLs] = React.useState<PerformerPosition>(
+    urls ? "source" : "destination"
+  );
+
+  const [pURLs, setPURLs] = React.useState<string[]>(urls);
+
+  const urlsIsRendered = !(
+    urls.length === 0 || compareArrays(destinationPerformer.urls ?? [], urls)
+  );
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -275,6 +289,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
     setPCareerLength(career_length);
+    setPURLs(urls);
 
     /** Update selected position */
     setSelectedName("source");
@@ -291,6 +306,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
+    setSelectedURLs(urls ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -369,6 +385,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedWeight === "source" && pWeight
           ? +pWeight
           : destinationPerformer.weight,
+      urls:
+        selectedURLs === "source" && pURLs
+          ? pURLs.filter((v) => v !== "") // Filter out empty inputs
+          : destinationPerformer.urls,
     };
 
     // Update the destination performer data
@@ -586,6 +606,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedCareerLength}
               setSourceValue={setPCareerLength}
               sourceValue={pCareerLength ?? ""}
+            />
+            <StringListInputRow
+              destinationValue={destinationPerformer.urls ?? []}
+              label={intl.formatMessage({ id: "urls" })}
+              placeholder={intl.formatMessage({ id: "urls" })}
+              render={urlsIsRendered}
+              selectedInput={selectedURLs}
+              setSelectedInput={setSelectedURLs}
+              setSourceValue={setPURLs}
+              sourceValue={pURLs}
             />
           </form>
         </div>
