@@ -30,6 +30,12 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
     props.setSourceValue(updatedState);
   };
 
+  /** Handler for the onClick event for each input remove button */
+  const handleClickRemoveButton = (index: number) => {
+    const updatedState = sourceValues.filter((_v, i) => i !== index);
+    props.setSourceValue(updatedState);
+  };
+
   return (
     <FormRowWrapper className="string-list-row" label={props.label}>
       <FormInputGroup>
@@ -68,6 +74,7 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
                   key={i}
                   index={i}
                   onChangeCallback={handleInputChange}
+                  onClickRemoveButton={handleClickRemoveButton}
                   position="source"
                   placeholder={props.placeholder}
                   value={v}
@@ -120,11 +127,19 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
       props.onChangeCallback(e.target.value, props.index);
   };
 
+  const handleOnClick: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (props.onClickRemoveButton) props.onClickRemoveButton(props.index);
+  };
+
   // Only render the remove item button on the source side.
   const removeButton =
     props.position === "source" ? (
       <div className="input-group-append">
-        <button type="button" className="btn btn-danger">
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={handleOnClick}
+        >
           <Icon icon={faMinus} />
         </button>
       </div>
@@ -150,6 +165,9 @@ interface StringListInputItemProps {
 
   /** The function to execute after the input onChange event. */
   onChangeCallback?: (value: string, index: number) => void;
+
+  /** The function to execute after the remove button onClick event. */
+  onClickRemoveButton?: (index: number) => void;
 
   /** Identifies which position the input is for. */
   position: PerformerPosition;
