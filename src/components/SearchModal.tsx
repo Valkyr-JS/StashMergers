@@ -46,6 +46,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
         findPerformer(id: ${performers[0].id}) {
           id
           birthdate
+          career_length
           death_date
           disambiguation
           ethnicity

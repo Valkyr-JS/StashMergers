@@ -32,6 +32,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   const {
     birthdate,
+    career_length,
     death_date,
     disambiguation,
     ethnicity,
@@ -228,6 +229,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pFakeTits, setPFakeTits] =
     React.useState<Performer["fake_tits"]>(fake_tits);
 
+  /* ---------------------------------------- Career length --------------------------------------- */
+
+  const [selectedCareerLength, setSelectedCareerLength] =
+    React.useState<PerformerPosition>(career_length ? "source" : "destination");
+
+  const [pCareerLength, setPCareerLength] =
+    React.useState<Performer["career_length"]>(career_length);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -244,6 +253,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPPenisLength(penis_length?.toString());
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
+    setPCareerLength(career_length);
 
     /** Update selected position */
     setSelectedName("source");
@@ -258,6 +268,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedPenisLength(penis_length ? "source" : "destination");
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
+    setSelectedCareerLength(career_length ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -288,6 +299,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedBirthdate === "source" && !!pBirthdate
           ? new Date(pBirthdate).toISOString().split("T")[0]
           : destinationPerformer.birthdate,
+      career_length:
+        selectedCareerLength === "source" && pCareerLength
+          ? pCareerLength
+          : destinationPerformer.career_length,
       death_date:
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
@@ -522,6 +537,19 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedFakeTits}
               setSourceValue={setPFakeTits}
               sourceValue={pFakeTits ?? ""}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.career_length ?? ""}
+              label={intl.formatMessage({ id: "career_length" })}
+              placeholder={intl.formatMessage({ id: "career_length" })}
+              render={
+                !!career_length &&
+                career_length !== destinationPerformer.career_length
+              }
+              selectedInput={selectedCareerLength}
+              setSelectedInput={setSelectedCareerLength}
+              setSourceValue={setPCareerLength}
+              sourceValue={pCareerLength ?? ""}
             />
           </form>
         </div>
