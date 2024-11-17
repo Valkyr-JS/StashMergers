@@ -38,6 +38,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     eye_color,
     hair_color,
     height_cm,
+    measurements,
     penis_length,
     weight,
   } = sourcePerformer;
@@ -210,6 +211,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
       : validatePenisLength(pPenisLength ?? "");
   }, [selectedPenisLength]);
 
+  /* ---------------------------------------- Measurements ---------------------------------------- */
+
+  const [selectedMeasurements, setSelectedMeasurements] =
+    React.useState<PerformerPosition>(measurements ? "source" : "destination");
+
+  const [pMeasurements, setPMeasurements] =
+    React.useState<Performer["measurements"]>(measurements);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -224,6 +233,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPHeightCm(height_cm?.toString());
     setPWeight(weight?.toString());
     setPPenisLength(penis_length?.toString());
+    setPMeasurements(measurements);
 
     /** Update selected position */
     setSelectedName("source");
@@ -236,6 +246,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedHeightCm(height_cm ? "source" : "destination");
     setSelectedWeight(weight ? "source" : "destination");
     setSelectedPenisLength(penis_length ? "source" : "destination");
+    setSelectedMeasurements(measurements ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -290,6 +301,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedHeightCm === "source" && pHeightCm
           ? +pHeightCm
           : destinationPerformer.height_cm,
+      measurements:
+        selectedMeasurements === "source" && pMeasurements
+          ? pMeasurements
+          : destinationPerformer.measurements,
       penis_length:
         selectedPenisLength === "source" && pPenisLength
           ? +pPenisLength
@@ -467,6 +482,19 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPPenisLength}
               sourceValue={pPenisLength ?? ""}
               validation={validatePenisLength}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.measurements ?? ""}
+              label={intl.formatMessage({ id: "measurements" })}
+              placeholder={intl.formatMessage({ id: "measurements" })}
+              render={
+                !!measurements &&
+                measurements !== destinationPerformer.measurements
+              }
+              selectedInput={selectedMeasurements}
+              setSelectedInput={setSelectedMeasurements}
+              setSourceValue={setPMeasurements}
+              sourceValue={pMeasurements ?? ""}
             />
           </form>
         </div>
