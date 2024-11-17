@@ -1,6 +1,7 @@
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
+import { validateArrayContainsOnlyUniques } from "../../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -9,6 +10,8 @@ const { faMinus } = PluginApi.libraries.FontAwesomeSolid;
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   if (props.render === false) return null;
+
+  const [showError, setShowError] = React.useState(false);
 
   /** Add an empty string to the end of the list if needed, to ensure there is
    * always an empty input at the end of the list. Mimics Stash native
@@ -28,6 +31,9 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
     });
 
     props.setSourceValue(updatedState);
+
+    if (!props.allowDuplicates)
+      setShowError(!validateArrayContainsOnlyUniques(updatedState));
   };
 
   /** Handler for the onClick event for each input remove button */
@@ -82,6 +88,11 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
               );
             })}
           </div>
+          {showError ? (
+            <div className="invalid-feedback mt-n2">
+              {props.label} must be unique
+            </div>
+          ) : null}
         </div>
       </FormInputGroup>
     </FormRowWrapper>
@@ -91,6 +102,10 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
 export default StringListInputRow;
 
 interface StringListInputRowProps {
+  /** Whether to allow duplicate values in a list. Displays an error if false or
+   * undefined. */
+  allowDuplicates?: boolean;
+
   /** The input value array for the destination performer. */
   destinationValue: string[];
 
