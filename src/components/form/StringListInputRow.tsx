@@ -1,3 +1,4 @@
+import { default as cx } from "classnames";
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
@@ -12,6 +13,7 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   if (props.render === false) return null;
 
   const [showError, setShowError] = React.useState(false);
+  const [duplicateIndices, setDuplicateIndices] = React.useState<number[]>([]);
 
   /** Add an empty string to the end of the list if needed, to ensure there is
    * always an empty input at the end of the list. Mimics Stash native
@@ -26,21 +28,41 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
 
   /** Handler for the onChange event for each input */
   const handleInputChange = (val: string, index: number) => {
-    const updatedState = sourceValues.map((v, i) => {
+    const updatedArray = sourceValues.map((v, i) => {
       return i === index ? val : v;
     });
 
-    props.setSourceValue(updatedState);
+    props.setSourceValue(updatedArray);
 
-    if (!props.allowDuplicates)
-      setShowError(!validateArrayContainsOnlyUniques(updatedState));
+    if (!props.allowDuplicates) {
+      const uniqueValues: string[] = [];
+      const dupeIndices: number[] = [];
+
+      // Loop through the updated array to check for duplicate values
+      updatedArray.forEach((v, i) => {
+        if (uniqueValues.includes(v)) {
+          // Add the item index to the dupeIndices array
+          dupeIndices.push(i);
+        } else {
+          // Add the value to the uniqueValues array
+          uniqueValues.push(v);
+        }
+      });
+
+      setDuplicateIndices(dupeIndices);
+    }
+    setShowError(!validateArrayContainsOnlyUniques(updatedArray));
   };
 
   /** Handler for the onClick event for each input remove button */
   const handleClickRemoveButton = (index: number) => {
-    const updatedState = sourceValues.filter((_v, i) => i !== index);
-    props.setSourceValue(updatedState);
+    const updatedArray = sourceValues.filter((_v, i) => i !== index);
+    props.setSourceValue(updatedArray);
   };
+
+  const listInputClasses = cx("string-list-input", {
+    "is-invalid": showError,
+  });
 
   return (
     <FormRowWrapper className="string-list-row" label={props.label}>
@@ -72,13 +94,14 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
           performerPosition="source"
           setSelected={props.setSelectedInput}
         />
-        <div className="string-list-input">
+        <div className={listInputClasses}>
           <div className="form-group">
             {sourceValues.map((v, i) => {
               return (
                 <StringListInputItem
                   key={i}
                   index={i}
+                  isDuplicate={duplicateIndices.includes(i)}
                   onChangeCallback={handleInputChange}
                   onClickRemoveButton={handleClickRemoveButton}
                   position="source"
@@ -146,6 +169,12 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
     if (props.onClickRemoveButton) props.onClickRemoveButton(props.index);
   };
 
+  const inputClasses = cx(
+    "text-input",
+    { "is-invalid": props.isDuplicate },
+    "form-control"
+  );
+
   // Only render the remove item button on the source side.
   const removeButton =
     props.position === "source" ? (
@@ -163,7 +192,7 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
   return (
     <div className="input-group">
       <input
-        className="text-input form-control"
+        className={inputClasses}
         onChange={handleOnChange}
         placeholder={props.placeholder}
         readOnly={props.position === "destination"}
@@ -177,6 +206,9 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
 interface StringListInputItemProps {
   /** The index of the value in the list array. */
   index: number;
+
+  /** Identifies the input value as a duplicate of a previous value. */
+  isDuplicate?: boolean;
 
   /** The function to execute after the input onChange event. */
   onChangeCallback?: (value: string, index: number) => void;
