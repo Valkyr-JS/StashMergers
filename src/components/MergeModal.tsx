@@ -431,7 +431,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
               placeholder={intl.formatMessage({ id: "alias_list" })}
               selectedInput={selectedAliasList}
               setSelectedInput={setSelectedAliasList}
-              sourceValue={sourcePerformer.alias_list}
+              setSourceValue={setPAliasList}
+              sourceValue={pAliasList}
             />
             <StringInputRow
               destinationValue={destinationPerformer.birthdate ?? ""}

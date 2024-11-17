@@ -8,6 +8,14 @@ const { Icon } = PluginApi.components;
 const { faMinus } = PluginApi.libraries.FontAwesomeSolid;
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
+  const handleInputChange = (val: string, index: number) => {
+    const updatedState = props.sourceValue.map((v, i) => {
+      return i === index ? val : v;
+    });
+
+    if (props.setSourceValue) props.setSourceValue(updatedState);
+  };
+
   return (
     <FormRowWrapper className="string-list-row" label={props.label}>
       <FormInputGroup>
@@ -22,6 +30,7 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
               return (
                 <StringListInputItem
                   key={i}
+                  index={i}
                   position="destination"
                   placeholder={props.placeholder}
                   value={v}
@@ -43,6 +52,8 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
               return (
                 <StringListInputItem
                   key={i}
+                  index={i}
+                  onChangeCallback={handleInputChange}
                   position="source"
                   placeholder={props.placeholder}
                   value={v}
@@ -74,11 +85,21 @@ interface StringListInputRowProps {
   /** Sets whether the destination or source value should be used on update. */
   setSelectedInput: React.Dispatch<React.SetStateAction<PerformerPosition>>;
 
+  /** Sets the value of the source input. */
+  setSourceValue: React.Dispatch<React.SetStateAction<string[]>>;
+
   /** The input value array for the source performer. */
   sourceValue: string[];
 }
 
 const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
+  /** onChange handler */
+  const handleOnChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (props.onChangeCallback)
+      props.onChangeCallback(e.target.value, props.index);
+  };
+
+  // Only render the remove item button on the source side.
   const removeButton =
     props.position === "source" ? (
       <div className="input-group-append">
@@ -87,10 +108,12 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
         </button>
       </div>
     ) : null;
+
   return (
     <div className="input-group">
       <input
         className="text-input form-control"
+        onChange={handleOnChange}
         placeholder={props.placeholder}
         readOnly={props.position === "destination"}
         value={props.value}
@@ -101,6 +124,12 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
 };
 
 interface StringListInputItemProps {
+  /** The index of the value in the list array. */
+  index: number;
+
+  /** The function to execute after the input onChange event. */
+  onChangeCallback?: (value: string, index: number) => void;
+
   /** Identifies which position the input is for. */
   position: PerformerPosition;
 
