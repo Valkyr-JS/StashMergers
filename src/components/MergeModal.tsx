@@ -8,6 +8,8 @@ import {
   validateNumString,
 } from "../helpers";
 import StringListInputRow from "./form/StringListInputRow";
+import DropdownInputRow from "./form/DropdownInputRow";
+import { genderStrings, genderToString, stringToGender } from "../../utils";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -45,6 +47,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     disambiguation,
     ethnicity,
     eye_color,
+    gender,
     fake_tits,
     hair_color,
     height_cm,
@@ -101,6 +104,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
       ? setValidAliasList(true)
       : validateAliasList(pAliasList);
   }, [selectedAliasList, pAliasList]);
+
+  /* ------------------------------------------- Gender ------------------------------------------- */
+
+  const [selectedGender, setSelectedGender] = React.useState<PerformerPosition>(
+    gender ? "source" : "destination"
+  );
+
+  const [pGender, setPGender] = React.useState<Maybe<GenderEnum> | undefined>(
+    gender
+  );
+
+  // Create an array of all options, including a blank option for undefined.
+  const genderOptions = [""].concat(genderStrings);
+
+  /** Handler for converting the dropdown string to a gender enum */
+  const handleChangeGenderSelect = (v: string) => setPGender(stringToGender(v));
 
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
@@ -314,6 +333,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     // Update source values
     setPDisambiguation(disambiguation);
     setPAliasList(alias_list);
+    setPGender(gender);
     setPBirthdate(birthdate);
     setPDeathDate(death_date);
     setPEthnicity(ethnicity);
@@ -331,6 +351,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
     setSelectedAliasList(alias_list ? "source" : "destination");
+    setSelectedGender(gender ? "source" : "destination");
     setSelectedBirthdate(birthdate ? "source" : "destination");
     setSelectedDeathDate(death_date ? "source" : "destination");
     setSelectedEthnicity(ethnicity ? "source" : "destination");
@@ -403,6 +424,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedFakeTits === "source" && pFakeTits
           ? pFakeTits
           : destinationPerformer.fake_tits,
+      gender:
+        selectedGender === "source" && pGender
+          ? pGender
+          : destinationPerformer.gender,
       hair_color:
         selectedHairColor === "source" && pHairColor
           ? pHairColor
@@ -502,6 +527,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedAliasList}
               setSourceValue={setPAliasList}
               sourceValue={pAliasList}
+            />
+            <DropdownInputRow
+              destinationValue={
+                genderToString(destinationPerformer.gender) ?? ""
+              }
+              label={intl.formatMessage({ id: "gender" })}
+              options={genderOptions}
+              selectedInput={selectedGender}
+              setSelectedInput={setSelectedGender}
+              setSourceValue={handleChangeGenderSelect}
+              sourceValue={genderToString(pGender) ?? ""}
             />
             <StringInputRow
               destinationValue={destinationPerformer.birthdate ?? ""}
