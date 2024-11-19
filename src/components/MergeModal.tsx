@@ -565,8 +565,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
               label={intl.formatMessage({ id: "gender" })}
               options={genderOptions}
               render={
-                !!pGender &&
-                genderToString(pGender) !==
+                !!gender &&
+                genderToString(gender) !==
                   genderToString(destinationPerformer.gender)
               }
               selectedInput={selectedGender}
@@ -685,8 +685,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
               label={intl.formatMessage({ id: "circumcised" })}
               options={circumcisedOptions}
               render={
-                !!pCircumcised &&
-                circumcisedToString(pCircumcised) !==
+                !!circumcised &&
+                circumcisedToString(circumcised) !==
                   circumcisedToString(destinationPerformer.circumcised)
               }
               selectedInput={selectedCircumcised}
