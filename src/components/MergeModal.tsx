@@ -9,7 +9,14 @@ import {
 } from "../helpers";
 import StringListInputRow from "./form/StringListInputRow";
 import DropdownInputRow from "./form/DropdownInputRow";
-import { genderStrings, genderToString, stringToGender } from "../../utils";
+import {
+  circumcisedStrings,
+  circumcisedToString,
+  genderStrings,
+  genderToString,
+  stringToCircumcised,
+  stringToGender,
+} from "../utils";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -43,6 +50,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     alias_list,
     birthdate,
     career_length,
+    circumcised,
     death_date,
     disambiguation,
     ethnicity,
@@ -274,6 +282,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
       : validatePenisLength(pPenisLength ?? "");
   }, [selectedPenisLength]);
 
+  /* ----------------------------------------- Circumcised ---------------------------------------- */
+
+  const [selectedCircumcised, setSelectedCircumcised] =
+    React.useState<PerformerPosition>(circumcised ? "source" : "destination");
+
+  const [pCircumcised, setPCircumcised] = React.useState<
+    Maybe<CircumisedEnum> | undefined
+  >(circumcised);
+
+  // Create an array of all options, including a blank option for undefined.
+  const circumcisedOptions = [""].concat(circumcisedStrings);
+
+  /** Handler for converting the dropdown string to a circumcised enum */
+  const handleChangeCircumcisedSelect = (v: string) =>
+    setPCircumcised(stringToCircumcised(v));
+
   /* ---------------------------------------- Measurements ---------------------------------------- */
 
   const [selectedMeasurements, setSelectedMeasurements] =
@@ -342,6 +366,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPHeightCm(height_cm?.toString());
     setPWeight(weight?.toString());
     setPPenisLength(penis_length?.toString());
+    setPCircumcised(circumcised);
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
     setPCareerLength(career_length);
@@ -360,6 +385,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedHeightCm(height_cm ? "source" : "destination");
     setSelectedWeight(weight ? "source" : "destination");
     setSelectedPenisLength(penis_length ? "source" : "destination");
+    setSelectedCircumcised(circumcised ? "source" : "destination");
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
@@ -444,6 +470,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedPenisLength === "source" && pPenisLength
           ? +pPenisLength
           : destinationPerformer.penis_length,
+      circumcised:
+        selectedCircumcised === "source" && pCircumcised
+          ? pCircumcised
+          : destinationPerformer.circumcised,
       weight:
         selectedWeight === "source" && pWeight
           ? +pWeight
@@ -534,6 +564,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
               }
               label={intl.formatMessage({ id: "gender" })}
               options={genderOptions}
+              render={
+                !!pGender &&
+                genderToString(pGender) !==
+                  genderToString(destinationPerformer.gender)
+              }
               selectedInput={selectedGender}
               setSelectedInput={setSelectedGender}
               setSourceValue={handleChangeGenderSelect}
@@ -642,6 +677,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPPenisLength}
               sourceValue={pPenisLength ?? ""}
               validation={validatePenisLength}
+            />
+            <DropdownInputRow
+              destinationValue={
+                circumcisedToString(destinationPerformer.circumcised) ?? ""
+              }
+              label={intl.formatMessage({ id: "circumcised" })}
+              options={circumcisedOptions}
+              render={
+                !!pCircumcised &&
+                circumcisedToString(pCircumcised) !==
+                  circumcisedToString(destinationPerformer.circumcised)
+              }
+              selectedInput={selectedCircumcised}
+              setSelectedInput={setSelectedCircumcised}
+              setSourceValue={handleChangeCircumcisedSelect}
+              sourceValue={circumcisedToString(pCircumcised) ?? ""}
             />
             <StringInputRow
               destinationValue={destinationPerformer.measurements ?? ""}

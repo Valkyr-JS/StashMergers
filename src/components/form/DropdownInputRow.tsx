@@ -7,6 +7,8 @@ const { React } = PluginApi;
 const { Form } = PluginApi.libraries.Bootstrap;
 
 const DropdownInputRow: React.FC<DropdownInputRowProps> = (props) => {
+  if (props.render === false) return null;
+
   /** Handler for select onChange events. */
   const handleSourceChange: React.ChangeEventHandler = (e) => {
     const target = e.target as HTMLSelectElement;
@@ -68,6 +70,9 @@ interface DropdownInputRowProps {
 
   /** The list of dropdown options. */
   options: string[];
+
+  /** Whether to render the component or not. */
+  render?: boolean;
 
   /** Dictates whether the destination or source value should be used on update. */
   selectedInput: PerformerPosition;

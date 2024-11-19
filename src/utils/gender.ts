@@ -2,7 +2,8 @@
  * https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/utils/gender.ts
  * */
 
-/** A map of gender strings with each enum for use in pace of the const enum. */
+/** A map of gender strings with each enum for use in place of the const enum.
+ * */
 export const stringGenderMap = new Map<string, GenderEnum>([
   ["Male", GenderEnum.Male],
   ["Female", GenderEnum.Female],

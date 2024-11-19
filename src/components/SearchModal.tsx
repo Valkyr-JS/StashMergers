@@ -48,6 +48,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           alias_list
           birthdate
           career_length
+          circumcised
           death_date
           disambiguation
           ethnicity
