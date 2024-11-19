@@ -33,6 +33,13 @@ export const getCountries = (locale: string = "en") => {
   }));
 };
 
+/** Converts a country name to its ISO code. */
+export const getISOByCountry = (name: string, locale: string = "en") => {
+  return (
+    Countries.getAlpha2Code(name, locale) ?? Countries.getAlpha2Code(name, "en")
+  );
+};
+
 /** Converts a country ISO code to its local code variant */
 export const getLocaleCode = (code: string) => {
   if (code === "zh-CN") return "zh";

@@ -16,7 +16,7 @@ import {
   genderToString,
   getCountries,
   getCountryByISO,
-  getLocaleCode,
+  getISOByCountry,
   stringToCircumcised,
   stringToGender,
 } from "../utils";
@@ -199,8 +199,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
   );
 
   /** Handler for converting the dropdown country name to a country ISO */
-  const handleChangeCountrySelect = (v: string) =>
-    setPCountry(!!v ? getLocaleCode(v) ?? "" : "");
+  const handleChangeCountrySelect = (v: string) => {
+    console.log(v);
+    console.log(getISOByCountry(v, intl.locale));
+    setPCountry(!!v ? getISOByCountry(v, intl.locale) : "");
+  };
 
   /* ------------------------------------------ Ethnicity ----------------------------------------- */
 
