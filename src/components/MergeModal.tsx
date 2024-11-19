@@ -14,6 +14,9 @@ import {
   circumcisedToString,
   genderStrings,
   genderToString,
+  getCountries,
+  getCountryByISO,
+  getLocaleCode,
   stringToCircumcised,
   stringToGender,
 } from "../utils";
@@ -51,6 +54,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     birthdate,
     career_length,
     circumcised,
+    country,
     death_date,
     disambiguation,
     ethnicity,
@@ -178,6 +182,25 @@ const MergeModal: React.FC<MergeModalProps> = ({
       ? setValidDeathDate(true)
       : validateDeathDate(pDeathDate ?? "");
   }, [selectedDeathDate]);
+
+  /* ------------------------------------------- Country ------------------------------------------ */
+
+  const [selectedCountry, setSelectedCountry] =
+    React.useState<PerformerPosition>(country ? "source" : "destination");
+
+  // pCountry is the ISO code
+  const [pCountry, setPCountry] = React.useState<Maybe<string> | undefined>(
+    country
+  );
+
+  // Create an array of all options.
+  const countryOptions = [""].concat(
+    getCountries(intl.locale).map((c) => c.label)
+  );
+
+  /** Handler for converting the dropdown country name to a country ISO */
+  const handleChangeCountrySelect = (v: string) =>
+    setPCountry(!!v ? getLocaleCode(v) ?? "" : "");
 
   /* ------------------------------------------ Ethnicity ----------------------------------------- */
 
@@ -360,6 +383,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPGender(gender);
     setPBirthdate(birthdate);
     setPDeathDate(death_date);
+    setPCountry(country);
     setPEthnicity(ethnicity);
     setPHairColor(hair_color);
     setPEyeColor(eye_color);
@@ -379,6 +403,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedGender(gender ? "source" : "destination");
     setSelectedBirthdate(birthdate ? "source" : "destination");
     setSelectedDeathDate(death_date ? "source" : "destination");
+    setSelectedCountry(country ? "source" : "destination");
     setSelectedEthnicity(ethnicity ? "source" : "destination");
     setSelectedHairColor(hair_color ? "source" : "destination");
     setSelectedEyeColor(eye_color ? "source" : "destination");
@@ -430,6 +455,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedCareerLength === "source" && pCareerLength
           ? pCareerLength
           : destinationPerformer.career_length,
+      country:
+        selectedCountry === "source" && pCountry
+          ? pCountry
+          : destinationPerformer.country,
       death_date:
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
@@ -599,6 +628,20 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPDeathDate}
               sourceValue={pDeathDate ?? ""}
               validation={validateDeathDate}
+            />
+            <DropdownInputRow
+              destinationValue={
+                !!destinationPerformer.country
+                  ? getCountryByISO(destinationPerformer.country) ?? ""
+                  : ""
+              }
+              label={intl.formatMessage({ id: "country" })}
+              options={countryOptions}
+              render={!!country && country !== destinationPerformer.country}
+              selectedInput={selectedCountry}
+              setSelectedInput={setSelectedCountry}
+              setSourceValue={handleChangeCountrySelect}
+              sourceValue={!!pCountry ? getCountryByISO(pCountry) ?? "" : ""}
             />
             <StringInputRow
               destinationValue={destinationPerformer.ethnicity ?? ""}

@@ -98,6 +98,7 @@ interface IPluginApi {
 /* -------------------------------------------------------------------------- */
 
 interface StashPluginComponents {
+  CountrySelect: (props: ICountrySelectProps) => React.JSX.Element;
   HoverPopover: (props: IHoverPopover) => React.JSX.Element;
   Icon: (props: IIcon) => FontAwesomeIcon;
   PerformerDetailsPanel: (props: IPerformerDetailsPanel) => React.JSX.Element;
@@ -254,4 +255,14 @@ interface IFilterProps {
 interface IFilterValueProps<T> {
   values?: T[];
   onSelect?: (item: T[]) => void;
+}
+
+interface ICountrySelectProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
+  showFlag?: boolean;
+  isClearable?: boolean;
+  menuPortalTarget?: HTMLElement | null;
 }

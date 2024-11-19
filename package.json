@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Valkyr-JS/StashMergePerformers#readme",
   "dependencies": {
     "classnames": "^2.5.1",
+    "i18n-iso-countries": "^7.13.0",
     "react-intl": "^6.6.8",
     "sass": "^1.77.6",
     "typescript": "^5.5.3"
