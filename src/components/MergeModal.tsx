@@ -22,6 +22,7 @@ import {
 } from "../utils";
 import TagSelectRow from "./form/TagSelectRow";
 import ImageRow from "./form/ImageInputRow";
+import CheckboxRow from "./form/CheckboxRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -66,6 +67,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     fake_tits,
     hair_color,
     height_cm,
+    ignore_auto_tag,
     image_path,
     measurements,
     penis_length,
@@ -421,6 +423,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pImagePath, setPImagePath] =
     React.useState<Performer["image_path"]>(image_path);
 
+  /* --------------------------------------- Ignore auto-tag -------------------------------------- */
+
+  const [selectedIgnoreAutoTag, setSelectedIgnoreAutoTag] =
+    React.useState<PerformerPosition>(
+      ignore_auto_tag ? "source" : "destination"
+    );
+
+  const [pIgnoreAutoTag, setPIgnoreAutoTag] =
+    React.useState<Performer["ignore_auto_tag"]>(ignore_auto_tag);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -448,6 +460,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPDetails(details);
     setPTags(tags);
     setPImagePath(image_path);
+    setPIgnoreAutoTag(ignore_auto_tag);
 
     /** Update selected position */
     setSelectedName("source");
@@ -473,6 +486,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedDetails(details ? "source" : "destination");
     setSelectedTags(tags ? "source" : "destination");
     setSelectedImagePath(image_path ? "source" : "destination");
+    setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -557,6 +571,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedHeightCm === "source" && pHeightCm
           ? +pHeightCm
           : destinationPerformer.height_cm,
+      ignore_auto_tag:
+        selectedImagePath === "source"
+          ? pIgnoreAutoTag
+          : destinationPerformer.ignore_auto_tag,
       image:
         selectedImagePath === "source" && pImagePath
           ? pImagePath
@@ -921,6 +939,15 @@ const MergeModal: React.FC<MergeModalProps> = ({
                 alt: intl.formatMessage({ id: "performer_image" }),
                 src: sourcePerformer.image_path ?? "",
               }}
+            />
+            <CheckboxRow
+              destinationValue={destinationPerformer.ignore_auto_tag}
+              label={intl.formatMessage({ id: "ignore_auto_tag" })}
+              render={ignore_auto_tag !== destinationPerformer.ignore_auto_tag}
+              selectedInput={selectedIgnoreAutoTag}
+              setSelectedInput={setSelectedIgnoreAutoTag}
+              setSourceValue={setPIgnoreAutoTag}
+              sourceValue={pIgnoreAutoTag}
             />
           </form>
         </div>
