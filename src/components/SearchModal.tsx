@@ -48,16 +48,20 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           alias_list
           birthdate
           career_length
+          circumcised
+          country
           death_date
           disambiguation
           ethnicity
           eye_color
           fake_tits
+          gender
           hair_color
           height_cm
           name
           measurements
           penis_length
+          tags { __typename aliases description favorite id image_path name parents { id name } }
           urls
           weight
         }

@@ -8,6 +8,19 @@ import {
   validateNumString,
 } from "../helpers";
 import StringListInputRow from "./form/StringListInputRow";
+import DropdownInputRow from "./form/DropdownInputRow";
+import {
+  circumcisedStrings,
+  circumcisedToString,
+  genderStrings,
+  genderToString,
+  getCountries,
+  getCountryByISO,
+  getISOByCountry,
+  stringToCircumcised,
+  stringToGender,
+} from "../utils";
+import TagSelectRow from "./form/TagSelectRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -41,15 +54,19 @@ const MergeModal: React.FC<MergeModalProps> = ({
     alias_list,
     birthdate,
     career_length,
+    circumcised,
+    country,
     death_date,
     disambiguation,
     ethnicity,
     eye_color,
+    gender,
     fake_tits,
     hair_color,
     height_cm,
     measurements,
     penis_length,
+    tags,
     weight,
   } = sourcePerformer;
 
@@ -102,6 +119,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
       : validateAliasList(pAliasList);
   }, [selectedAliasList, pAliasList]);
 
+  /* ------------------------------------------- Gender ------------------------------------------- */
+
+  const [selectedGender, setSelectedGender] = React.useState<PerformerPosition>(
+    gender ? "source" : "destination"
+  );
+
+  const [pGender, setPGender] = React.useState<Maybe<GenderEnum> | undefined>(
+    gender
+  );
+
+  // Create an array of all options, including a blank option for undefined.
+  const genderOptions = [""].concat(genderStrings);
+
+  /** Handler for converting the dropdown string to a gender enum */
+  const handleChangeGenderSelect = (v: string) => setPGender(stringToGender(v));
+
   /* ------------------------------------------ Birthdate ----------------------------------------- */
 
   const [selectedBirthdate, setSelectedBirthdate] =
@@ -151,6 +184,28 @@ const MergeModal: React.FC<MergeModalProps> = ({
       ? setValidDeathDate(true)
       : validateDeathDate(pDeathDate ?? "");
   }, [selectedDeathDate]);
+
+  /* ------------------------------------------- Country ------------------------------------------ */
+
+  const [selectedCountry, setSelectedCountry] =
+    React.useState<PerformerPosition>(country ? "source" : "destination");
+
+  // pCountry is the ISO code
+  const [pCountry, setPCountry] = React.useState<Maybe<string> | undefined>(
+    country
+  );
+
+  // Create an array of all options.
+  const countryOptions = [""].concat(
+    getCountries(intl.locale).map((c) => c.label)
+  );
+
+  /** Handler for converting the dropdown country name to a country ISO */
+  const handleChangeCountrySelect = (v: string) => {
+    console.log(v);
+    console.log(getISOByCountry(v, intl.locale));
+    setPCountry(!!v ? getISOByCountry(v, intl.locale) : "");
+  };
 
   /* ------------------------------------------ Ethnicity ----------------------------------------- */
 
@@ -255,6 +310,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
       : validatePenisLength(pPenisLength ?? "");
   }, [selectedPenisLength]);
 
+  /* ----------------------------------------- Circumcised ---------------------------------------- */
+
+  const [selectedCircumcised, setSelectedCircumcised] =
+    React.useState<PerformerPosition>(circumcised ? "source" : "destination");
+
+  const [pCircumcised, setPCircumcised] = React.useState<
+    Maybe<CircumisedEnum> | undefined
+  >(circumcised);
+
+  // Create an array of all options, including a blank option for undefined.
+  const circumcisedOptions = [""].concat(circumcisedStrings);
+
+  /** Handler for converting the dropdown string to a circumcised enum */
+  const handleChangeCircumcisedSelect = (v: string) =>
+    setPCircumcised(stringToCircumcised(v));
+
   /* ---------------------------------------- Measurements ---------------------------------------- */
 
   const [selectedMeasurements, setSelectedMeasurements] =
@@ -307,6 +378,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
     selectedURLs === "destination" ? setValidURLs(true) : validateURLs(pURLs);
   }, [selectedURLs, pURLs]);
 
+  /* -------------------------------------------- Tags -------------------------------------------- */
+  const [selectedTags, setSelectedTags] = React.useState<PerformerPosition>(
+    tags ? "source" : "destination"
+  );
+
+  const [pTags, setPTags] = React.useState<Performer["tags"]>(tags);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -314,35 +392,43 @@ const MergeModal: React.FC<MergeModalProps> = ({
     // Update source values
     setPDisambiguation(disambiguation);
     setPAliasList(alias_list);
+    setPGender(gender);
     setPBirthdate(birthdate);
     setPDeathDate(death_date);
+    setPCountry(country);
     setPEthnicity(ethnicity);
     setPHairColor(hair_color);
     setPEyeColor(eye_color);
     setPHeightCm(height_cm?.toString());
     setPWeight(weight?.toString());
     setPPenisLength(penis_length?.toString());
+    setPCircumcised(circumcised);
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
     setPCareerLength(career_length);
     setPURLs(urls);
+    setPTags(tags);
 
     /** Update selected position */
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
     setSelectedAliasList(alias_list ? "source" : "destination");
+    setSelectedGender(gender ? "source" : "destination");
     setSelectedBirthdate(birthdate ? "source" : "destination");
     setSelectedDeathDate(death_date ? "source" : "destination");
+    setSelectedCountry(country ? "source" : "destination");
     setSelectedEthnicity(ethnicity ? "source" : "destination");
     setSelectedHairColor(hair_color ? "source" : "destination");
     setSelectedEyeColor(eye_color ? "source" : "destination");
     setSelectedHeightCm(height_cm ? "source" : "destination");
     setSelectedWeight(weight ? "source" : "destination");
     setSelectedPenisLength(penis_length ? "source" : "destination");
+    setSelectedCircumcised(circumcised ? "source" : "destination");
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
     setSelectedURLs(urls ? "source" : "destination");
+    setSelectedTags(tags ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -383,6 +469,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedCareerLength === "source" && pCareerLength
           ? pCareerLength
           : destinationPerformer.career_length,
+      circumcised:
+        selectedCircumcised === "source" && pCircumcised
+          ? pCircumcised
+          : destinationPerformer.circumcised,
+      country:
+        selectedCountry === "source" && pCountry
+          ? pCountry
+          : destinationPerformer.country,
       death_date:
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
@@ -403,6 +497,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedFakeTits === "source" && pFakeTits
           ? pFakeTits
           : destinationPerformer.fake_tits,
+      gender:
+        selectedGender === "source" && pGender
+          ? pGender
+          : destinationPerformer.gender,
       hair_color:
         selectedHairColor === "source" && pHairColor
           ? pHairColor
@@ -419,6 +517,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedPenisLength === "source" && pPenisLength
           ? +pPenisLength
           : destinationPerformer.penis_length,
+      tag_ids:
+        selectedTags === "source" && pTags
+          ? pTags.map((t) => t.id)
+          : destinationPerformer.tags.map((t) => t.id),
       weight:
         selectedWeight === "source" && pWeight
           ? +pWeight
@@ -503,6 +605,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPAliasList}
               sourceValue={pAliasList}
             />
+            <DropdownInputRow
+              destinationValue={
+                genderToString(destinationPerformer.gender) ?? ""
+              }
+              label={intl.formatMessage({ id: "gender" })}
+              options={genderOptions}
+              render={
+                !!gender &&
+                genderToString(gender) !==
+                  genderToString(destinationPerformer.gender)
+              }
+              selectedInput={selectedGender}
+              setSelectedInput={setSelectedGender}
+              setSourceValue={handleChangeGenderSelect}
+              sourceValue={genderToString(pGender) ?? ""}
+            />
             <StringInputRow
               destinationValue={destinationPerformer.birthdate ?? ""}
               label={intl.formatMessage({ id: "birthdate" })}
@@ -528,6 +646,20 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPDeathDate}
               sourceValue={pDeathDate ?? ""}
               validation={validateDeathDate}
+            />
+            <DropdownInputRow
+              destinationValue={
+                !!destinationPerformer.country
+                  ? getCountryByISO(destinationPerformer.country) ?? ""
+                  : ""
+              }
+              label={intl.formatMessage({ id: "country" })}
+              options={countryOptions}
+              render={!!country && country !== destinationPerformer.country}
+              selectedInput={selectedCountry}
+              setSelectedInput={setSelectedCountry}
+              setSourceValue={handleChangeCountrySelect}
+              sourceValue={!!pCountry ? getCountryByISO(pCountry) ?? "" : ""}
             />
             <StringInputRow
               destinationValue={destinationPerformer.ethnicity ?? ""}
@@ -607,6 +739,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
               sourceValue={pPenisLength ?? ""}
               validation={validatePenisLength}
             />
+            <DropdownInputRow
+              destinationValue={
+                circumcisedToString(destinationPerformer.circumcised) ?? ""
+              }
+              label={intl.formatMessage({ id: "circumcised" })}
+              options={circumcisedOptions}
+              render={
+                !!circumcised &&
+                circumcisedToString(circumcised) !==
+                  circumcisedToString(destinationPerformer.circumcised)
+              }
+              selectedInput={selectedCircumcised}
+              setSelectedInput={setSelectedCircumcised}
+              setSourceValue={handleChangeCircumcisedSelect}
+              sourceValue={circumcisedToString(pCircumcised) ?? ""}
+            />
             <StringInputRow
               destinationValue={destinationPerformer.measurements ?? ""}
               label={intl.formatMessage({ id: "measurements" })}
@@ -654,6 +802,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedURLs}
               setSourceValue={setPURLs}
               sourceValue={pURLs}
+            />
+            <TagSelectRow
+              destinationValue={destinationPerformer.tags}
+              label={intl.formatMessage({ id: "tags" })}
+              selectedInput={selectedTags}
+              setSelectedInput={setSelectedTags}
+              setSourceValue={setPTags}
+              sourceValue={pTags}
             />
           </form>
         </div>

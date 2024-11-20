@@ -98,6 +98,7 @@ interface IPluginApi {
 /* -------------------------------------------------------------------------- */
 
 interface StashPluginComponents {
+  CountrySelect: (props: ICountrySelectProps) => React.JSX.Element;
   HoverPopover: (props: IHoverPopover) => React.JSX.Element;
   Icon: (props: IIcon) => FontAwesomeIcon;
   PerformerDetailsPanel: (props: IPerformerDetailsPanel) => React.JSX.Element;
@@ -108,6 +109,7 @@ interface StashPluginComponents {
     props: IFilterProps & IFilterValueProps<Performer>
   ) => React.JSX.Element;
   SceneCard: (props: ISceneCardProps) => React.JSX.Element;
+  TagSelect: (props: TagSelectProps) => React.JSX.Element;
 }
 
 interface PatchableComponents {
@@ -255,3 +257,19 @@ interface IFilterValueProps<T> {
   values?: T[];
   onSelect?: (item: T[]) => void;
 }
+
+interface ICountrySelectProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
+  showFlag?: boolean;
+  isClearable?: boolean;
+  menuPortalTarget?: HTMLElement | null;
+}
+
+type TagSelectProps = IFilterProps &
+  IFilterValueProps<Tag> & {
+    hoverPlacement?: Placement;
+    excludeIds?: string[];
+  };
