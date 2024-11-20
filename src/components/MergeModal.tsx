@@ -21,6 +21,7 @@ import {
   stringToGender,
 } from "../utils";
 import TagSelectRow from "./form/TagSelectRow";
+import ImageRow from "./form/ImageInputRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -65,6 +66,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     fake_tits,
     hair_color,
     height_cm,
+    image_path,
     measurements,
     penis_length,
     piercings,
@@ -404,11 +406,20 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pDetails, setPDetails] = React.useState<Performer["details"]>(details);
 
   /* -------------------------------------------- Tags -------------------------------------------- */
+
   const [selectedTags, setSelectedTags] = React.useState<PerformerPosition>(
     tags ? "source" : "destination"
   );
 
   const [pTags, setPTags] = React.useState<Performer["tags"]>(tags);
+
+  /* --------------------------------------- Performer image -------------------------------------- */
+
+  const [selectedImagePath, setSelectedImagePath] =
+    React.useState<PerformerPosition>(image_path ? "source" : "destination");
+
+  const [pImagePath, setPImagePath] =
+    React.useState<Performer["image_path"]>(image_path);
 
   /* ------------------------------------------- General ------------------------------------------ */
 
@@ -436,6 +447,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPURLs(urls);
     setPDetails(details);
     setPTags(tags);
+    setPImagePath(image_path);
 
     /** Update selected position */
     setSelectedName("source");
@@ -460,6 +472,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedURLs(urls ? "source" : "destination");
     setSelectedDetails(details ? "source" : "destination");
     setSelectedTags(tags ? "source" : "destination");
+    setSelectedImagePath(image_path ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -544,6 +557,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedHeightCm === "source" && pHeightCm
           ? +pHeightCm
           : destinationPerformer.height_cm,
+      image:
+        selectedImagePath === "source" && pImagePath
+          ? pImagePath
+          : destinationPerformer.image_path,
       measurements:
         selectedMeasurements === "source" && pMeasurements
           ? pMeasurements
@@ -888,6 +905,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedTags}
               setSourceValue={setPTags}
               sourceValue={pTags}
+            />
+            <ImageRow
+              destinationImage={{
+                alt: intl.formatMessage({ id: "performer_image" }),
+                src: destinationPerformer.image_path ?? "",
+              }}
+              label={intl.formatMessage({ id: "performer_image" })}
+              render={
+                !!image_path && image_path !== destinationPerformer.image_path
+              }
+              selectedInput={selectedImagePath}
+              setSelectedInput={setSelectedImagePath}
+              sourceImage={{
+                alt: intl.formatMessage({ id: "performer_image" }),
+                src: sourcePerformer.image_path ?? "",
+              }}
             />
           </form>
         </div>
