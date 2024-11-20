@@ -66,6 +66,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     height_cm,
     measurements,
     penis_length,
+    piercings,
     tags,
     tattoos,
     weight,
@@ -350,6 +351,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   const [pTattoos, setPTattoos] = React.useState<Performer["tattoos"]>(tattoos);
 
+  /* ------------------------------------------ Piercings ----------------------------------------- */
+
+  const [selectedPiercings, setSelectedPiercings] =
+    React.useState<PerformerPosition>(piercings ? "source" : "destination");
+
+  const [pPiercings, setPPiercings] =
+    React.useState<Performer["piercings"]>(piercings);
+
   /* ---------------------------------------- Career length --------------------------------------- */
 
   const [selectedCareerLength, setSelectedCareerLength] =
@@ -414,6 +423,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
     setPTattoos(tattoos);
+    setPPiercings(piercings);
     setPCareerLength(career_length);
     setPURLs(urls);
     setPTags(tags);
@@ -436,6 +446,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
     setSelectedTattoos(tattoos ? "source" : "destination");
+    setSelectedPiercings(piercings ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
     setSelectedURLs(urls ? "source" : "destination");
     setSelectedTags(tags ? "source" : "destination");
@@ -527,6 +538,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedPenisLength === "source" && pPenisLength
           ? +pPenisLength
           : destinationPerformer.penis_length,
+      piercings:
+        selectedPiercings === "source" && pPiercings
+          ? pPiercings
+          : destinationPerformer.piercings,
       tag_ids:
         selectedTags === "source" && pTags
           ? pTags.map((t) => t.id)
@@ -804,6 +819,19 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedTattoos}
               setSourceValue={setPTattoos}
               sourceValue={pTattoos ?? ""}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.piercings ?? ""}
+              isTextArea
+              label={intl.formatMessage({ id: "piercings" })}
+              placeholder={intl.formatMessage({ id: "piercings" })}
+              render={
+                !!piercings && piercings !== destinationPerformer.piercings
+              }
+              selectedInput={selectedPiercings}
+              setSelectedInput={setSelectedPiercings}
+              setSourceValue={setPPiercings}
+              sourceValue={pPiercings ?? ""}
             />
             <StringInputRow
               destinationValue={destinationPerformer.career_length ?? ""}
