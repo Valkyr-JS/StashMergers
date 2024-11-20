@@ -11,3 +11,8 @@ type MergeDirection = "from" | "into";
 /** The position of the performer as the source or destination. The source is
  * merge into the destination. */
 type PerformerPosition = "destination" | "source";
+
+interface IImageProp {
+  src: HTMLImageElement["src"];
+  alt?: HTMLImageElement["alt"];
+}
