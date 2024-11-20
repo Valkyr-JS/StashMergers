@@ -59,6 +59,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           gender
           hair_color
           height_cm
+          ignore_auto_tag
           image_path
           name
           measurements
