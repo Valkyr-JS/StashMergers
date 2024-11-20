@@ -51,6 +51,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           circumcised
           country
           death_date
+          details
           disambiguation
           ethnicity
           eye_color

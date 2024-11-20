@@ -57,6 +57,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     circumcised,
     country,
     death_date,
+    details,
     disambiguation,
     ethnicity,
     eye_color,
@@ -395,6 +396,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
     selectedURLs === "destination" ? setValidURLs(true) : validateURLs(pURLs);
   }, [selectedURLs, pURLs]);
 
+  /* ------------------------------------------- Details ------------------------------------------ */
+
+  const [selectedDetails, setSelectedDetails] =
+    React.useState<PerformerPosition>(details ? "source" : "destination");
+
+  const [pDetails, setPDetails] = React.useState<Performer["details"]>(details);
+
   /* -------------------------------------------- Tags -------------------------------------------- */
   const [selectedTags, setSelectedTags] = React.useState<PerformerPosition>(
     tags ? "source" : "destination"
@@ -426,6 +434,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPPiercings(piercings);
     setPCareerLength(career_length);
     setPURLs(urls);
+    setPDetails(details);
     setPTags(tags);
 
     /** Update selected position */
@@ -449,6 +458,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedPiercings(piercings ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
     setSelectedURLs(urls ? "source" : "destination");
+    setSelectedDetails(details ? "source" : "destination");
     setSelectedTags(tags ? "source" : "destination");
   }, [sourcePerformer]);
 
@@ -502,6 +512,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
           : destinationPerformer.death_date,
+      details:
+        selectedDetails === "source" && pDetails
+          ? pDetails
+          : destinationPerformer.details,
       disambiguation:
         selectedDisambiguation === "source" && pDisambiguation
           ? pDisambiguation
@@ -855,6 +869,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedURLs}
               setSourceValue={setPURLs}
               sourceValue={pURLs}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.details ?? ""}
+              isTextArea
+              label={intl.formatMessage({ id: "details" })}
+              placeholder={intl.formatMessage({ id: "details" })}
+              render={!!details && details !== destinationPerformer.details}
+              selectedInput={selectedDetails}
+              setSelectedInput={setSelectedDetails}
+              setSourceValue={setPDetails}
+              sourceValue={pDetails ?? ""}
             />
             <TagSelectRow
               destinationValue={destinationPerformer.tags}
