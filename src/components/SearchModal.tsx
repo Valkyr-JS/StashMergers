@@ -61,6 +61,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           name
           measurements
           penis_length
+          tags { __typename aliases description favorite id image_path name parents { id name } }
           urls
           weight
         }

@@ -109,6 +109,7 @@ interface StashPluginComponents {
     props: IFilterProps & IFilterValueProps<Performer>
   ) => React.JSX.Element;
   SceneCard: (props: ISceneCardProps) => React.JSX.Element;
+  TagSelect: (props: TagSelectProps) => React.JSX.Element;
 }
 
 interface PatchableComponents {
@@ -266,3 +267,9 @@ interface ICountrySelectProps {
   isClearable?: boolean;
   menuPortalTarget?: HTMLElement | null;
 }
+
+type TagSelectProps = IFilterProps &
+  IFilterValueProps<Tag> & {
+    hoverPlacement?: Placement;
+    excludeIds?: string[];
+  };

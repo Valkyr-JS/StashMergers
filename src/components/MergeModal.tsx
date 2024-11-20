@@ -20,6 +20,7 @@ import {
   stringToCircumcised,
   stringToGender,
 } from "../utils";
+import TagSelectRow from "./form/TagSelectRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -65,6 +66,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     height_cm,
     measurements,
     penis_length,
+    tags,
     weight,
   } = sourcePerformer;
 
@@ -376,6 +378,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
     selectedURLs === "destination" ? setValidURLs(true) : validateURLs(pURLs);
   }, [selectedURLs, pURLs]);
 
+  /* -------------------------------------------- Tags -------------------------------------------- */
+  const [selectedTags, setSelectedTags] = React.useState<PerformerPosition>(
+    tags ? "source" : "destination"
+  );
+
+  const [pTags, setPTags] = React.useState<Performer["tags"]>(tags);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -398,6 +407,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPFakeTits(fake_tits);
     setPCareerLength(career_length);
     setPURLs(urls);
+    setPTags(tags);
 
     /** Update selected position */
     setSelectedName("source");
@@ -418,6 +428,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedFakeTits(fake_tits ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
     setSelectedURLs(urls ? "source" : "destination");
+    setSelectedTags(tags ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -458,6 +469,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedCareerLength === "source" && pCareerLength
           ? pCareerLength
           : destinationPerformer.career_length,
+      circumcised:
+        selectedCircumcised === "source" && pCircumcised
+          ? pCircumcised
+          : destinationPerformer.circumcised,
       country:
         selectedCountry === "source" && pCountry
           ? pCountry
@@ -502,10 +517,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedPenisLength === "source" && pPenisLength
           ? +pPenisLength
           : destinationPerformer.penis_length,
-      circumcised:
-        selectedCircumcised === "source" && pCircumcised
-          ? pCircumcised
-          : destinationPerformer.circumcised,
+      tag_ids:
+        selectedTags === "source" && pTags
+          ? pTags.map((t) => t.id)
+          : destinationPerformer.tags.map((t) => t.id),
       weight:
         selectedWeight === "source" && pWeight
           ? +pWeight
@@ -777,6 +792,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedCareerLength}
               setSourceValue={setPCareerLength}
               sourceValue={pCareerLength ?? ""}
+            />
+            <TagSelectRow
+              destinationValue={destinationPerformer.tags}
+              label={intl.formatMessage({ id: "tags" })}
+              selectedInput={selectedTags}
+              setSelectedInput={setSelectedTags}
+              setSourceValue={setPTags}
+              sourceValue={pTags}
             />
             <StringListInputRow
               destinationValue={destinationPerformer.urls ?? []}
