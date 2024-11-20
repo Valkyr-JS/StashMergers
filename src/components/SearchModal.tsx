@@ -51,6 +51,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           circumcised
           country
           death_date
+          details
           disambiguation
           ethnicity
           eye_color
@@ -61,7 +62,9 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           name
           measurements
           penis_length
+          piercings
           tags { __typename aliases description favorite id image_path name parents { id name } }
+          tattoos
           urls
           weight
         }

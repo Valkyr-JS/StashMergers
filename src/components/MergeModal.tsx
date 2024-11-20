@@ -57,6 +57,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     circumcised,
     country,
     death_date,
+    details,
     disambiguation,
     ethnicity,
     eye_color,
@@ -66,7 +67,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
     height_cm,
     measurements,
     penis_length,
+    piercings,
     tags,
+    tattoos,
     weight,
   } = sourcePerformer;
 
@@ -342,6 +345,21 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pFakeTits, setPFakeTits] =
     React.useState<Performer["fake_tits"]>(fake_tits);
 
+  /* ------------------------------------------- Tattoos ------------------------------------------ */
+
+  const [selectedTattoos, setSelectedTattoos] =
+    React.useState<PerformerPosition>(tattoos ? "source" : "destination");
+
+  const [pTattoos, setPTattoos] = React.useState<Performer["tattoos"]>(tattoos);
+
+  /* ------------------------------------------ Piercings ----------------------------------------- */
+
+  const [selectedPiercings, setSelectedPiercings] =
+    React.useState<PerformerPosition>(piercings ? "source" : "destination");
+
+  const [pPiercings, setPPiercings] =
+    React.useState<Performer["piercings"]>(piercings);
+
   /* ---------------------------------------- Career length --------------------------------------- */
 
   const [selectedCareerLength, setSelectedCareerLength] =
@@ -378,6 +396,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
     selectedURLs === "destination" ? setValidURLs(true) : validateURLs(pURLs);
   }, [selectedURLs, pURLs]);
 
+  /* ------------------------------------------- Details ------------------------------------------ */
+
+  const [selectedDetails, setSelectedDetails] =
+    React.useState<PerformerPosition>(details ? "source" : "destination");
+
+  const [pDetails, setPDetails] = React.useState<Performer["details"]>(details);
+
   /* -------------------------------------------- Tags -------------------------------------------- */
   const [selectedTags, setSelectedTags] = React.useState<PerformerPosition>(
     tags ? "source" : "destination"
@@ -405,8 +430,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPCircumcised(circumcised);
     setPMeasurements(measurements);
     setPFakeTits(fake_tits);
+    setPTattoos(tattoos);
+    setPPiercings(piercings);
     setPCareerLength(career_length);
     setPURLs(urls);
+    setPDetails(details);
     setPTags(tags);
 
     /** Update selected position */
@@ -426,8 +454,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedCircumcised(circumcised ? "source" : "destination");
     setSelectedMeasurements(measurements ? "source" : "destination");
     setSelectedFakeTits(fake_tits ? "source" : "destination");
+    setSelectedTattoos(tattoos ? "source" : "destination");
+    setSelectedPiercings(piercings ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
     setSelectedURLs(urls ? "source" : "destination");
+    setSelectedDetails(details ? "source" : "destination");
     setSelectedTags(tags ? "source" : "destination");
   }, [sourcePerformer]);
 
@@ -481,6 +512,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedDeathDate === "source" && !!pDeathDate
           ? new Date(pDeathDate).toISOString().split("T")[0]
           : destinationPerformer.death_date,
+      details:
+        selectedDetails === "source" && pDetails
+          ? pDetails
+          : destinationPerformer.details,
       disambiguation:
         selectedDisambiguation === "source" && pDisambiguation
           ? pDisambiguation
@@ -517,10 +552,18 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedPenisLength === "source" && pPenisLength
           ? +pPenisLength
           : destinationPerformer.penis_length,
+      piercings:
+        selectedPiercings === "source" && pPiercings
+          ? pPiercings
+          : destinationPerformer.piercings,
       tag_ids:
         selectedTags === "source" && pTags
           ? pTags.map((t) => t.id)
           : destinationPerformer.tags.map((t) => t.id),
+      tattoos:
+        selectedTattoos === "source" && pTattoos
+          ? pTattoos
+          : destinationPerformer.tattoos,
       weight:
         selectedWeight === "source" && pWeight
           ? +pWeight
@@ -781,6 +824,30 @@ const MergeModal: React.FC<MergeModalProps> = ({
               sourceValue={pFakeTits ?? ""}
             />
             <StringInputRow
+              destinationValue={destinationPerformer.tattoos ?? ""}
+              isTextArea
+              label={intl.formatMessage({ id: "tattoos" })}
+              placeholder={intl.formatMessage({ id: "tattoos" })}
+              render={!!tattoos && tattoos !== destinationPerformer.tattoos}
+              selectedInput={selectedTattoos}
+              setSelectedInput={setSelectedTattoos}
+              setSourceValue={setPTattoos}
+              sourceValue={pTattoos ?? ""}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.piercings ?? ""}
+              isTextArea
+              label={intl.formatMessage({ id: "piercings" })}
+              placeholder={intl.formatMessage({ id: "piercings" })}
+              render={
+                !!piercings && piercings !== destinationPerformer.piercings
+              }
+              selectedInput={selectedPiercings}
+              setSelectedInput={setSelectedPiercings}
+              setSourceValue={setPPiercings}
+              sourceValue={pPiercings ?? ""}
+            />
+            <StringInputRow
               destinationValue={destinationPerformer.career_length ?? ""}
               label={intl.formatMessage({ id: "career_length" })}
               placeholder={intl.formatMessage({ id: "career_length" })}
@@ -802,6 +869,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedURLs}
               setSourceValue={setPURLs}
               sourceValue={pURLs}
+            />
+            <StringInputRow
+              destinationValue={destinationPerformer.details ?? ""}
+              isTextArea
+              label={intl.formatMessage({ id: "details" })}
+              placeholder={intl.formatMessage({ id: "details" })}
+              render={!!details && details !== destinationPerformer.details}
+              selectedInput={selectedDetails}
+              setSelectedInput={setSelectedDetails}
+              setSourceValue={setPDetails}
+              sourceValue={pDetails ?? ""}
             />
             <TagSelectRow
               destinationValue={destinationPerformer.tags}
