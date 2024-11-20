@@ -1,3 +1,4 @@
+import { default as cx } from "classnames";
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
@@ -14,9 +15,6 @@ const StringInputRow: React.FC<StringInputRowProps> = (props) => {
     if (props.validation) props.validation(e.target.value);
   };
 
-  // If setting the source value is not available, mark the input as read-only.
-  const isReadOnly = props.setSourceValue === undefined;
-
   const name = props.label.toLowerCase().split(" ").join("-");
 
   if (props.render === false) return null;
@@ -29,11 +27,11 @@ const StringInputRow: React.FC<StringInputRowProps> = (props) => {
           performerPosition="destination"
           setSelected={props.setSelectedInput}
         />
-        <input
-          className="bg-secondary text-white border-secondary form-control"
-          name={"destination-performer-" + name}
+        <InputComponent
+          name={name}
           placeholder={props.placeholder}
-          readOnly={true}
+          position="destination"
+          isTextArea={props.isTextArea}
           value={props.destinationValue}
         />
       </FormInputGroup>
@@ -43,12 +41,12 @@ const StringInputRow: React.FC<StringInputRowProps> = (props) => {
           performerPosition="source"
           setSelected={props.setSelectedInput}
         />
-        <input
-          className="bg-secondary text-white border-secondary form-control"
-          name={"source-performer-" + name}
+        <InputComponent
+          name={name}
           onChange={handleSourceChange}
           placeholder={props.placeholder}
-          readOnly={isReadOnly}
+          position="source"
+          isTextArea={props.isTextArea}
           value={props.sourceValue}
         />
       </FormInputGroup>
@@ -61,6 +59,9 @@ export default StringInputRow;
 interface StringInputRowProps {
   /** The input value for the destination performer. */
   destinationValue: string;
+
+  /** If `true`, the input is replaced with a textarea. */
+  isTextArea?: boolean;
 
   /** The row label. */
   label: string;
@@ -88,4 +89,56 @@ interface StringInputRowProps {
 
   /** A function that processes the string to check if it's valid. */
   validation?: (val: string) => void;
+}
+
+/* ---------------------------------------------------------------------------------------------- */
+/*                                         Input component                                        */
+/* ---------------------------------------------------------------------------------------------- */
+
+const InputComponent: React.FC<InputComponentProps> = (props) => {
+  const isReadOnly =
+    props.position === "destination" || props.onChange === undefined;
+
+  const classes = cx(
+    "bg-secondary",
+    "text-white",
+    "border-secondary",
+    { "scene-description": props.isTextArea },
+    "form-control"
+  );
+
+  if (props.isTextArea) {
+    return (
+      <textarea
+        className={classes}
+        name={props.position + "-performer-" + props.name}
+        onChange={props.onChange}
+        placeholder={props.placeholder}
+        readOnly={isReadOnly}
+        value={props.value}
+      />
+    );
+  }
+
+  return (
+    <input
+      className={classes}
+      name={props.position + "-performer-" + props.name}
+      onChange={props.onChange}
+      placeholder={props.placeholder}
+      readOnly={isReadOnly}
+      value={props.value}
+    />
+  );
+};
+
+interface InputComponentProps {
+  name: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  placeholder: StringInputRowProps["placeholder"];
+  position: PerformerPosition;
+  isTextArea?: StringInputRowProps["isTextArea"];
+  value:
+    | StringInputRowProps["destinationValue"]
+    | StringInputRowProps["sourceValue"];
 }
