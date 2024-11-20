@@ -34,7 +34,12 @@ const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
           performerPosition="destination"
           setSelected={props.setSelectedInput}
         />
-        <TagSelect values={props.destinationValue} isDisabled isMulti />
+        <TagSelect
+          className="form-control"
+          isDisabled
+          isMulti
+          values={props.destinationValue}
+        />
       </FormInputGroup>
       <FormInputGroup>
         <SelectInputButton
@@ -43,9 +48,10 @@ const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
           setSelected={props.setSelectedInput}
         />
         <TagSelect
-          values={props.sourceValue}
+          className="form-control"
           isMulti
           onSelect={props.setSourceValue}
+          values={props.sourceValue}
         />
       </FormInputGroup>
     </FormRowWrapper>
