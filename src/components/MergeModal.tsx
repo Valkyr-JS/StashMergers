@@ -793,14 +793,6 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPCareerLength}
               sourceValue={pCareerLength ?? ""}
             />
-            <TagSelectRow
-              destinationValue={destinationPerformer.tags}
-              label={intl.formatMessage({ id: "tags" })}
-              selectedInput={selectedTags}
-              setSelectedInput={setSelectedTags}
-              setSourceValue={setPTags}
-              sourceValue={pTags}
-            />
             <StringListInputRow
               destinationValue={destinationPerformer.urls ?? []}
               label={intl.formatMessage({ id: "urls" })}
@@ -810,6 +802,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedURLs}
               setSourceValue={setPURLs}
               sourceValue={pURLs}
+            />
+            <TagSelectRow
+              destinationValue={destinationPerformer.tags}
+              label={intl.formatMessage({ id: "tags" })}
+              selectedInput={selectedTags}
+              setSelectedInput={setSelectedTags}
+              setSourceValue={setPTags}
+              sourceValue={pTags}
             />
           </form>
         </div>
