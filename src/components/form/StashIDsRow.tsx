@@ -62,7 +62,7 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
           performerPosition="source"
           setSelected={props.setSelectedInput}
         />
-        <div className="stash-id-list">
+        <div className="string-list-input stash-id-list">
           <div className="form-group">
             {props.sourceIDs.map((s, i) => {
               return (
