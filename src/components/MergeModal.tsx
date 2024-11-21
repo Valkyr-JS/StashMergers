@@ -2,6 +2,7 @@ import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
 import {
   compareArrays,
+  compareTagArray,
   fetchData,
   validateArrayContainsOnlyUniques,
   validateDateString,
@@ -939,6 +940,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
             <TagSelectRow
               destinationValue={destinationPerformer.tags}
               label={intl.formatMessage({ id: "tags" })}
+              render={
+                !!tags.length &&
+                !compareTagArray(tags, destinationPerformer.tags)
+              }
               selectedInput={selectedTags}
               setSelectedInput={setSelectedTags}
               setSourceValue={setPTags}

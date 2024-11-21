@@ -6,6 +6,8 @@ const { PluginApi } = window;
 const { React } = PluginApi;
 
 const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
+  if (props.render === false) return null;
+
   /* --------------------------------------- Load components -------------------------------------- */
 
   /**
