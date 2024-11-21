@@ -38,6 +38,10 @@ export const compareArrays = (a: any[], b: any[]) =>
 
 /** Compare two arrays of tags and return a boolean indicating whether they
  * match. */
-export const compareTagArray = (a: Tag[], b: Tag[]) =>
+export const compareTagArrays = (a: Tag[], b: Tag[]) =>
   a.length === b.length &&
   a.every((element, index) => element.id === b[index].id);
+
+export const compareStashIDArrays = (a: StashIdInput[], b: StashIdInput[]) =>
+  a.length === b.length &&
+  a.every((element, index) => element.stash_id === b[index].stash_id);

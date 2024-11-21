@@ -2,7 +2,8 @@ import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
 import {
   compareArrays,
-  compareTagArray,
+  compareStashIDArrays,
+  compareTagArrays,
   fetchData,
   validateArrayContainsOnlyUniques,
   validateDateString,
@@ -946,7 +947,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
               label={intl.formatMessage({ id: "tags" })}
               render={
                 !!tags.length &&
-                !compareTagArray(tags, destinationPerformer.tags)
+                !compareTagArrays(tags, destinationPerformer.tags)
               }
               selectedInput={selectedTags}
               setSelectedInput={setSelectedTags}
@@ -981,7 +982,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
             <StashIDListRow
               destinationIDs={destinationPerformer.stash_ids}
               label={intl.formatMessage({ id: "stash_ids" })}
-              render={stash_ids !== destinationPerformer.stash_ids}
+              render={
+                !!stash_ids.length &&
+                !compareStashIDArrays(stash_ids, destinationPerformer.stash_ids)
+              }
               selectedInput={selectedStashIDs}
               setSelectedInput={setSelectedStashIDs}
               setSourceValue={setPStashIDs}
