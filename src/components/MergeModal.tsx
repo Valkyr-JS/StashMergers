@@ -446,9 +446,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /* ------------------------------------------- General ------------------------------------------ */
 
-  // Updates on source performer change
-  React.useEffect(() => {
-    // Update source values
+  /** Resets all fields to their original state. */
+  const resetAllFields = () => {
+    // Reset source values
     setPDisambiguation(disambiguation);
     setPAliasList(alias_list);
     setPGender(gender);
@@ -474,7 +474,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPIgnoreAutoTag(ignore_auto_tag);
     setPStashIDs(stash_ids);
 
-    /** Update selected position */
+    /** Reset selected position */
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
     setSelectedAliasList(alias_list ? "source" : "destination");
@@ -500,7 +500,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
     setSelectedStashIDs(stash_ids ? "source" : "destination");
-  }, [sourcePerformer]);
+  };
+
+  // Updates on source performer change
+  React.useEffect(() => resetAllFields(), [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
   const canSubmit =
@@ -514,11 +517,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
-  /** Handler for closing the modal. */
-  const handleClose = () => {
+  /** Handler for clicking the cancel button. */
+  const handleCancel = () => {
     props.setShow(false);
 
     // Clear any changes made by the user
+    resetAllFields();
   };
 
   const dialogClasses = cx("modal-dialog", "scrape-dialog", "modal-lg");
@@ -646,7 +650,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     // Delete the source performer from the database
 
     // Otherwise, close the modal
-    handleClose();
+    props.setShow(false);
   };
 
   /* ------------------------------------------ Component ----------------------------------------- */
@@ -991,7 +995,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
         <div style={{ marginLeft: "auto" }}>
           <button
             className="btn btn-secondary"
-            onClick={handleClose}
+            onClick={handleCancel}
             type="button"
           >
             {intl.formatMessage({ id: "actions.cancel" })}
