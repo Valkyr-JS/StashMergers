@@ -23,6 +23,7 @@ import {
 import TagSelectRow from "./form/TagSelectRow";
 import ImageRow from "./form/ImageInputRow";
 import CheckboxRow from "./form/CheckboxRow";
+import StashIDListRow from "./form/StashIDsRow";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -72,6 +73,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     measurements,
     penis_length,
     piercings,
+    stash_ids,
     tags,
     tattoos,
     weight,
@@ -433,6 +435,14 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pIgnoreAutoTag, setPIgnoreAutoTag] =
     React.useState<Performer["ignore_auto_tag"]>(ignore_auto_tag);
 
+  /* ------------------------------------------ Stash IDs ----------------------------------------- */
+
+  const [selectedStashIDs, setSelectedStashIDs] =
+    React.useState<PerformerPosition>(stash_ids ? "source" : "destination");
+
+  const [pStashIDs, setPStashIDs] =
+    React.useState<Performer["stash_ids"]>(stash_ids);
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   // Updates on source performer change
@@ -461,6 +471,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPTags(tags);
     setPImagePath(image_path);
     setPIgnoreAutoTag(ignore_auto_tag);
+    setPStashIDs(stash_ids);
 
     /** Update selected position */
     setSelectedName("source");
@@ -487,6 +498,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedTags(tags ? "source" : "destination");
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
+    setSelectedStashIDs(stash_ids ? "source" : "destination");
   }, [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
@@ -591,6 +603,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedPiercings === "source" && pPiercings
           ? pPiercings
           : destinationPerformer.piercings,
+      stash_ids:
+        selectedStashIDs === "source" && pStashIDs
+          ? pStashIDs
+          : destinationPerformer.stash_ids,
       tag_ids:
         selectedTags === "source" && pTags
           ? pTags.map((t) => t.id)
@@ -949,6 +965,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPIgnoreAutoTag}
               sourceValue={pIgnoreAutoTag}
             />
+            <StashIDListRow
+              destinationIDs={destinationPerformer.stash_ids}
+              label={intl.formatMessage({ id: "stash_ids" })}
+              render={stash_ids !== destinationPerformer.stash_ids}
+              selectedInput={selectedStashIDs}
+              setSelectedInput={setSelectedStashIDs}
+              setSourceValue={setPStashIDs}
+              sourceIDs={pStashIDs}
+              stashBoxes={props.stashBoxes}
+            />
           </form>
         </div>
       </Modal.Body>
@@ -992,4 +1018,7 @@ interface MergeModalProps {
 
   /** Current data for the source performer */
   sourcePerformer?: Performer;
+
+  /** Data for each Stash box */
+  stashBoxes: StashBox[];
 }

@@ -2,6 +2,7 @@ import MergeDropdownButton from "./components/MergeDropdownButton";
 import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
 import { mergeButtonRootID } from "./constants";
+import { fetchData } from "./helpers";
 import "./styles.scss";
 
 const { PluginApi } = window;
@@ -12,6 +13,19 @@ const { useIntl } = PluginApi.libraries.Intl;
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
   const intl = useIntl();
+
+  /* ----------------------------------------- Fetch data ----------------------------------------- */
+
+  const [stashboxes, setStashboxes] = React.useState<StashBox[]>([]);
+
+  const query = `query { configuration { general { stashBoxes { endpoint name } } } }`;
+
+  React.useEffect(() => {
+    fetchData<{ data: { configuration: ConfigResult } }>(query).then((res) => {
+      console.log(res);
+      if (res?.data) setStashboxes(res.data.configuration.general.stashBoxes);
+    });
+  }, []);
 
   /* ---------------------------------------- Search modal ---------------------------------------- */
 
@@ -102,6 +116,7 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
         setShow={setShowMergeModal}
         show={showMergeModal}
         sourcePerformer={sourcePerformer}
+        stashBoxes={stashboxes}
       />
     </>,
   ];

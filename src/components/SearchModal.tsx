@@ -65,6 +65,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           measurements
           penis_length
           piercings
+          stash_ids { endpoint stash_id }
           tags { __typename aliases description favorite id image_path name parents { id name } }
           tattoos
           urls

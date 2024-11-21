@@ -7,8 +7,6 @@ import RemoveInputButton from "./RemoveInputButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = PluginApi.components;
-const { faMinus } = PluginApi.libraries.FontAwesomeSolid;
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   if (props.render === false) return null;
