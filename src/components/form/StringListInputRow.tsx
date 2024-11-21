@@ -4,12 +4,19 @@ import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import { validateArrayContainsOnlyUniques } from "../../helpers";
 import RemoveInputButton from "./RemoveInputButton";
+import MergeListsButton from "./MergeListsButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
+const { Icon } = PluginApi.components;
+const { faRightLong } = PluginApi.libraries.FontAwesomeSolid;
+const { useIntl } = PluginApi.libraries.Intl;
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   if (props.render === false) return null;
+
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
 
   const [showError, setShowError] = React.useState(false);
   const [duplicateIndices, setDuplicateIndices] = React.useState<number[]>([]);
@@ -63,8 +70,22 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
     "is-invalid": showError,
   });
 
+  /** Handler for merging the destination list with the source list */
+  const mergeLists = () => {
+    const updatedList = [...props.destinationValue];
+    props.sourceValue.forEach((s) => {
+      // Only add non-duplicate list items
+      if (updatedList.findIndex((v) => v === s) === -1) updatedList.push(s);
+      props.setSourceValue(updatedList);
+    });
+  };
+
   return (
-    <FormRowWrapper className="string-list-row" label={props.label}>
+    <FormRowWrapper
+      className="string-list-row"
+      label={props.label}
+      mergeListsHandler={props.destinationValue.length ? mergeLists : undefined}
+    >
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}

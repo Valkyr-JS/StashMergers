@@ -3,9 +3,11 @@ import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import RemoveInputButton from "./RemoveInputButton";
 import { getStashboxBase } from "../../utils";
+import MergeListsButton from "./MergeListsButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
+const { useIntl } = PluginApi.libraries.Intl;
 
 const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
   if (props.render === false) return null;
@@ -16,8 +18,23 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
     props.setSourceValue(updatedArray);
   };
 
+  /** Handler for merging the destination list with the source list */
+  const mergeLists = () => {
+    const updatedList = [...props.destinationIDs];
+    props.sourceIDs.forEach((s) => {
+      // Only add non-duplicate list items
+      if (updatedList.findIndex((v) => v.stash_id === s.stash_id) === -1)
+        updatedList.push(s);
+      props.setSourceValue(updatedList);
+    });
+  };
+
   return (
-    <FormRowWrapper className="string-list-row flex-nowrap" label={props.label}>
+    <FormRowWrapper
+      className="string-list-row flex-nowrap"
+      label={props.label}
+      mergeListsHandler={props.destinationIDs.length ? mergeLists : undefined}
+    >
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}
@@ -45,7 +62,7 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
           performerPosition="source"
           setSelected={props.setSelectedInput}
         />
-        <div className="stash-id-list">
+        <div className="string-list-input stash-id-list">
           <div className="form-group">
             {props.sourceIDs.map((s, i) => {
               return (

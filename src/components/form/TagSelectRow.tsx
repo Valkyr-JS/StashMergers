@@ -1,11 +1,14 @@
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
+import MergeListsButton from "./MergeListsButton";
 import SelectInputButton from "./SelectInputButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
 
 const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
+  if (props.render === false) return null;
+
   /* --------------------------------------- Load components -------------------------------------- */
 
   /**
@@ -26,8 +29,22 @@ const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
 
   const { TagSelect } = window.PluginApi.components;
 
+  /** Handler for merging the destination list with the source list */
+  const mergeLists = () => {
+    const updatedList = [...props.destinationValue];
+    props.sourceValue.forEach((t) => {
+      // Only add non-duplicate list items
+      if (updatedList.findIndex((v) => v.id === t.id) === -1)
+        updatedList.push(t);
+      props.setSourceValue(updatedList);
+    });
+  };
+
   return (
-    <FormRowWrapper label={props.label}>
+    <FormRowWrapper
+      label={props.label}
+      mergeListsHandler={props.destinationValue.length ? mergeLists : undefined}
+    >
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}

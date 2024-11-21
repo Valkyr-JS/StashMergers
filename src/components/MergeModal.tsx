@@ -2,6 +2,8 @@ import { default as cx } from "classnames";
 import StringInputRow from "./form/StringInputRow";
 import {
   compareArrays,
+  compareStashIDArrays,
+  compareTagArrays,
   fetchData,
   validateArrayContainsOnlyUniques,
   validateDateString,
@@ -445,9 +447,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /* ------------------------------------------- General ------------------------------------------ */
 
-  // Updates on source performer change
-  React.useEffect(() => {
-    // Update source values
+  /** Resets all fields to their original state. */
+  const resetAllFields = () => {
+    // Reset source values
     setPDisambiguation(disambiguation);
     setPAliasList(alias_list);
     setPGender(gender);
@@ -473,7 +475,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPIgnoreAutoTag(ignore_auto_tag);
     setPStashIDs(stash_ids);
 
-    /** Update selected position */
+    /** Reset selected position */
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
     setSelectedAliasList(alias_list ? "source" : "destination");
@@ -499,7 +501,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
     setSelectedStashIDs(stash_ids ? "source" : "destination");
-  }, [sourcePerformer]);
+  };
+
+  // Updates on source performer change
+  React.useEffect(() => resetAllFields(), [sourcePerformer]);
 
   // Enable confirm button if all fields with validation pass.
   const canSubmit =
@@ -513,11 +518,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
-  /** Handler for closing the modal. */
-  const handleClose = () => {
+  /** Handler for clicking the cancel button. */
+  const handleCancel = () => {
     props.setShow(false);
 
     // Clear any changes made by the user
+    resetAllFields();
   };
 
   const dialogClasses = cx("modal-dialog", "scrape-dialog", "modal-lg");
@@ -645,7 +651,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     // Delete the source performer from the database
 
     // Otherwise, close the modal
-    handleClose();
+    props.setShow(false);
   };
 
   /* ------------------------------------------ Component ----------------------------------------- */
@@ -939,6 +945,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
             <TagSelectRow
               destinationValue={destinationPerformer.tags}
               label={intl.formatMessage({ id: "tags" })}
+              render={
+                !!tags.length &&
+                !compareTagArrays(tags, destinationPerformer.tags)
+              }
               selectedInput={selectedTags}
               setSelectedInput={setSelectedTags}
               setSourceValue={setPTags}
@@ -972,7 +982,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
             <StashIDListRow
               destinationIDs={destinationPerformer.stash_ids}
               label={intl.formatMessage({ id: "stash_ids" })}
-              render={stash_ids !== destinationPerformer.stash_ids}
+              render={
+                !!stash_ids.length &&
+                !compareStashIDArrays(stash_ids, destinationPerformer.stash_ids)
+              }
               selectedInput={selectedStashIDs}
               setSelectedInput={setSelectedStashIDs}
               setSourceValue={setPStashIDs}
@@ -986,10 +999,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
         <div style={{ marginLeft: "auto" }}>
           <button
             className="btn btn-secondary"
-            onClick={handleClose}
+            onClick={handleCancel}
             type="button"
           >
             {intl.formatMessage({ id: "actions.cancel" })}
+          </button>
+          <button
+            className="ml-2 btn btn-secondary"
+            onClick={resetAllFields}
+            type="button"
+          >
+            {intl.formatMessage({ id: "actions.refresh" })}
           </button>
           <button
             className="ml-2 btn btn-primary"
