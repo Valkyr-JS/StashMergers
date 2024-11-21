@@ -514,7 +514,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
   /* -------------------------------------------- Modal ------------------------------------------- */
 
   /** Handler for closing the modal. */
-  const handleClose = () => props.setShow(false);
+  const handleClose = () => {
+    props.setShow(false);
+
+    // Clear any changes made by the user
+  };
 
   const dialogClasses = cx("modal-dialog", "scrape-dialog", "modal-lg");
 
@@ -635,10 +639,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
     // Replace source performer ID with destination performer ID in galleries
 
-    // Delete the source performer from the database
-
     // If the current performer is the source, navigate to the destination
     // performer page
+
+    // Delete the source performer from the database
 
     // Otherwise, close the modal
     handleClose();

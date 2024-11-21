@@ -17,14 +17,14 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
   };
 
   return (
-    <FormRowWrapper className="string-list-row" label={props.label}>
+    <FormRowWrapper className="string-list-row flex-nowrap" label={props.label}>
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}
           performerPosition="destination"
           setSelected={props.setSelectedInput}
         />
-        <div className="string-list-input">
+        <div className="string-list-input stash-id-list">
           <div className="form-group">
             {props.destinationIDs.map((s, i) => {
               return (
@@ -45,7 +45,7 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
           performerPosition="source"
           setSelected={props.setSelectedInput}
         />
-        <div className="string-list-input">
+        <div className="stash-id-list">
           <div className="form-group">
             {props.sourceIDs.map((s, i) => {
               return (
@@ -119,8 +119,8 @@ const StashIDItem: React.FC<StashIDItemProps> = (props) => {
 
   return (
     <div className="input-group">
-      <span className="stash-id-pill" data-endpoint={endpointName}>
-        <span>{endpointName}</span>
+      <span className="stash-id-pill pl-2" data-endpoint={endpointName}>
+        <span className="stash-id-pill-title">{endpointName}</span>
         <a target="_blank" rel="noopener noreferrer" href={link}>
           {stash_id}
         </a>
