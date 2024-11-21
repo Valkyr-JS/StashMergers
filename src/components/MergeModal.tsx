@@ -1001,6 +1001,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
             {intl.formatMessage({ id: "actions.cancel" })}
           </button>
           <button
+            className="ml-2 btn btn-secondary"
+            onClick={resetAllFields}
+            type="button"
+          >
+            {intl.formatMessage({ id: "actions.refresh" })}
+          </button>
+          <button
             className="ml-2 btn btn-primary"
             disabled={!canSubmit}
             onClick={handleConfirm}
