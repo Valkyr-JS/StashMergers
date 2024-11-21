@@ -4,6 +4,7 @@ import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import { validateArrayContainsOnlyUniques } from "../../helpers";
 import RemoveInputButton from "./RemoveInputButton";
+import MergeListsButton from "./MergeListsButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -133,16 +134,7 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
           ) : null}
         </div>
       </FormInputGroup>
-      <div className="col-12 d-flex mt-2">
-        <button
-          type="button"
-          className="btn btn-secondary mx-auto"
-          onClick={mergeLists}
-        >
-          <Icon icon={faRightLong} className="mr-1" />
-          {intl.formatMessage({ id: "actions.merge_into" })}
-        </button>
-      </div>
+      <MergeListsButton onClick={mergeLists} />
     </FormRowWrapper>
   );
 };
