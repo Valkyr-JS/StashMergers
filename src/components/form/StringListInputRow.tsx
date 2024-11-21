@@ -4,7 +4,6 @@ import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import { validateArrayContainsOnlyUniques } from "../../helpers";
 import RemoveInputButton from "./RemoveInputButton";
-import { IntlShape } from "react-intl";
 
 const { PluginApi } = window;
 const { React } = PluginApi;

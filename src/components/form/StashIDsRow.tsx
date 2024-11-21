@@ -6,14 +6,31 @@ import { getStashboxBase } from "../../utils";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
+const { Icon } = PluginApi.components;
+const { faRightLong } = PluginApi.libraries.FontAwesomeSolid;
+const { useIntl } = PluginApi.libraries.Intl;
 
 const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
   if (props.render === false) return null;
+
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
 
   /** Handler for the onClick event for each input remove button */
   const handleClickRemoveButton = (index: number) => {
     const updatedArray = props.sourceIDs.filter((_s, i) => i !== index);
     props.setSourceValue(updatedArray);
+  };
+
+  /** Handler for merging the destination list with the source list */
+  const mergeLists = () => {
+    const updatedList = [...props.destinationIDs];
+    props.sourceIDs.forEach((s) => {
+      // Only add non-duplicate list items
+      if (updatedList.findIndex((v) => v.stash_id === s.stash_id) === -1)
+        updatedList.push(s);
+      props.setSourceValue(updatedList);
+    });
   };
 
   return (
@@ -59,6 +76,14 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
               );
             })}
           </div>
+          <button
+            type="button"
+            className="btn btn-secondary ml-2"
+            onClick={mergeLists}
+          >
+            <Icon icon={faRightLong} className="mr-1" />
+            {intl.formatMessage({ id: "actions.merge" })}
+          </button>
         </div>
       </FormInputGroup>
     </FormRowWrapper>
