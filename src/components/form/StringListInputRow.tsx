@@ -81,7 +81,11 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   };
 
   return (
-    <FormRowWrapper className="string-list-row" label={props.label}>
+    <FormRowWrapper
+      className="string-list-row"
+      label={props.label}
+      mergeListsHandler={props.destinationValue.length ? mergeLists : undefined}
+    >
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}
@@ -134,7 +138,6 @@ const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
           ) : null}
         </div>
       </FormInputGroup>
-      <MergeListsButton onClick={mergeLists} />
     </FormRowWrapper>
   );
 };

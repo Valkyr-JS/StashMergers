@@ -30,7 +30,11 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
   };
 
   return (
-    <FormRowWrapper className="string-list-row flex-nowrap" label={props.label}>
+    <FormRowWrapper
+      className="string-list-row flex-nowrap"
+      label={props.label}
+      mergeListsHandler={props.destinationIDs.length ? mergeLists : undefined}
+    >
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}
@@ -74,7 +78,6 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
           </div>
         </div>
       </FormInputGroup>
-      <MergeListsButton onClick={mergeLists} />
     </FormRowWrapper>
   );
 };

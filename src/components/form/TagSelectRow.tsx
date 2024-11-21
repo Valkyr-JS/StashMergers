@@ -41,7 +41,10 @@ const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
   };
 
   return (
-    <FormRowWrapper label={props.label}>
+    <FormRowWrapper
+      label={props.label}
+      mergeListsHandler={props.destinationValue.length ? mergeLists : undefined}
+    >
       <FormInputGroup>
         <SelectInputButton
           selected={props.selectedInput === "destination"}
@@ -68,7 +71,6 @@ const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
           values={props.sourceValue}
         />
       </FormInputGroup>
-      <MergeListsButton onClick={mergeLists} />
     </FormRowWrapper>
   );
 };

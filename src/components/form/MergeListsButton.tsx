@@ -1,7 +1,5 @@
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = PluginApi.components;
-const { faRightLong } = PluginApi.libraries.FontAwesomeSolid;
 const { useIntl } = PluginApi.libraries.Intl;
 
 const MergeListsButton: React.FC<MergeListsButtonProps> = (props) => {
@@ -9,16 +7,9 @@ const MergeListsButton: React.FC<MergeListsButtonProps> = (props) => {
   const intl = useIntl();
 
   return (
-    <div className="col-12 d-flex mt-2">
-      <button
-        type="button"
-        className="btn btn-secondary mx-auto"
-        onClick={props.onClick}
-      >
-        <Icon icon={faRightLong} className="mr-1" />
-        {intl.formatMessage({ id: "actions.merge_into" })}
-      </button>
-    </div>
+    <button type="button" className="btn btn-secondary" onClick={props.onClick}>
+      {intl.formatMessage({ id: "actions.merge" })}
+    </button>
   );
 };
 
