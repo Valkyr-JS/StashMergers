@@ -4,6 +4,37 @@
   }
 }
 
+.merge-performers-merge-modal {
+  .stash-id-list {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .stash-id-pill {
+    display: grid;
+
+    a {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-radius: 0 0 0.25rem 0.25rem;
+    }
+  }
+
+  .stash-id-pill-title {
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+
+  .stash-id-pill:not(:last-child) {
+    a {
+      border-radius: 0 0 0 0.25rem;
+    }
+
+    .stash-id-pill-title {
+      border-radius: 0.25rem 0 0 0;
+    }
+  }
+}
+
 .merge-performers-search-modal .modal-body {
   // Fix the options list positioning
   min-height: 500px;

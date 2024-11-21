@@ -3,11 +3,10 @@ import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import { validateArrayContainsOnlyUniques } from "../../helpers";
+import RemoveInputButton from "./RemoveInputButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = PluginApi.components;
-const { faMinus } = PluginApi.libraries.FontAwesomeSolid;
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   if (props.render === false) return null;
@@ -178,15 +177,7 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
   // Only render the remove item button on the source side.
   const removeButton =
     props.position === "source" ? (
-      <div className="input-group-append">
-        <button
-          type="button"
-          className="btn btn-danger"
-          onClick={handleOnClick}
-        >
-          <Icon icon={faMinus} />
-        </button>
-      </div>
+      <RemoveInputButton onClick={handleOnClick} />
     ) : null;
 
   return (
