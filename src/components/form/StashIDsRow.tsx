@@ -76,16 +76,18 @@ const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
               );
             })}
           </div>
-          <button
-            type="button"
-            className="btn btn-secondary ml-2"
-            onClick={mergeLists}
-          >
-            <Icon icon={faRightLong} className="mr-1" />
-            {intl.formatMessage({ id: "actions.merge" })}
-          </button>
         </div>
       </FormInputGroup>
+      <div className="col-12 d-flex mt-2">
+        <button
+          type="button"
+          className="btn btn-secondary mx-auto"
+          onClick={mergeLists}
+        >
+          <Icon icon={faRightLong} className="mr-1" />
+          {intl.formatMessage({ id: "actions.merge_into" })}
+        </button>
+      </div>
     </FormRowWrapper>
   );
 };
