@@ -7,15 +7,10 @@ import MergeListsButton from "./MergeListsButton";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
-const { Icon } = PluginApi.components;
-const { faRightLong } = PluginApi.libraries.FontAwesomeSolid;
 const { useIntl } = PluginApi.libraries.Intl;
 
 const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
   if (props.render === false) return null;
-
-  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
-  const intl = useIntl();
 
   /** Handler for the onClick event for each input remove button */
   const handleClickRemoveButton = (index: number) => {
