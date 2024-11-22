@@ -730,11 +730,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
       });
     });
 
-    // TODO - Delete the source performer from the database
+    // Delete the source performer from the database
+    const deleteSourceQuery = `mutation DeleteSourcePerformer($input: PerformerDestroyInput!) { performerDestroy(input: $input) }`;
+    const deleteSourceInput = { input: { id: sourcePerformer.id } };
+    fetchData(deleteSourceQuery, deleteSourceInput).then((res) =>
+      console.log("source deleted", res)
+    );
 
     // Update the destination performer data
-    const query = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
-    fetchData(query, { input: updatedData })
+    const updateDestination = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
+    fetchData(updateDestination, { input: updatedData })
       // Load the destination performer's page. Do this even if we're already on
       // it so that data is refreshed
       .then(() =>
