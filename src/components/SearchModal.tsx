@@ -1,4 +1,4 @@
-import { fetchData } from "../helpers";
+import { fetchData, fetchPerformerData } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -41,44 +41,10 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
 
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
-    if (performers.length) {
-      const query = `query FetchSelectedPerformer {
-        findPerformer(id: ${performers[0].id}) {
-          id
-          alias_list
-          birthdate
-          career_length
-          circumcised
-          country
-          death_date
-          details
-          disambiguation
-          ethnicity
-          eye_color
-          fake_tits
-          gender
-          hair_color
-          height_cm
-          ignore_auto_tag
-          image_path
-          name
-          measurements
-          penis_length
-          piercings
-          stash_ids { endpoint stash_id }
-          tags { __typename aliases description favorite id image_path name parents { id name } }
-          tattoos
-          urls
-          weight
-        }
-      }`;
-
-      fetchData<{ data: { findPerformer: Performer } }>(query).then((res) => {
-        if (res?.data) props.setSelectedPerformer(res.data.findPerformer);
-      });
-    } else {
-      props.setSelectedPerformer(undefined);
-    }
+    if (performers.length)
+      fetchPerformerData(performers[0].id).then((res) =>
+        props.setSelectedPerformer(res)
+      );
   };
 
   /* -------------------------------------------- Modal ------------------------------------------- */

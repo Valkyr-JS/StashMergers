@@ -75,6 +75,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     measurements,
     penis_length,
     piercings,
+    scenes,
     stash_ids,
     tags,
     tattoos,
@@ -635,11 +636,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
           : destinationPerformer.urls,
     };
 
-    // Update the destination performer data
-    const query = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
-    fetchData(query, { input: updatedData }).then((res) => console.log(res));
-
     // Replace source performer ID with destination performer ID in scenes
+    const sceneRemoveMutation = `mutation RemoveSourcePerformerFromScenes($input: BulkSceneUpdateInput!) {
+      bulkSceneUpdate(input: $input) {
+        id
+        title
+        performers {
+          id
+          name
+        }
+      }
+    }`;
 
     // Replace source performer ID with destination performer ID in images
 
@@ -649,6 +656,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
     // performer page
 
     // Delete the source performer from the database
+
+    // Update the destination performer data
+    const query = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
+    fetchData(query, { input: updatedData }).then((res) => console.log(res));
 
     // Otherwise, close the modal
     props.setShow(false);

@@ -2,7 +2,7 @@ import MergeDropdownButton from "./components/MergeDropdownButton";
 import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
 import { mergeButtonRootID } from "./constants";
-import { fetchData } from "./helpers";
+import { fetchData, fetchPerformerData } from "./helpers";
 import "./styles.scss";
 
 const { PluginApi } = window;
@@ -17,14 +17,21 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   /* ----------------------------------------- Fetch data ----------------------------------------- */
 
   const [stashboxes, setStashboxes] = React.useState<StashBox[]>([]);
+  const [thisPerformer, setThisPerformer] = React.useState<
+    Performer | undefined
+  >(undefined);
 
   const query = `query { configuration { general { stashBoxes { endpoint name } } } }`;
 
   React.useEffect(() => {
+    // Fetch Stashbox config data
     fetchData<{ data: { configuration: ConfigResult } }>(query).then((res) => {
       console.log(res);
       if (res?.data) setStashboxes(res.data.configuration.general.stashBoxes);
     });
+
+    // Fetch data for the peformer whose page we're on.
+    fetchPerformerData(props.performer.id).then((res) => setThisPerformer(res));
   }, []);
 
   /* ---------------------------------------- Search modal ---------------------------------------- */
@@ -57,10 +64,10 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   const [showMergeModal, setShowMergeModal] = React.useState(false);
 
   const destinationPerformer =
-    mergeDirection === "into" ? selectedPerformer : props.performer;
+    mergeDirection === "into" ? selectedPerformer : thisPerformer;
 
   const sourcePerformer =
-    mergeDirection === "from" ? selectedPerformer : props.performer;
+    mergeDirection === "from" ? selectedPerformer : thisPerformer;
 
   /* ------------------------------------ Merge dropdown button ----------------------------------- */
 
@@ -98,6 +105,8 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
   }
 
   /* ------------------------------------------ Component ----------------------------------------- */
+
+  if (!thisPerformer) return [<Original {...props} />];
 
   return [
     <>
