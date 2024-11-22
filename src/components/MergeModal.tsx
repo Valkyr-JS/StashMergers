@@ -5,6 +5,7 @@ import {
   compareStashIDArrays,
   compareTagArrays,
   fetchData,
+  modifyContentPerformers,
   validateArrayContainsOnlyUniques,
   validateDateString,
   validateNumString,
@@ -637,16 +638,21 @@ const MergeModal: React.FC<MergeModalProps> = ({
     };
 
     // Replace source performer ID with destination performer ID in scenes
-    const sceneRemoveMutation = `mutation RemoveSourcePerformerFromScenes($input: BulkSceneUpdateInput!) {
-      bulkSceneUpdate(input: $input) {
-        id
-        title
-        performers {
-          id
-          name
-        }
-      }
-    }`;
+    const sceneIDs = sourcePerformer.scenes.map((s) => s.id);
+
+    modifyContentPerformers({
+      content: "Scene",
+      contentIDs: sceneIDs,
+      mode: "REMOVE",
+      performerID: sourcePerformer.id,
+    }).then(() =>
+      modifyContentPerformers({
+        content: "Scene",
+        contentIDs: sceneIDs,
+        mode: "ADD",
+        performerID: destinationPerformer.id,
+      })
+    );
 
     // Replace source performer ID with destination performer ID in images
 

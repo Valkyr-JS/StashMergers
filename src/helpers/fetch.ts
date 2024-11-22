@@ -51,3 +51,35 @@ export const fetchPerformerData = async (
   const req = await fetchData<{ data: { findPerformer: Performer } }>(query);
   return req?.data.findPerformer;
 };
+
+/** Helper function to add or remove a performer in a given set of content. */
+export const modifyContentPerformers = async (args: {
+  content: "Gallery" | "Image" | "Scene";
+  contentIDs: string[];
+  mode: "ADD" | "REMOVE";
+  performerID: Performer["id"];
+}) => {
+  const { content, contentIDs, mode, performerID } = args;
+
+  const mutation = `mutation RemoveSourcePerformerFromContent($input: Bulk${content}UpdateInput!) {
+      bulk${content}Update(input: $input) {
+        id
+        performers {
+          id
+        }
+      }
+    }`;
+
+  const input = {
+    input: {
+      ids: contentIDs,
+      performer_ids: {
+        ids: performerID,
+        mode: mode,
+      },
+    },
+  };
+
+  const req = await fetchData(mutation, input);
+  return req;
+};
