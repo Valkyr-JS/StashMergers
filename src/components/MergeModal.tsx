@@ -34,6 +34,7 @@ const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faPencil } = PluginApi.libraries.FontAwesomeSolid;
 const { useIntl } = PluginApi.libraries.Intl;
+const { makePerformerScenesUrl } = PluginApi.utils.NavUtils;
 
 const MergeModal: React.FC<MergeModalProps> = ({
   destinationPerformer,
@@ -729,16 +730,21 @@ const MergeModal: React.FC<MergeModalProps> = ({
       });
     });
 
-    // If the current performer is the source, navigate to the destination
-    // performer page
-
-    // Delete the source performer from the database
+    // TODO - Delete the source performer from the database
 
     // Update the destination performer data
     const query = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
-    fetchData(query, { input: updatedData }).then((res) => console.log(res));
+    fetchData(query, { input: updatedData })
+      // Load the destination performer's page. Do this even if we're already on
+      // it so that data is refreshed
+      .then(() =>
+        // Set timeout just so the modal has time to close.
+        setTimeout(() => {
+          window.location.href = `/performers/${destinationPerformer.id}/`;
+        }, 500)
+      );
 
-    // Otherwise, close the modal
+    // Close the modal
     props.setShow(false);
   };
 

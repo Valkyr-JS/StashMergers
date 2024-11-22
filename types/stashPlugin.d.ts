@@ -88,7 +88,13 @@ interface IPluginApi {
     route: (path: string, component: React.FC<any>) => void;
   };
   utils: {
-    NavUtils: any;
+    NavUtils: {
+      makePerformerScenesUrl: (
+        performer: Partial<Performer>,
+        extraPerformer?: ILabeledId,
+        extraCriteria?: Criterion<CriterionValue>[]
+      ) => string;
+    };
     loadComponents: any;
   };
 }
@@ -273,3 +279,17 @@ type TagSelectProps = IFilterProps &
     hoverPlacement?: Placement;
     excludeIds?: string[];
   };
+
+interface ILabeledId {
+  id: string;
+  label: string;
+}
+
+type CriterionValue = string | string[] | ILabeledId[];
+// | IHierarchicalLabelValue
+// | ILabeledValueListValue
+// | INumberValue
+// | IStashIDValue
+// | IDateValue
+// | ITimestampValue
+// | IPhashDistanceValue;
