@@ -662,6 +662,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
         }
       }
     }`;
+
     const sourceGalleriesInput = {
       input: {
         performers: {
@@ -692,6 +693,41 @@ const MergeModal: React.FC<MergeModalProps> = ({
     });
 
     // Replace source performer ID with destination performer ID in images
+    const sourceImagesQuery = `query SourcePerformerImages($input: ImageFilterType) {
+      findImages(filter: {per_page: -1}, image_filter: $input) {
+        images {
+          id
+        }
+      }
+    }`;
+
+    const sourceImagesInput = {
+      input: {
+        performers: {
+          value: [sourcePerformer.id],
+          modifier: "INCLUDES",
+        },
+      },
+    };
+
+    fetchData<{
+      data: { findImages: FindImagesResultType };
+    }>(sourceImagesQuery, sourceImagesInput).then((res) => {
+      const imageIDs = res?.data.findImages.images.map((i) => i.id) ?? [];
+      modifyContentPerformers({
+        content: "Image",
+        contentIDs: imageIDs,
+        mode: "REMOVE",
+        performerID: sourcePerformer.id,
+      }).then(() => {
+        modifyContentPerformers({
+          content: "Image",
+          contentIDs: imageIDs,
+          mode: "ADD",
+          performerID: destinationPerformer.id,
+        });
+      });
+    });
 
     // If the current performer is the source, navigate to the destination
     // performer page
