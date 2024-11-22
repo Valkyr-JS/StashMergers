@@ -654,9 +654,44 @@ const MergeModal: React.FC<MergeModalProps> = ({
       })
     );
 
-    // Replace source performer ID with destination performer ID in images
-
     // Replace source performer ID with destination performer ID in galleries
+    const sourceGalleriesQuery = `query SourcePerformerGalleries($input: GalleryFilterType) {
+      findGalleries(filter: {per_page: -1}, gallery_filter: $input) {
+        galleries {
+          id
+        }
+      }
+    }`;
+    const sourceGalleriesInput = {
+      input: {
+        performers: {
+          value: [sourcePerformer.id],
+          modifier: "INCLUDES",
+        },
+      },
+    };
+
+    fetchData<{
+      data: { findGalleries: FindGalleriesResultType };
+    }>(sourceGalleriesQuery, sourceGalleriesInput).then((res) => {
+      const galleryIDs =
+        res?.data.findGalleries.galleries.map((g) => g.id) ?? [];
+      modifyContentPerformers({
+        content: "Gallery",
+        contentIDs: galleryIDs,
+        mode: "REMOVE",
+        performerID: sourcePerformer.id,
+      }).then(() => {
+        modifyContentPerformers({
+          content: "Gallery",
+          contentIDs: galleryIDs,
+          mode: "ADD",
+          performerID: destinationPerformer.id,
+        });
+      });
+    });
+
+    // Replace source performer ID with destination performer ID in images
 
     // If the current performer is the source, navigate to the destination
     // performer page
