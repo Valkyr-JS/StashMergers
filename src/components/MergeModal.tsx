@@ -5,6 +5,7 @@ import {
   compareStashIDArrays,
   compareTagArrays,
   fetchData,
+  modifyContentPerformers,
   validateArrayContainsOnlyUniques,
   validateDateString,
   validateNumString,
@@ -33,6 +34,7 @@ const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faPencil } = PluginApi.libraries.FontAwesomeSolid;
 const { useIntl } = PluginApi.libraries.Intl;
+const { makePerformerScenesUrl } = PluginApi.utils.NavUtils;
 
 const MergeModal: React.FC<MergeModalProps> = ({
   destinationPerformer,
@@ -75,6 +77,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     measurements,
     penis_length,
     piercings,
+    scenes,
     stash_ids,
     tags,
     tattoos,
@@ -635,22 +638,118 @@ const MergeModal: React.FC<MergeModalProps> = ({
           : destinationPerformer.urls,
     };
 
-    // Update the destination performer data
-    const query = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
-    fetchData(query, { input: updatedData }).then((res) => console.log(res));
-
     // Replace source performer ID with destination performer ID in scenes
+    const sceneIDs = sourcePerformer.scenes.map((s) => s.id);
 
-    // Replace source performer ID with destination performer ID in images
+    modifyContentPerformers({
+      content: "Scene",
+      contentIDs: sceneIDs,
+      mode: "REMOVE",
+      performerID: sourcePerformer.id,
+    }).then(() =>
+      modifyContentPerformers({
+        content: "Scene",
+        contentIDs: sceneIDs,
+        mode: "ADD",
+        performerID: destinationPerformer.id,
+      })
+    );
 
     // Replace source performer ID with destination performer ID in galleries
+    const sourceGalleriesQuery = `query SourcePerformerGalleries($input: GalleryFilterType) {
+      findGalleries(filter: {per_page: -1}, gallery_filter: $input) {
+        galleries {
+          id
+        }
+      }
+    }`;
 
-    // If the current performer is the source, navigate to the destination
-    // performer page
+    const sourceGalleriesInput = {
+      input: {
+        performers: {
+          value: [sourcePerformer.id],
+          modifier: "INCLUDES",
+        },
+      },
+    };
+
+    fetchData<{
+      data: { findGalleries: FindGalleriesResultType };
+    }>(sourceGalleriesQuery, sourceGalleriesInput).then((res) => {
+      const galleryIDs =
+        res?.data.findGalleries.galleries.map((g) => g.id) ?? [];
+      modifyContentPerformers({
+        content: "Gallery",
+        contentIDs: galleryIDs,
+        mode: "REMOVE",
+        performerID: sourcePerformer.id,
+      }).then(() => {
+        modifyContentPerformers({
+          content: "Gallery",
+          contentIDs: galleryIDs,
+          mode: "ADD",
+          performerID: destinationPerformer.id,
+        });
+      });
+    });
+
+    // Replace source performer ID with destination performer ID in images
+    const sourceImagesQuery = `query SourcePerformerImages($input: ImageFilterType) {
+      findImages(filter: {per_page: -1}, image_filter: $input) {
+        images {
+          id
+        }
+      }
+    }`;
+
+    const sourceImagesInput = {
+      input: {
+        performers: {
+          value: [sourcePerformer.id],
+          modifier: "INCLUDES",
+        },
+      },
+    };
+
+    fetchData<{
+      data: { findImages: FindImagesResultType };
+    }>(sourceImagesQuery, sourceImagesInput).then((res) => {
+      const imageIDs = res?.data.findImages.images.map((i) => i.id) ?? [];
+      modifyContentPerformers({
+        content: "Image",
+        contentIDs: imageIDs,
+        mode: "REMOVE",
+        performerID: sourcePerformer.id,
+      }).then(() => {
+        modifyContentPerformers({
+          content: "Image",
+          contentIDs: imageIDs,
+          mode: "ADD",
+          performerID: destinationPerformer.id,
+        });
+      });
+    });
 
     // Delete the source performer from the database
+    const deleteSourceQuery = `mutation DeleteSourcePerformer($input: PerformerDestroyInput!) { performerDestroy(input: $input) }`;
+    const deleteSourceInput = { input: { id: sourcePerformer.id } };
+    fetchData(deleteSourceQuery, deleteSourceInput).then((res) =>
+      console.log("source deleted", res)
+    );
 
-    // Otherwise, close the modal
+    // Update the destination performer data
+    const updateDestination = `mutation UpdateDestinationPerformer ($input: PerformerUpdateInput!) { performerUpdate(input: $input) { id } }`;
+    fetchData(updateDestination, { input: updatedData })
+      // Load the destination performer's page. Do this even if we're already on
+      // it so that data is refreshed
+      .then(() =>
+        // Set timeout just so the modal has time to close.
+        setTimeout(() => {
+          window.location.href = `/performers/${destinationPerformer.id}/`;
+        }, 500)
+      );
+
+    // Close the modal
     props.setShow(false);
   };
 
