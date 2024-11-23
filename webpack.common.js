@@ -2,7 +2,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 
-const pluginID = "StashMergePerformers";
+const pluginID = "StashMergers";
 
 module.exports = {
   entry: "./src/main.tsx",

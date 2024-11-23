@@ -1,7 +1,7 @@
 {
-  "name": "stashmergeperformers",
+  "name": "stashmergers",
   "version": "0.1.0",
-  "description": "A plugin to enable merging two performers together in Stash.",
+  "description": "A plugin for selectively merging data between items in Stash.",
   "main": "./src/main.ts",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Valkyr-JS/StashMergePerformers.git"
+    "url": "git+https://github.com/Valkyr-JS/StashMergers.git"
   },
   "author": "Valkyr-JS",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Valkyr-JS/StashMergePerformers/issues"
+    "url": "https://github.com/Valkyr-JS/StashMergers/issues"
   },
-  "homepage": "https://github.com/Valkyr-JS/StashMergePerformers#readme",
+  "homepage": "https://github.com/Valkyr-JS/StashMergers#readme",
   "dependencies": {
     "classnames": "^2.5.1",
     "i18n-iso-countries": "^7.13.0",

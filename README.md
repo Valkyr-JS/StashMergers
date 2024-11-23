@@ -1,3 +1,3 @@
-# Stash Merge Performers
+# Stash Mergers
 
-A plugin to enable merging two performers together in Stash.
+A plugin for selectively merging data between items in Stash.
