@@ -34,7 +34,6 @@ const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faPencil } = PluginApi.libraries.FontAwesomeSolid;
 const { useIntl } = PluginApi.libraries.Intl;
-const { makePerformerScenesUrl } = PluginApi.utils.NavUtils;
 
 const MergeModal: React.FC<MergeModalProps> = ({
   destinationPerformer,
@@ -597,7 +596,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           ? +pHeightCm
           : destinationPerformer.height_cm,
       ignore_auto_tag:
-        selectedImagePath === "source"
+        selectedIgnoreAutoTag === "source"
           ? pIgnoreAutoTag
           : destinationPerformer.ignore_auto_tag,
       image:
