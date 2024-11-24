@@ -1,4 +1,4 @@
-import { fetchData, fetchPerformerData } from "../helpers";
+import { fetchPerformerData } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -30,6 +30,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
    */
 
   const [componentsReady, setComponentsReady] = React.useState(false);
+  const [showWarning, setShowWarning] = React.useState(false);
 
   // ? Short-term workaround for the above bug. Use a timeout to wait for the
   // PluginApi to fully load before continuing.
@@ -41,10 +42,17 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
 
   /** Handler for selecting a performer in the selection list */
   const handleSelect = (performers: Performer[]) => {
-    if (performers.length)
-      fetchPerformerData(performers[0].id).then((res) =>
+    if (performers.length) {
+      const selection = performers[0];
+
+      fetchPerformerData(selection.id).then((res) =>
         props.setSelectedPerformer(res)
       );
+
+      // Check the selected performer isn't the current performer, and warn if
+      // it is.
+      setShowWarning(selection.id === props.thisPerformer.id);
+    }
   };
 
   /* -------------------------------------------- Modal ------------------------------------------- */
@@ -93,12 +101,15 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
                 <PerformerSelect
                   active={!!props.selectedPerformer?.id}
                   creatable={false}
-                  isClearable={true}
+                  isClearable={false}
                   onSelect={handleSelect}
                   values={
                     props.selectedPerformer ? [props.selectedPerformer] : []
                   }
                 />
+                <Warning show={showWarning}>
+                  Source and destination performers cannot match.
+                </Warning>
               </div>
             </div>
           </div>
@@ -115,7 +126,7 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           </button>
           <button
             className="ml-2 btn btn-primary"
-            disabled={!props.selectedPerformer}
+            disabled={!props.selectedPerformer || showWarning}
             onClick={handleConfirmButtonClick}
             type="button"
           >
@@ -146,5 +157,22 @@ interface SearchModalProps {
   setShowMergeModal: React.Dispatch<React.SetStateAction<boolean>>;
 
   /** Whether to display the modal. */
+  show: boolean;
+
+  /** Data for the performer whose profile page is currently open. */
+  thisPerformer: Performer;
+}
+
+/* ---------------------------------------------------------------------------------------------- */
+/*                                             Warning                                            */
+/* ---------------------------------------------------------------------------------------------- */
+
+const Warning: React.FC<WarningProps> = (props) => {
+  if (!props.show) return null;
+
+  return <div className="invalid-feedback">{props.children}</div>;
+};
+
+interface WarningProps extends React.PropsWithChildren {
   show: boolean;
 }
