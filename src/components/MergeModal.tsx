@@ -567,7 +567,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           ? pDetails
           : destinationPerformer.details,
       disambiguation:
-        selectedDisambiguation === "source" && pDisambiguation
+        selectedDisambiguation === "source"
           ? pDisambiguation
           : destinationPerformer.disambiguation,
       ethnicity:
