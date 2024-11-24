@@ -76,7 +76,6 @@ const MergeModal: React.FC<MergeModalProps> = ({
     measurements,
     penis_length,
     piercings,
-    scenes,
     stash_ids,
     tags,
     tattoos,
@@ -540,7 +539,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           ? sourcePerformer.name
           : destinationPerformer.name,
       alias_list:
-        selectedAliasList === "source" && pAliasList
+        selectedAliasList === "source" && pAliasList.length
           ? pAliasList.filter((v) => v !== "") // Filter out empty inputs
           : destinationPerformer.alias_list,
       birthdate:
@@ -616,7 +615,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           ? pPiercings
           : destinationPerformer.piercings,
       stash_ids:
-        selectedStashIDs === "source" && pStashIDs
+        selectedStashIDs === "source" && pStashIDs.length
           ? pStashIDs
           : destinationPerformer.stash_ids,
       tag_ids:
@@ -632,7 +631,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           ? +pWeight
           : destinationPerformer.weight,
       urls:
-        selectedURLs === "source" && pURLs
+        selectedURLs === "source" && pURLs.length
           ? pURLs.filter((v) => v !== "") // Filter out empty inputs
           : destinationPerformer.urls,
     };
