@@ -8,17 +8,9 @@ const { React } = PluginApi;
 const CheckboxRow: React.FC<CheckboxRowProps> = (props) => {
   if (props.render === false) return null;
 
-  const [checked, setChecked] = React.useState(props.sourceValue);
-
   /** On change handler for the source input. */
-  const handleSourceChange: React.ChangeEventHandler<HTMLInputElement> = (
-    e
-  ) => {
-    if (props.setSourceValue) {
-      props.setSourceValue(!checked);
-      setChecked(!checked);
-    }
-  };
+  const handleSourceChange: React.ChangeEventHandler<HTMLInputElement> = (_e) =>
+    props.setSourceValue(!props.sourceValue);
 
   const name = props.label.toLowerCase().split(" ").join("-");
 
@@ -49,7 +41,7 @@ const CheckboxRow: React.FC<CheckboxRowProps> = (props) => {
         />
         <div className="form-check ml-3">
           <input
-            checked={checked}
+            checked={props.sourceValue}
             className="form-check-input position-static"
             id={name + "-source"}
             name={name + "-source"}

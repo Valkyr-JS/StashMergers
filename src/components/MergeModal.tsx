@@ -34,7 +34,6 @@ const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faPencil } = PluginApi.libraries.FontAwesomeSolid;
 const { useIntl } = PluginApi.libraries.Intl;
-const { makePerformerScenesUrl } = PluginApi.utils.NavUtils;
 
 const MergeModal: React.FC<MergeModalProps> = ({
   destinationPerformer,
@@ -77,7 +76,6 @@ const MergeModal: React.FC<MergeModalProps> = ({
     measurements,
     penis_length,
     piercings,
-    scenes,
     stash_ids,
     tags,
     tattoos,
@@ -104,7 +102,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
   /* ----------------------------------------- Alias list ----------------------------------------- */
 
   const [selectedAliasList, setSelectedAliasList] =
-    React.useState<PerformerPosition>(alias_list ? "source" : "destination");
+    React.useState<PerformerPosition>(
+      alias_list.length ? "source" : "destination"
+    );
 
   const [pAliasList, setPAliasList] =
     React.useState<Performer["alias_list"]>(alias_list);
@@ -382,7 +382,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
   /* -------------------------------------------- URLs -------------------------------------------- */
 
   const [selectedURLs, setSelectedURLs] = React.useState<PerformerPosition>(
-    urls ? "source" : "destination"
+    urls.length ? "source" : "destination"
   );
 
   const [pURLs, setPURLs] = React.useState<string[]>(urls);
@@ -443,7 +443,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
   /* ------------------------------------------ Stash IDs ----------------------------------------- */
 
   const [selectedStashIDs, setSelectedStashIDs] =
-    React.useState<PerformerPosition>(stash_ids ? "source" : "destination");
+    React.useState<PerformerPosition>(
+      stash_ids.length ? "source" : "destination"
+    );
 
   const [pStashIDs, setPStashIDs] =
     React.useState<Performer["stash_ids"]>(stash_ids);
@@ -481,7 +483,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     /** Reset selected position */
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
-    setSelectedAliasList(alias_list ? "source" : "destination");
+    setSelectedAliasList(alias_list.length ? "source" : "destination");
     setSelectedGender(gender ? "source" : "destination");
     setSelectedBirthdate(birthdate ? "source" : "destination");
     setSelectedDeathDate(death_date ? "source" : "destination");
@@ -498,12 +500,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedTattoos(tattoos ? "source" : "destination");
     setSelectedPiercings(piercings ? "source" : "destination");
     setSelectedCareerLength(career_length ? "source" : "destination");
-    setSelectedURLs(urls ? "source" : "destination");
+    setSelectedURLs(urls.length ? "source" : "destination");
     setSelectedDetails(details ? "source" : "destination");
     setSelectedTags(tags ? "source" : "destination");
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
-    setSelectedStashIDs(stash_ids ? "source" : "destination");
+    setSelectedStashIDs(stash_ids.length ? "source" : "destination");
   };
 
   // Updates on source performer change
@@ -541,99 +543,101 @@ const MergeModal: React.FC<MergeModalProps> = ({
           ? sourcePerformer.name
           : destinationPerformer.name,
       alias_list:
-        selectedAliasList === "source" && pAliasList
+        selectedAliasList === "source"
           ? pAliasList.filter((v) => v !== "") // Filter out empty inputs
           : destinationPerformer.alias_list,
       birthdate:
-        selectedBirthdate === "source" && !!pBirthdate
-          ? new Date(pBirthdate).toISOString().split("T")[0]
+        selectedBirthdate === "source"
+          ? !!pBirthdate
+            ? new Date(pBirthdate).toISOString().split("T")[0]
+            : ""
           : destinationPerformer.birthdate,
       career_length:
-        selectedCareerLength === "source" && pCareerLength
+        selectedCareerLength === "source"
           ? pCareerLength
           : destinationPerformer.career_length,
       circumcised:
-        selectedCircumcised === "source" && pCircumcised
+        selectedCircumcised === "source"
           ? pCircumcised
           : destinationPerformer.circumcised,
       country:
-        selectedCountry === "source" && pCountry
-          ? pCountry
-          : destinationPerformer.country,
+        selectedCountry === "source" ? pCountry : destinationPerformer.country,
       death_date:
-        selectedDeathDate === "source" && !!pDeathDate
-          ? new Date(pDeathDate).toISOString().split("T")[0]
+        selectedDeathDate === "source"
+          ? !!pDeathDate
+            ? new Date(pDeathDate).toISOString().split("T")[0]
+            : ""
           : destinationPerformer.death_date,
       details:
-        selectedDetails === "source" && pDetails
-          ? pDetails
-          : destinationPerformer.details,
+        selectedDetails === "source" ? pDetails : destinationPerformer.details,
       disambiguation:
-        selectedDisambiguation === "source" && pDisambiguation
+        selectedDisambiguation === "source"
           ? pDisambiguation
           : destinationPerformer.disambiguation,
       ethnicity:
-        selectedEthnicity === "source" && pEthnicity
+        selectedEthnicity === "source"
           ? pEthnicity
           : destinationPerformer.ethnicity,
       eye_color:
-        selectedEyeColor === "source" && pEyeColor
+        selectedEyeColor === "source"
           ? pEyeColor
           : destinationPerformer.eye_color,
       fake_tits:
-        selectedFakeTits === "source" && pFakeTits
+        selectedFakeTits === "source"
           ? pFakeTits
           : destinationPerformer.fake_tits,
       gender:
-        selectedGender === "source" && pGender
-          ? pGender
-          : destinationPerformer.gender,
+        selectedGender === "source" ? pGender : destinationPerformer.gender,
       hair_color:
-        selectedHairColor === "source" && pHairColor
+        selectedHairColor === "source"
           ? pHairColor
           : destinationPerformer.hair_color,
       height_cm:
-        selectedHeightCm === "source" && pHeightCm
-          ? +pHeightCm
+        selectedHeightCm === "source"
+          ? !!pHeightCm
+            ? +pHeightCm
+            : undefined
           : destinationPerformer.height_cm,
       ignore_auto_tag:
-        selectedImagePath === "source"
+        selectedIgnoreAutoTag === "source"
           ? pIgnoreAutoTag
           : destinationPerformer.ignore_auto_tag,
       image:
-        selectedImagePath === "source" && pImagePath
+        selectedImagePath === "source"
           ? pImagePath
           : destinationPerformer.image_path,
       measurements:
-        selectedMeasurements === "source" && pMeasurements
+        selectedMeasurements === "source"
           ? pMeasurements
           : destinationPerformer.measurements,
       penis_length:
-        selectedPenisLength === "source" && pPenisLength
-          ? +pPenisLength
+        selectedPenisLength === "source"
+          ? !!pPenisLength
+            ? +pPenisLength
+            : undefined
           : destinationPerformer.penis_length,
       piercings:
-        selectedPiercings === "source" && pPiercings
+        selectedPiercings === "source"
           ? pPiercings
           : destinationPerformer.piercings,
       stash_ids:
-        selectedStashIDs === "source" && pStashIDs
+        selectedStashIDs === "source"
           ? pStashIDs
           : destinationPerformer.stash_ids,
       tag_ids:
-        selectedTags === "source" && pTags
+        selectedTags === "source"
           ? pTags.map((t) => t.id)
           : destinationPerformer.tags.map((t) => t.id),
       tattoos:
-        selectedTattoos === "source" && pTattoos
-          ? pTattoos
-          : destinationPerformer.tattoos,
+        selectedTattoos === "source" ? pTattoos : destinationPerformer.tattoos,
       weight:
-        selectedWeight === "source" && pWeight
-          ? +pWeight
+        selectedWeight === "source"
+          ? pWeight
+            ? +pWeight
+            : undefined
           : destinationPerformer.weight,
       urls:
-        selectedURLs === "source" && pURLs
+        selectedURLs === "source"
           ? pURLs.filter((v) => v !== "") // Filter out empty inputs
           : destinationPerformer.urls,
     };
