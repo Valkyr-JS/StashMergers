@@ -642,24 +642,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
           : destinationPerformer.urls,
     };
 
-    // Replace source performer ID with destination performer ID in scenes
+    // Add destination performer ID to source performer scenes
     const sceneIDs = sourcePerformer.scenes.map((s) => s.id);
 
     modifyContentPerformers({
       content: "Scene",
       contentIDs: sceneIDs,
-      mode: "REMOVE",
-      performerID: sourcePerformer.id,
-    }).then(() =>
-      modifyContentPerformers({
-        content: "Scene",
-        contentIDs: sceneIDs,
-        mode: "ADD",
-        performerID: destinationPerformer.id,
-      })
-    );
+      mode: "ADD",
+      performerID: destinationPerformer.id,
+    });
 
-    // Replace source performer ID with destination performer ID in galleries
+    // Add destination performer ID to source performer galleries
     const sourceGalleriesQuery = `query SourcePerformerGalleries($input: GalleryFilterType) {
       findGalleries(filter: {per_page: -1}, gallery_filter: $input) {
         galleries {
@@ -685,19 +678,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
       modifyContentPerformers({
         content: "Gallery",
         contentIDs: galleryIDs,
-        mode: "REMOVE",
-        performerID: sourcePerformer.id,
-      }).then(() => {
-        modifyContentPerformers({
-          content: "Gallery",
-          contentIDs: galleryIDs,
-          mode: "ADD",
-          performerID: destinationPerformer.id,
-        });
+        mode: "ADD",
+        performerID: destinationPerformer.id,
       });
     });
 
-    // Replace source performer ID with destination performer ID in images
+    // Add destination performer ID to source performer images
     const sourceImagesQuery = `query SourcePerformerImages($input: ImageFilterType) {
       findImages(filter: {per_page: -1}, image_filter: $input) {
         images {
@@ -722,15 +708,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
       modifyContentPerformers({
         content: "Image",
         contentIDs: imageIDs,
-        mode: "REMOVE",
-        performerID: sourcePerformer.id,
-      }).then(() => {
-        modifyContentPerformers({
-          content: "Image",
-          contentIDs: imageIDs,
-          mode: "ADD",
-          performerID: destinationPerformer.id,
-        });
+        mode: "ADD",
+        performerID: destinationPerformer.id,
       });
     });
 
