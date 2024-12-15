@@ -1070,7 +1070,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedImagePath}
               sourceImage={{
                 alt: intl.formatMessage({ id: "performer_image" }),
-                src: sourcePerformer.image_path ?? "",
+                src: pImagePath ?? "",
               }}
             />
             <CheckboxRow
