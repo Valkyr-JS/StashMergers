@@ -15,6 +15,10 @@
 
 \* Where possible, Stash Mergers references the localization file for the user's selected language in Stash. In some places, e.g. some warning messages, localization options aren't available so they are hardcoded in English.
 
+### Known Issues
+
+- 17/12/2024 - Stash instances that are locked behind a username and password will run into issues with broken performer images when running a merge in either direction. This is an issue with Stash rather than the plugin, and [has been raised on the GitHub issues page there](https://github.com/stashapp/stash/issues/5538). I've looked at various workarounds, but the only thing that will work for now is turning off credentials in Stash whilst running a merge. I'm keeping an eye on the issue and will update this plugin if needed as soon as a fix is available.
+
 ## Installation
 
 1. In Stash go to Settings > Plugins.
