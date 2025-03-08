@@ -19,42 +19,6 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
         : "actions.merge_into",
   });
 
-  /* ------------------------------------- Performer selection ------------------------------------ */
-
-  /**
-   * ! There is an issue with the PerformerSelect component which is likely
-   * happening in the PluginApi. The component only loads if called on an page
-   * other than the first. I.e. it doesn't work on a hard refresh or if the
-   * performer profile page is navigated to directly. Bug raised at
-   * https://github.com/stashapp/stash/issues/5479
-   */
-
-  const [componentsReady, setComponentsReady] = React.useState(false);
-  const [showWarning, setShowWarning] = React.useState(false);
-
-  // ? Short-term workaround for the above bug. Use a timeout to wait for the
-  // PluginApi to fully load before continuing.
-  setTimeout(() => setComponentsReady(true), 100);
-
-  if (!componentsReady) return null;
-
-  const { PerformerSelect } = window.PluginApi.components;
-
-  /** Handler for selecting a performer in the selection list */
-  const handleSelect = (performers: Performer[]) => {
-    if (performers.length) {
-      const selection = performers[0];
-
-      fetchPerformerData(selection.id).then((res) =>
-        props.setSelectedPerformer(res)
-      );
-
-      // Check the selected performer isn't the current performer, and warn if
-      // it is.
-      setShowWarning(selection.id === props.thisPerformer.id);
-    }
-  };
-
   /* -------------------------------------------- Modal ------------------------------------------- */
 
   /** Handler for closing the modal. */
@@ -78,6 +42,33 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
         ? "dialogs.merge.source"
         : "dialogs.merge.destination",
   });
+
+  /* ------------------------------------- Performer selection ------------------------------------ */
+
+  const [showWarning, setShowWarning] = React.useState(false);
+
+  // Wait for PluginApi components to load before rendering.
+  const componentsLoading = PluginApi.hooks.useLoadComponents([
+    PluginApi.loadableComponents.PerformerSelect,
+  ]);
+
+  if (componentsLoading) return null;
+  const { PerformerSelect } = PluginApi.components;
+
+  /** Handler for selecting a performer in the selection list */
+  const handleSelect = (performers: Performer[]) => {
+    if (performers.length) {
+      const selection = performers[0];
+
+      fetchPerformerData(selection.id).then((res) =>
+        props.setSelectedPerformer(res)
+      );
+
+      // Check the selected performer isn't the current performer, and warn if
+      // it is.
+      setShowWarning(selection.id === props.thisPerformer.id);
+    }
+  };
 
   /* ------------------------------------------ Component ----------------------------------------- */
 
