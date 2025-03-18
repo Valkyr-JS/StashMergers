@@ -1,6 +1,6 @@
 {
   "name": "stashmergers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A plugin for selectively merging data between performers in Stash.",
   "main": "./src/main.ts",
   "scripts": {
