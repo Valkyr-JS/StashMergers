@@ -1,5 +1,6 @@
 import * as Countries from "i18n-iso-countries";
-Countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+import enLocale from "i18n-iso-countries/langs/en.json";
+Countries.registerLocale(enLocale);
 
 /** Converts a country ISO code to its country name. */
 export const getCountryByISO = (

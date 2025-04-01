@@ -1,6 +1,7 @@
 import commonjs from "@rollup/plugin-commonjs";
 import copy from "rollup-plugin-copy";
 import del from "rollup-plugin-delete";
+import json from '@rollup/plugin-json';
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import replace from "@rollup/plugin-replace";
@@ -45,13 +46,16 @@ export default {
     format: "cjs",
   },
   plugins: [
-    commonjs(),
+    commonjs({
+      dynamicRequireTargets: ["**/langs/*.json"]
+    }),
     copy({
       targets: [
         { src: "src/source.yml", dest: "dist", rename: pluginID + ".yml" },
       ],
     }),
     del({ targets: "dist" }),
+    json(),
     nodeResolve(),
     peerDepsExternal(),
     replace({
