@@ -1,6 +1,6 @@
 import { default as cx } from "classnames";
 import MergeListsButton from "./MergeListsButton";
-const { React } = window.PluginApi;
+import React from "react";
 
 const FormRowWrapper: React.FC<FormRowWrapperProps> = (props) => {
   const classes = cx("px-3", "pt-3", props.className, "row");

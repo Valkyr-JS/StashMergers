@@ -2,9 +2,9 @@ import { default as cx } from "classnames";
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
+import React from "react";
 
 const { PluginApi } = window;
-const { React } = PluginApi;
 
 const StringInputRow: React.FC<StringInputRowProps> = (props) => {
   /** On change handler for the source input. */

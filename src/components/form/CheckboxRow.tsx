@@ -1,9 +1,7 @@
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
-
-const { PluginApi } = window;
-const { React } = PluginApi;
+import React from "react";
 
 const CheckboxRow: React.FC<CheckboxRowProps> = (props) => {
   if (props.render === false) return null;

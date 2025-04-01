@@ -1,12 +1,14 @@
+import React from "react";
+import { Modal } from "react-bootstrap";
+import {
+  faRightToBracket,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { useIntl } from "react-intl";
 import { fetchPerformerData } from "../helpers";
 
 const { PluginApi } = window;
-const { React } = PluginApi;
 const { Icon } = PluginApi.components;
-const { Modal } = PluginApi.libraries.Bootstrap;
-const { faRightToBracket, faRightFromBracket } =
-  PluginApi.libraries.FontAwesomeSolid;
-const { useIntl } = PluginApi.libraries.Intl;
 
 const SearchModal: React.FC<SearchModalProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json

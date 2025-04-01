@@ -1,10 +1,7 @@
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
-import MergeListsButton from "./MergeListsButton";
 import SelectInputButton from "./SelectInputButton";
-
-const { PluginApi } = window;
-const { React } = PluginApi;
+import React from "react";
 
 const TagSelectRow: React.FC<TagSelectRowProps> = (props) => {
   if (props.render === false) return null;

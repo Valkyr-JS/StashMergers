@@ -1,12 +1,14 @@
 import { default as cx } from "classnames";
-import { IntlShape } from "react-intl";
+import type { IntlShape } from "react-intl";
+import React from "react";
+import { DropdownButton } from "react-bootstrap";
+import {
+  faRightToBracket,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 
 const { PluginApi } = window;
-const { React } = PluginApi;
 const { Icon } = PluginApi.components;
-const { DropdownButton } = PluginApi.libraries.Bootstrap;
-const { faRightToBracket, faRightFromBracket } =
-  PluginApi.libraries.FontAwesomeSolid;
 
 const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = ({
   intl,
