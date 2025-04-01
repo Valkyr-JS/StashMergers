@@ -2,7 +2,7 @@ import MergeDropdownButton from "./components/MergeDropdownButton";
 import type { MergeDropdownButtonProps } from "./components/MergeDropdownButton";
 import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
-import { mergeButtonRootID } from "./constants";
+import { mergeButtonRootID, mergeStudioRootID } from "./constants";
 import { fetchData, fetchPerformerData, waitForEl } from "./helpers";
 import "./styles.scss";
 
@@ -156,11 +156,35 @@ const renderStudioButton = async (path: string) => {
       mergeFromClickHandler: () => console.log("merge from"),
       mergeIntoClickHandler: () => console.log("merge into"),
     });
+
+    // Create a new React root for the modals, as the Studio Details Panel can't
+    // be patched directly.
+
+    // Find .detail-container to append the new root element to.
+    const elDetailsContainer = await waitForEl(".detail-container");
+
+    // Check if the studio modals root has already rendered to avoid re-rendering.
+    const studioRootExists =
+      document.querySelector("#" + mergeStudioRootID) !== null;
+
+    if (elDetailsContainer && !studioRootExists) {
+      // Create the root for the modals
+      const elStudioRoot = document.createElement("div");
+      elStudioRoot.setAttribute("id", mergeStudioRootID);
+
+      elDetailsContainer.append(elStudioRoot);
+
+      // Deprecated in React but still available via the Plugin API at time of
+      // development.
+      ReactDOM.render(<>Modals go here</>, elStudioRoot);
+    }
   }
 };
 
+// On load
 renderStudioButton(window.location.pathname);
 
+// On page change
 PluginApi.Event.addEventListener("stash:location", (e) =>
   renderStudioButton(e.detail.data.location.pathname)
 );
