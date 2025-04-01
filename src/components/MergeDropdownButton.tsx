@@ -1,5 +1,5 @@
 import { default as cx } from "classnames";
-import { IntlShape } from "react-intl";
+import type { IntlShape } from "react-intl";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -12,7 +12,7 @@ const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = ({
   intl,
   ...props
 }) => {
-  const merge = intl.formatMessage({ id: "actions.merge" });
+  const merge = intl ? intl.formatMessage({ id: "actions.merge" }) : "Merge";
   return (
     <DropdownButton
       id="merge-performer-dropdown-button"
@@ -21,11 +21,13 @@ const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = ({
     >
       <DropdownMenuItem onClick={props.mergeFromClickHandler}>
         <Icon icon={faRightToBracket} />
-        {intl.formatMessage({ id: "actions.merge_from" })}...
+        {intl ? intl.formatMessage({ id: "actions.merge_from" }) : "Merge from"}
+        ...
       </DropdownMenuItem>
       <DropdownMenuItem onClick={props.mergeIntoClickHandler}>
         <Icon icon={faRightFromBracket} />
-        {intl.formatMessage({ id: "actions.merge_into" })}...
+        {intl ? intl.formatMessage({ id: "actions.merge_into" }) : "Merge to"}
+        ...
       </DropdownMenuItem>
     </DropdownButton>
   );
@@ -33,10 +35,10 @@ const MergeDropdownButton: React.FC<MergeDropdownButtonProps> = ({
 
 export default MergeDropdownButton;
 
-interface MergeDropdownButtonProps {
+export interface MergeDropdownButtonProps {
   /** Component can't access intl for some reason, so it needs to be passed.
    * */
-  intl: IntlShape;
+  intl?: IntlShape;
 
   /** The click handler for the "Merge from..." button. */
   mergeFromClickHandler: React.MouseEventHandler<HTMLAnchorElement>;

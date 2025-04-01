@@ -1,1 +1,1 @@
-export const mergeButtonRootID = "merge-performers-btn-root" as const;
+export const mergeButtonRootID = "mergers-btn-root" as const;
