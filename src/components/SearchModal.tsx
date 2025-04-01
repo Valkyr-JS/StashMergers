@@ -1,4 +1,5 @@
-import { fetchPerformerData } from "../helpers";
+import { IntlShape } from "react-intl";
+import { fetchPerformerData, fetchStudioData } from "../helpers";
 
 const { PluginApi } = window;
 const { React } = PluginApi;
@@ -6,25 +7,22 @@ const { Icon } = PluginApi.components;
 const { Modal } = PluginApi.libraries.Bootstrap;
 const { faRightToBracket, faRightFromBracket } =
   PluginApi.libraries.FontAwesomeSolid;
-const { useIntl } = PluginApi.libraries.Intl;
 
-const SearchModal: React.FC<SearchModalProps> = (props) => {
-  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
-  const intl = useIntl();
+const SearchModal: React.FC<SearchModalProps> = ({intl, ...props}) => {
 
-  const heading = intl.formatMessage({
+  const heading = !!intl ? intl.formatMessage({
     id:
       props.mergeDirection === "from"
         ? "actions.merge_from"
         : "actions.merge_into",
-  });
+  }) : props.mergeDirection === "from" ? "Merge from" : "Merge into";
 
   /* -------------------------------------------- Modal ------------------------------------------- */
 
   /** Handler for closing the modal. */
   const handleCloseModal = () => {
     props.setShow(false);
-    props.setSelectedPerformer(undefined);
+    props.setSelected(undefined);
   };
 
   /** Handler for clicking the confirm button. */
@@ -36,12 +34,12 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   const modalIcon =
     props.mergeDirection === "from" ? faRightToBracket : faRightFromBracket;
 
-  const searchPerformerType = intl.formatMessage({
+  const searchType = !!intl ? intl.formatMessage({
     id:
       props.mergeDirection === "from"
         ? "dialogs.merge.source"
         : "dialogs.merge.destination",
-  });
+  }) : props.mergeDirection === "from" ? "Source" : "Destination";
 
   /* ------------------------------------- Performer selection ------------------------------------ */
 
@@ -53,22 +51,40 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
   ]);
 
   if (componentsLoading) return null;
-  const { PerformerSelect } = PluginApi.components;
+  const { PerformerSelect, StudioSelect } = PluginApi.components;
 
-  /** Handler for selecting a performer in the selection list */
-  const handleSelect = (performers: Performer[]) => {
-    if (performers.length) {
-      const selection = performers[0];
+  /** Handler for selecting an item in the selection list */
+  const handleSelect = (items: (typeof props.this)[]) => {
+    if (items.length) {
+      const selection = items[0];
 
-      fetchPerformerData(selection.id).then((res) =>
-        props.setSelectedPerformer(res)
-      );
+      props.type === "performer"
+        ? fetchPerformerData(selection.id).then((res) => props.setSelected(res))
+        : fetchStudioData(selection.id).then((res) => props.setSelected(res));
 
-      // Check the selected performer isn't the current performer, and warn if
-      // it is.
-      setShowWarning(selection.id === props.thisPerformer.id);
+      // Check the selected item isn't the current item, and warn if it is.
+      setShowWarning(selection.id === props.this.id);
     }
   };
+
+  const selector =
+    props.type === "performer" ? (
+      <PerformerSelect
+        active={!!props.selected?.id}
+        creatable={false}
+        isClearable={false}
+        onSelect={handleSelect}
+        values={props.selected ? [props.selected] : []}
+      />
+    ) : (
+      <StudioSelect
+        active={!!props.selected?.id}
+        creatable={false}
+        isClearable={false}
+        onSelect={handleSelect}
+        values={props.selected ? [props.selected] : []}
+      />
+    );
 
   /* ------------------------------------------ Component ----------------------------------------- */
 
@@ -83,23 +99,15 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
           <div className="col-12 col-lg-6 col-xl-12">
             <div className="form-group row">
               <label
-                htmlFor={searchPerformerType.toLowerCase()}
+                htmlFor={searchType.toLowerCase()}
                 className="form-label col-form-label col-xl-12 col-sm-3"
               >
-                {searchPerformerType}
+                {searchType}
               </label>
               <div className="col-xl-12 col-sm-9">
-                <PerformerSelect
-                  active={!!props.selectedPerformer?.id}
-                  creatable={false}
-                  isClearable={false}
-                  onSelect={handleSelect}
-                  values={
-                    props.selectedPerformer ? [props.selectedPerformer] : []
-                  }
-                />
+                {selector}
                 <Warning show={showWarning}>
-                  Source and destination performers cannot match.
+                  Source and destination {props.type}s cannot match.
                 </Warning>
               </div>
             </div>
@@ -113,15 +121,15 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
             onClick={handleCloseModal}
             type="button"
           >
-            {intl.formatMessage({ id: "actions.cancel" })}
+            {!!intl ? intl.formatMessage({ id: "actions.cancel" }) : "Cancel"}
           </button>
           <button
             className="ml-2 btn btn-primary"
-            disabled={!props.selectedPerformer || showWarning}
+            disabled={!props.selected || showWarning}
             onClick={handleConfirmButtonClick}
             type="button"
           >
-            {intl.formatMessage({ id: "actions.confirm" })}
+            {!!intl ? intl.formatMessage({ id: "actions.confirm" }) : "Confirm"}
           </button>
         </div>
       </Modal.Footer>
@@ -131,15 +139,11 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
 
 export default SearchModal;
 
-interface SearchModalProps {
+type SearchModalProps = (PerformerSearchModalProps | StudioSearchModalProps) & {
+  intl?: IntlShape;
+
   /** The type of modal this is. */
   mergeDirection: MergeDirection;
-
-  selectedPerformer: Performer | undefined;
-
-  setSelectedPerformer: React.Dispatch<
-    React.SetStateAction<Performer | undefined>
-  >;
 
   /** Set whether to display the modal. */
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -149,9 +153,28 @@ interface SearchModalProps {
 
   /** Whether to display the modal. */
   show: boolean;
+};
+
+interface PerformerSearchModalProps {
+  selected?: Performer;
+
+  setSelected: React.Dispatch<React.SetStateAction<Performer | undefined>>;
 
   /** Data for the performer whose profile page is currently open. */
-  thisPerformer: Performer;
+  this: Performer;
+
+  type: "performer";
+}
+
+interface StudioSearchModalProps {
+  selected?: Studio;
+
+  setSelected: React.Dispatch<React.SetStateAction<Studio | undefined>>;
+
+  /** Data for the studio whose profile page is currently open. */
+  this: Studio;
+
+  type: "studio";
 }
 
 /* ---------------------------------------------------------------------------------------------- */

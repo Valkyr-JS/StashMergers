@@ -3,7 +3,12 @@ import type { MergeDropdownButtonProps } from "./components/MergeDropdownButton"
 import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
 import { mergeButtonRootID, mergeStudioRootID } from "./constants";
-import { fetchData, fetchPerformerData, waitForEl } from "./helpers";
+import {
+  fetchData,
+  fetchPerformerData,
+  fetchStudioData,
+  waitForEl,
+} from "./helpers";
 import "./styles.scss";
 
 const { PluginApi } = window;
@@ -122,13 +127,15 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
     <>
       <Original {...props} />
       <SearchModal
+        intl={intl}
         mergeDirection={mergeDirection}
-        selectedPerformer={selectedPerformer}
-        setSelectedPerformer={setSelectedPerformer}
+        selected={selectedPerformer}
+        setSelected={setSelectedPerformer}
         setShow={setShowSearchModal}
         setShowMergeModal={setShowMergeModal}
         show={showSearchModal}
-        thisPerformer={thisPerformer}
+        this={thisPerformer}
+        type="performer"
       />
       <MergeModal
         destinationPerformer={destinationPerformer}
@@ -150,13 +157,92 @@ PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {
 // it is implemented using a check to see what page is currently loaded. This is
 // done on the initial load, and again on each page change.
 
-const renderStudioButton = async (path: string) => {
-  if (path.match("/studios/\\d+")) {
-    createMergeButton({
-      mergeFromClickHandler: () => console.log("merge from"),
-      mergeIntoClickHandler: () => console.log("merge into"),
+const StudioModalsWrapper: React.FC<StudioModalsWrapperProps> = (props) => {
+  /* ----------------------------------------- Fetch data ----------------------------------------- */
+
+  const [stashboxes, setStashboxes] = React.useState<StashBox[]>([]);
+  const [thisStudio, setThisStudio] = React.useState<Studio | undefined>(
+    undefined
+  );
+
+  const query = `query { configuration { general { stashBoxes { endpoint name } } } }`;
+
+  React.useEffect(() => {
+    // Fetch Stashbox config data
+    fetchData<{ data: { configuration: ConfigResult } }>(query).then((res) => {
+      console.log(res);
+      if (res?.data) setStashboxes(res.data.configuration.general.stashBoxes);
     });
 
+    // Fetch data for the studio whose page we're on.
+    fetchStudioData(props.studioID).then((res) => setThisStudio(res));
+  }, []);
+
+  /* ---------------------------------------- Search modal ---------------------------------------- */
+
+  const [showSearchModal, setShowSearchModal] = React.useState(false);
+  const [mergeDirection, setMergeDirection] =
+    React.useState<MergeDirection>("from");
+  const [selectedStudio, setSelectedStudio] = React.useState<
+    Studio | undefined
+  >();
+
+  /** Handler for clicking the "Merge from..." button. */
+  const handleMergeFromClick: React.MouseEventHandler<
+    HTMLAnchorElement
+  > = () => {
+    setMergeDirection("from");
+    setShowSearchModal(true);
+  };
+
+  /** Handler for clicking the "Merge into..." button. */
+  const handleMergeIntoClick: React.MouseEventHandler<
+    HTMLAnchorElement
+  > = () => {
+    setMergeDirection("into");
+    setShowSearchModal(true);
+  };
+
+  createMergeButton({
+    mergeFromClickHandler: handleMergeFromClick,
+    mergeIntoClickHandler: handleMergeIntoClick,
+  });
+
+  /* ----------------------------------------- Merge modal ---------------------------------------- */
+
+  const [showMergeModal, setShowMergeModal] = React.useState(false);
+
+  const destinationStudio =
+    mergeDirection === "into" ? selectedStudio : thisStudio;
+
+  const sourceStudio = mergeDirection === "from" ? selectedStudio : thisStudio;
+
+  /* ------------------------------------------ Component ----------------------------------------- */
+
+  if (!thisStudio) return null;
+
+  return (
+    <>
+      <SearchModal
+        mergeDirection={mergeDirection}
+        selected={selectedStudio}
+        setSelected={setSelectedStudio}
+        setShow={setShowSearchModal}
+        setShowMergeModal={setShowMergeModal}
+        show={showSearchModal}
+        this={thisStudio}
+        type="studio"
+      />
+    </>
+  );
+};
+
+interface StudioModalsWrapperProps {
+  studioID: Studio["id"];
+}
+
+const renderStudioButton = async (path: string) => {
+  if (path.match("/studios/\\d+")) {
     // Create a new React root for the modals, as the Studio Details Panel can't
     // be patched directly.
 
@@ -174,9 +260,15 @@ const renderStudioButton = async (path: string) => {
 
       elDetailsContainer.append(elStudioRoot);
 
+      // Get the studio ID from the URL. E.g. '/studios/1/scenes'
+      const studioID = window.location.pathname.split("/")[2];
+
       // Deprecated in React but still available via the Plugin API at time of
       // development.
-      ReactDOM.render(<>Modals go here</>, elStudioRoot);
+      ReactDOM.render(
+        <StudioModalsWrapper studioID={studioID} />,
+        elStudioRoot
+      );
     }
   }
 };

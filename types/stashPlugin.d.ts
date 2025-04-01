@@ -115,6 +115,9 @@ interface StashPluginComponents {
     props: IFilterProps & IFilterValueProps<Performer>
   ) => React.JSX.Element;
   SceneCard: (props: ISceneCardProps) => React.JSX.Element;
+  StudioSelect: (
+    props: IFilterProps & IFilterValueProps<Studio>
+  ) => React.JSX.Element;
   TagSelect: (props: TagSelectProps) => React.JSX.Element;
 }
 
