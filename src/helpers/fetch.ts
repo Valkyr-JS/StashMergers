@@ -52,6 +52,31 @@ export const fetchPerformerData = async (
   return req?.data.findPerformer;
 };
 
+/** Fetch all required data for a studio. */
+export const fetchStudioData = async (
+  id: Studio["id"]
+): Promise<Studio | undefined> => {
+  const query = `query FetchSelectedStudio {
+    findStudio(id: ${id}) {
+      id
+      aliases
+      child_studios { id }
+      details
+      groups { id }
+      ignore_auto_tag
+      image_path
+      name
+      parent_studio { id }
+      stash_ids { endpoint stash_id }
+      tags { id }
+      url
+    }
+  }`;
+
+  const req = await fetchData<{ data: { findStudio: Studio } }>(query);
+  return req?.data.findStudio;
+};
+
 /** Helper function to add or remove a performer in a given set of content. */
 export const modifyContentPerformers = async (args: {
   content: "Gallery" | "Image" | "Scene";
