@@ -1,10 +1,8 @@
 import FormInputGroup from "./FormInputGroup";
 import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
-
-const { PluginApi } = window;
-const { React } = PluginApi;
-const { Form } = PluginApi.libraries.Bootstrap;
+import { FormControl } from "react-bootstrap";
+import React from "react";
 
 const DropdownInputRow: React.FC<DropdownInputRowProps> = (props) => {
   if (props.render === false) return null;
@@ -23,7 +21,7 @@ const DropdownInputRow: React.FC<DropdownInputRowProps> = (props) => {
           performerPosition="destination"
           setSelected={props.setSelectedInput}
         />
-        <Form.Control
+        <FormControl
           as="select"
           className="input-control"
           disabled
@@ -34,7 +32,7 @@ const DropdownInputRow: React.FC<DropdownInputRowProps> = (props) => {
               {opt}
             </option>
           ))}
-        </Form.Control>
+        </FormControl>
       </FormInputGroup>
       <FormInputGroup>
         <SelectInputButton
@@ -42,7 +40,7 @@ const DropdownInputRow: React.FC<DropdownInputRowProps> = (props) => {
           performerPosition="source"
           setSelected={props.setSelectedInput}
         />
-        <Form.Control
+        <FormControl
           as="select"
           className="input-control"
           onChange={handleSourceChange}
@@ -53,7 +51,7 @@ const DropdownInputRow: React.FC<DropdownInputRowProps> = (props) => {
               {opt}
             </option>
           ))}
-        </Form.Control>
+        </FormControl>
       </FormInputGroup>
     </FormRowWrapper>
   );

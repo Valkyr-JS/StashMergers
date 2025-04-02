@@ -1,9 +1,8 @@
 import { default as cx } from "classnames";
+import React from "react";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const { PluginApi } = window;
-const { React } = PluginApi;
 const { Icon } = window.PluginApi.components;
-const { faCheck, faXmark } = window.PluginApi.libraries.FontAwesomeSolid;
 
 const SelectInputButton: React.FC<SelectInputButtonProps> = (props) => {
   /** Button click handler */

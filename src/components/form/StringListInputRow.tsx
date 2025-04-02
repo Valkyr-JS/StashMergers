@@ -4,13 +4,8 @@ import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import { validateArrayContainsOnlyUniques } from "../../helpers";
 import RemoveInputButton from "./RemoveInputButton";
-import MergeListsButton from "./MergeListsButton";
-
-const { PluginApi } = window;
-const { React } = PluginApi;
-const { Icon } = PluginApi.components;
-const { faRightLong } = PluginApi.libraries.FontAwesomeSolid;
-const { useIntl } = PluginApi.libraries.Intl;
+import React from "react";
+import { useIntl } from "react-intl";
 
 const StringListInputRow: React.FC<StringListInputRowProps> = (props) => {
   if (props.render === false) return null;

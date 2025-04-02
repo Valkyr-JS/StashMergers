@@ -1,13 +1,14 @@
+import React from "react";
 import MergeDropdownButton from "./components/MergeDropdownButton";
 import MergeModal from "./components/MergeModal";
 import SearchModal from "./components/SearchModal";
 import { mergeButtonRootID } from "./constants";
 import { fetchData, fetchPerformerData } from "./helpers";
 import "./styles.scss";
+import ReactDOM from "react-dom";
+import { useIntl } from "react-intl";
 
 const { PluginApi } = window;
-const { React, ReactDOM } = PluginApi;
-const { useIntl } = PluginApi.libraries.Intl;
 
 // Wait for the performer details panel to load, as this contains the
 PluginApi.patch.instead("PerformerDetailsPanel", function (props, _, Original) {

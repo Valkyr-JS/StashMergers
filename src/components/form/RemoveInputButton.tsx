@@ -1,7 +1,7 @@
-const { PluginApi } = window;
-const { React } = PluginApi;
-const { Icon } = PluginApi.components;
-const { faMinus } = PluginApi.libraries.FontAwesomeSolid;
+import React from "react";
+import { faMinus } from "@fortawesome/free-solid-svg-icons";
+
+const { Icon } = window.PluginApi.components;
 
 const RemoveInputButton: React.FC<RemoveInputButtonProps> = (props) => {
   return (

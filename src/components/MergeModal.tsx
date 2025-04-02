@@ -27,13 +27,13 @@ import TagSelectRow from "./form/TagSelectRow";
 import ImageRow from "./form/ImageInputRow";
 import CheckboxRow from "./form/CheckboxRow";
 import StashIDListRow from "./form/StashIDsRow";
+import React from "react";
+import { Modal } from "react-bootstrap";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import { useIntl } from "react-intl";
 
 const { PluginApi } = window;
-const { React } = PluginApi;
 const { Icon } = PluginApi.components;
-const { Modal } = PluginApi.libraries.Bootstrap;
-const { faPencil } = PluginApi.libraries.FontAwesomeSolid;
-const { useIntl } = PluginApi.libraries.Intl;
 
 const MergeModal: React.FC<MergeModalProps> = ({
   destinationPerformer,

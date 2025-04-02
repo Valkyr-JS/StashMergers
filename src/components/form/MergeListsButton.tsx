@@ -1,6 +1,5 @@
-const { PluginApi } = window;
-const { React } = PluginApi;
-const { useIntl } = PluginApi.libraries.Intl;
+import React from "react";
+import { useIntl } from "react-intl";
 
 const MergeListsButton: React.FC<MergeListsButtonProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json

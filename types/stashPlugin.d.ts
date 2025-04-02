@@ -1,14 +1,13 @@
-import type { IconDefinition } from "@fortawesome/free-regular-svg-icons";
-import type { SizeProp } from "@fortawesome/fontawesome-svg-core";
+import type {
+  IconDefinition,
+  SizeProp,
+} from "@fortawesome/fontawesome-svg-core";
 import * as FontAwesomeRegular from "@fortawesome/free-regular-svg-icons";
 import * as FontAwesomeSolid from "@fortawesome/free-solid-svg-icons";
 import type { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type React from "@types/react";
-import type ReactDOM from "@types/react-dom";
 import type ReactRouterDOM from "@types/react-router-dom";
 import Mousetrap from "mousetrap";
 import * as ReactIntl from "react-intl";
-import * as ReactBootstrap from "react-bootstrap";
 
 declare global {
   interface Window {
@@ -111,6 +110,10 @@ interface StashPluginComponents {
   "PerformerDetailsPanel.DetailGroup": (
     props: IPerformerDetailsPanelDetailGroup
   ) => React.JSX.Element;
+  PerformerCard: (props: IPerformerCardProps) => React.JSX.Element;
+  "PerformerCard.Details": (props: IPerformerCardProps) => React.JSX.Element;
+  "PerformerCard.Image": (props: IPerformerCardProps) => React.JSX.Element;
+  "PerformerCard.Title": (props: IPerformerCardProps) => React.JSX.Element;
   PerformerSelect: (
     props: IFilterProps & IFilterValueProps<Performer>
   ) => React.JSX.Element;
@@ -147,6 +150,38 @@ interface PatchableComponentsBefore {
 }
 
 interface PatchableComponentsInstead {
+  (
+    component: "PerformerCard",
+    fn: (
+      props: IPerformerCardProps,
+      _: object,
+      Original: React.JSX
+    ) => React.JSX.Element[]
+  ): void;
+  (
+    component: "PerformerCard.Details",
+    fn: (
+      props: IPerformerCardProps,
+      _: object,
+      Original: React.JSX
+    ) => React.JSX.Element[]
+  ): void;
+  (
+    component: "PerformerCard.Image",
+    fn: (
+      props: IPerformerCardProps,
+      _: object,
+      Original: React.JSX
+    ) => React.JSX.Element[]
+  ): void;
+  (
+    component: "PerformerCard.Title",
+    fn: (
+      props: IPerformerCardProps,
+      _: object,
+      Original: React.JSX
+    ) => React.JSX.Element[]
+  ): void;
   (
     component: "PerformerDetailsPanel",
     fn: (
@@ -226,6 +261,30 @@ interface IHoverPopover extends React.PropsWithChildren {
   onOpen?: () => void;
   onClose?: () => void;
   target?: React.RefObject<HTMLElement>;
+}
+
+interface ILabeledId {
+  id: string;
+  label: string;
+}
+
+interface IPerformerCardProps {
+  performer: Performer;
+  containerWidth?: number;
+  ageFromDate?: string;
+  selecting?: boolean;
+  selected?: boolean;
+  zoomIndex?: number;
+  onSelectedChanged?: (selected: boolean, shiftKey: boolean) => void;
+  extraCriteria?: IPerformerCardExtraCriteria;
+}
+
+export interface IPerformerCardExtraCriteria {
+  scenes?: Scene[];
+  images?: Image[];
+  galleries?: Gallery[];
+  groups?: Group[];
+  performer?: ILabeledId;
 }
 
 interface ISceneCardProps {

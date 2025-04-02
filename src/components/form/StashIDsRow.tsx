@@ -3,11 +3,7 @@ import FormRowWrapper from "./FormRowWrapper";
 import SelectInputButton from "./SelectInputButton";
 import RemoveInputButton from "./RemoveInputButton";
 import { getStashboxBase } from "../../utils";
-import MergeListsButton from "./MergeListsButton";
-
-const { PluginApi } = window;
-const { React } = PluginApi;
-const { useIntl } = PluginApi.libraries.Intl;
+import React from "react";
 
 const StashIDListRow: React.FC<StashIDListRowProps> = (props) => {
   if (props.render === false) return null;
@@ -86,7 +82,7 @@ export default StashIDListRow;
 
 interface StashIDListRowProps {
   /** The IDs array for the destination performer. */
-  destinationIDs: StashIdInput[];
+  destinationIDs: StashId[];
 
   /** The row label. */
   label: string;
@@ -101,10 +97,10 @@ interface StashIDListRowProps {
   setSelectedInput: React.Dispatch<React.SetStateAction<PerformerPosition>>;
 
   /** Sets the value of the source input. */
-  setSourceValue: React.Dispatch<React.SetStateAction<StashIdInput[]>>;
+  setSourceValue: React.Dispatch<React.SetStateAction<StashId[]>>;
 
   /** The input value array for the source performer. */
-  sourceIDs: StashIdInput[];
+  sourceIDs: StashId[];
 
   /** Data for each Stash box */
   stashBoxes: StashBox[];
@@ -158,7 +154,7 @@ interface StashIDItemProps {
   position: PerformerPosition;
 
   /** The Stash ID data */
-  stashID: StashIdInput;
+  stashID: StashId;
 
   /** Data for each Stash box */
   stashBoxes: StashBox[];

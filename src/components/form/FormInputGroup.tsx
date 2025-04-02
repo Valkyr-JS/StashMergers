@@ -1,6 +1,5 @@
 import { default as cx } from "classnames";
-const { PluginApi } = window;
-const { React } = PluginApi;
+import React from "react";
 
 const FormInputGroup: React.FC<FormInputGroupProps> = (props) => {
   const classes = cx("input-group", props.className);
