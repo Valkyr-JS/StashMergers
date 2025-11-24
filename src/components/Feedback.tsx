@@ -1,12 +1,12 @@
+import classNames from "classnames";
 import React from "react";
 
 const Feedback: React.FC<FeedbackProps> = (props) => {
   if (!props.show) return null;
 
-  const classes =
-    props.type === "warning"
-      ? "invalid-feedback text-warning"
-      : "invalid-feedback";
+  const classes = classNames("invalid-feedback", {
+    "text-warning": props.type === "warning",
+  });
 
   return <div className={classes}>{props.children}</div>;
 };
