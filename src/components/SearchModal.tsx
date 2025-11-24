@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useIntl } from "react-intl";
 import { fetchPerformerData } from "../helpers";
+import Feedback from "./Feedback";
 
 const { PluginApi } = window;
 const { Icon } = PluginApi.components;
@@ -100,9 +101,9 @@ const SearchModal: React.FC<SearchModalProps> = (props) => {
                     props.selectedPerformer ? [props.selectedPerformer] : []
                   }
                 />
-                <Warning show={showWarning}>
+                <Feedback show={showWarning} type="error">
                   Source and destination performers cannot match.
-                </Warning>
+                </Feedback>
               </div>
             </div>
           </div>
@@ -154,18 +155,4 @@ interface SearchModalProps {
 
   /** Data for the performer whose profile page is currently open. */
   thisPerformer: Performer;
-}
-
-/* ---------------------------------------------------------------------------------------------- */
-/*                                             Warning                                            */
-/* ---------------------------------------------------------------------------------------------- */
-
-const Warning: React.FC<WarningProps> = (props) => {
-  if (!props.show) return null;
-
-  return <div className="invalid-feedback">{props.children}</div>;
-};
-
-interface WarningProps extends React.PropsWithChildren {
-  show: boolean;
 }
