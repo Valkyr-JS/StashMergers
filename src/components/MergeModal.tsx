@@ -31,6 +31,7 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { useIntl } from "react-intl";
+import SharedCheckboxRow from "./form/SharedCheckboxRow";
 
 const { PluginApi } = window;
 const { Icon } = PluginApi.components;
@@ -132,6 +133,22 @@ const MergeModal: React.FC<MergeModalProps> = ({
       ? setValidAliasList(true)
       : validateAliasList(pAliasList);
   }, [selectedAliasList, pAliasList]);
+
+  /* ----------------------------------- Add name to alias list ----------------------------------- */
+
+  const [addNameToAliasList, setAddNameToAliasList] = React.useState(true);
+
+  const handleChangeAddNameToAliasList = () =>
+    setAddNameToAliasList(!addNameToAliasList);
+
+  // Render if names do not match. Don't depend on which name or alias list is
+  // selected, to avoid complexity and changing the render state of the
+  // component.
+  const addNameToAliasListIsRendered =
+    sourcePerformer.name !== destinationPerformer.name;
+
+  const addNameToAliasListDescription =
+    "If the unselected performer's name is not included in the selected performer's list of aliases, enable this checkbox to include it in the final list.";
 
   /* ------------------------------------------- Gender ------------------------------------------- */
 
@@ -790,6 +807,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedAliasList}
               setSourceValue={setPAliasList}
               sourceValue={pAliasList}
+            />
+            <SharedCheckboxRow
+              description={addNameToAliasListDescription}
+              label="Add name as alias"
+              render={addNameToAliasListIsRendered}
+              setValue={handleChangeAddNameToAliasList}
+              value={addNameToAliasList}
             />
             <DropdownInputRow
               destinationValue={
