@@ -11,7 +11,7 @@ const SharedCheckboxRow: React.FC<SharedCheckboxRowProps> = (props) => {
   const name = props.label.toLowerCase().split(" ").join("-");
 
   const description = props.description ? (
-    <small>{props.description}</small>
+    <small className="ml-1">{props.description}</small>
   ) : null;
 
   return (
