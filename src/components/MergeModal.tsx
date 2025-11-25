@@ -31,6 +31,7 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { useIntl } from "react-intl";
+import SharedCheckboxRow from "./form/SharedCheckboxRow";
 
 const { PluginApi } = window;
 const { Icon } = PluginApi.components;
@@ -132,6 +133,25 @@ const MergeModal: React.FC<MergeModalProps> = ({
       ? setValidAliasList(true)
       : validateAliasList(pAliasList);
   }, [selectedAliasList, pAliasList]);
+
+  /* ----------------------------------- Add name to alias list ----------------------------------- */
+
+  const addNameToAliasListDefaultValue = true;
+  const [addNameToAliasList, setAddNameToAliasList] = React.useState(
+    addNameToAliasListDefaultValue
+  );
+
+  const handleChangeAddNameToAliasList = () =>
+    setAddNameToAliasList(!addNameToAliasList);
+
+  // Render if names do not match. Don't depend on which name or alias list is
+  // selected, to avoid complexity and changing the render state of the
+  // component.
+  const addNameToAliasListIsRendered =
+    sourcePerformer.name !== destinationPerformer.name;
+
+  const addNameToAliasListDescription =
+    "If the unselected performer's name is not included in the selected performer's list of aliases, enable this checkbox to include it in the final list.";
 
   /* ------------------------------------------- Gender ------------------------------------------- */
 
@@ -480,7 +500,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPIgnoreAutoTag(ignore_auto_tag);
     setPStashIDs(stash_ids);
 
-    /** Reset selected position */
+    // Reset selected position
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
     setSelectedAliasList(alias_list.length ? "source" : "destination");
@@ -506,6 +526,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
     setSelectedStashIDs(stash_ids.length ? "source" : "destination");
+
+    // Reset remaining
+    setAddNameToAliasList(addNameToAliasListDefaultValue);
   };
 
   // Updates on source performer change
@@ -535,6 +558,23 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /** Handler for clicking the confirm button. */
   const handleConfirm = () => {
+    // Process alias list
+    const processedAliasList =
+      selectedAliasList === "source"
+        ? pAliasList.filter((v) => v !== "") // Filter out empty inputs
+        : destinationPerformer.alias_list;
+
+    // Get the unselected performer name
+    const unselectedName =
+      selectedName === "source"
+        ? destinationPerformer.name
+        : sourcePerformer.name;
+
+    // Add the unselected name to the alias list if the user has enabled it and
+    // it isn't already included in the list
+    if (addNameToAliasList && !processedAliasList.includes(unselectedName))
+      processedAliasList.push(unselectedName);
+
     // Get the updated data
     const updatedData: PerformerUpdateInput = {
       id: destinationPerformer.id,
@@ -542,10 +582,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
         selectedName === "source"
           ? sourcePerformer.name
           : destinationPerformer.name,
-      alias_list:
-        selectedAliasList === "source"
-          ? pAliasList.filter((v) => v !== "") // Filter out empty inputs
-          : destinationPerformer.alias_list,
+      alias_list: processedAliasList,
       birthdate:
         selectedBirthdate === "source"
           ? !!pBirthdate
@@ -790,6 +827,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSelectedInput={setSelectedAliasList}
               setSourceValue={setPAliasList}
               sourceValue={pAliasList}
+            />
+            <SharedCheckboxRow
+              description={addNameToAliasListDescription}
+              label="Add name as alias"
+              render={addNameToAliasListIsRendered}
+              setValue={handleChangeAddNameToAliasList}
+              value={addNameToAliasList}
             />
             <DropdownInputRow
               destinationValue={
