@@ -478,7 +478,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
   // objects need to be converted to arrays and compared so that fields with
   // matching keys are linked.
   const destinationCustomFieldsValues: CustomFieldValue[] = [];
-  const sourceCustomFieldsValues: CustomFieldValue[] = [];
+
+  // The final, recompiled custom fields object.
+  const [pCustomFields, setPCustomFields] = React.useState<{
+    [key: string]: CustomFieldValue;
+  }>({});
+
+  // The value of each source custom field.
+  const [sourceCustomFields, setSourceCustomFields] = React.useState<
+    CustomFieldValue[]
+  >([]);
 
   // Create a list of unique custom field property keys
   const destinationCustomFieldKeys = Object.keys(
@@ -502,11 +511,20 @@ const MergeModal: React.FC<MergeModalProps> = ({
     );
 
     // Source performer
-    sourceCustomFieldsValues.push(
+    setSourceCustomFields([
+      ...sourceCustomFields,
       sourceCustomFieldKeys.includes(key)
         ? sourcePerformer.custom_fields[key]
-        : null
-    );
+        : null,
+    ]);
+
+    // Compiled object
+    setPCustomFields({
+      ...pCustomFields,
+      [key]: destinationCustomFieldKeys.includes(key)
+        ? destinationPerformer.custom_fields[key]
+        : sourcePerformer.custom_fields[key],
+    });
   }
 
   // The selected position of each field. Default to "destination" unless it is
@@ -518,16 +536,6 @@ const MergeModal: React.FC<MergeModalProps> = ({
       v === null ? "source" : "destination"
     )
   );
-
-  // The value of each source custom field.
-  const [sourceCustomFields, setSourceCustomFields] = React.useState<
-    CustomFieldValue[]
-  >(sourceCustomFieldsValues);
-
-  // The final, recompiled custom fields object.
-  const [pCustomFields, setPCustomFields] = React.useState<
-    Performer["custom_fields"]
-  >({});
 
   /* ------------------------------------------- General ------------------------------------------ */
 
@@ -559,6 +567,29 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPIgnoreAutoTag(ignore_auto_tag);
     setPStashIDs(stash_ids);
 
+    // Reste custom fields final object and source values array.
+    setSourceCustomFields([]);
+    setPCustomFields({});
+    for (let i = 0; i < customFieldLabels.length; i++) {
+      const key = customFieldLabels[i];
+
+      // Source performer
+      setSourceCustomFields([
+        ...sourceCustomFields,
+        sourceCustomFieldKeys.includes(key)
+          ? sourcePerformer.custom_fields[key]
+          : null,
+      ]);
+
+      // Compiled object
+      setPCustomFields({
+        ...pCustomFields,
+        [key]: destinationCustomFieldKeys.includes(key)
+          ? destinationPerformer.custom_fields[key]
+          : sourcePerformer.custom_fields[key],
+      });
+    }
+
     // Reset selected position
     setSelectedName("source");
     setSelectedDisambiguation(disambiguation ? "source" : "destination");
@@ -585,6 +616,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
     setSelectedStashIDs(stash_ids.length ? "source" : "destination");
+    setSelectedCustomFields(
+      destinationCustomFieldsValues.map((v) =>
+        v === null ? "source" : "destination"
+      )
+    );
 
     // Reset remaining
     setAddNameToAliasList(addNameToAliasListDefaultValue);
@@ -658,6 +694,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
           : destinationPerformer.circumcised,
       country:
         selectedCountry === "source" ? pCountry : destinationPerformer.country,
+      custom_fields: {
+        full: pCustomFields,
+      },
       death_date:
         selectedDeathDate === "source"
           ? !!pDeathDate
