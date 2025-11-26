@@ -3,103 +3,41 @@ import FormRowWrapper from "./FormRowWrapper";
 import FormInputGroup from "./FormInputGroup";
 import SelectInputButton from "./SelectInputButton";
 
+/* ---------------------------------------------------------------------------------------------- */
+/*                                CustomFieldsPropertyRow component                               */
+/* ---------------------------------------------------------------------------------------------- */
+
 const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
   props
 ) => {
   const name = props.label.toLowerCase().split(" ").join("-");
 
-  const renderInputGroup = (
-    value: CustomFieldValue,
-    position: PerformerPosition
-  ) => {
-    const isReadOnly = position === "destination";
-    switch (typeof value) {
-      case "boolean":
-        /** On change handler for the source input. */
-        const handleBooleanSourceChange:
-          | React.ChangeEventHandler<HTMLInputElement>
-          | undefined = isReadOnly
-          ? undefined
-          : () => props.setSourceValue(!props.sourceValue);
-
-        return (
-          <div className="form-check ml-3">
-            <input
-              checked={value}
-              className="form-check-input position-static"
-              id={name + "-" + position}
-              name={name + "-" + position}
-              onChange={handleBooleanSourceChange}
-              type="checkbox"
-              value={value.toString()}
-            />
-          </div>
-        );
-      case "number":
-        /** On change handler for the source input. */
-        const handleNumberSourceChange:
-          | React.ChangeEventHandler<HTMLInputElement>
-          | undefined = isReadOnly
-          ? undefined
-          : (e) => {
-              if (props.setSourceValue) props.setSourceValue(+e.target.value);
-            };
-
-        return (
-          <input
-            className="bg-secondary text-white border-secondary form-control"
-            name={position + "-" + name}
-            onChange={handleNumberSourceChange}
-            readOnly={isReadOnly}
-            type="number"
-            value={value}
-          />
-        );
-
-      case "undefined":
-        return null;
-      default:
-        // Treat all other types as a string
-        const stringValue = JSON.stringify(value);
-
-        /** On change handler for the source input. */
-        const handleStringSourceChange:
-          | React.ChangeEventHandler<HTMLInputElement>
-          | undefined = isReadOnly
-          ? undefined
-          : (e) => {
-              if (props.setSourceValue) props.setSourceValue(e.target.value);
-            };
-
-        return (
-          <input
-            className="bg-secondary text-white border-secondary form-control"
-            name={position + "-" + name}
-            onChange={handleStringSourceChange}
-            readOnly={isReadOnly}
-            value={stringValue}
-          />
-        );
-    }
-  };
-
   return (
     <FormRowWrapper label={props.label}>
       <FormInputGroup>
         <SelectInputButton
-          selected={props.selectedInput === "destination"}
           performerPosition="destination"
+          selected={props.selectedInput === "destination"}
           setSelected={props.setSelectedInput}
         />
-        {renderInputGroup(props.destinationValue, "destination")}
+        <MixedInputGroup
+          name={name}
+          position="destination"
+          value={props.destinationValue}
+        />
       </FormInputGroup>
       <FormInputGroup>
         <SelectInputButton
-          selected={props.selectedInput === "source"}
           performerPosition="source"
+          selected={props.selectedInput === "source"}
           setSelected={props.setSelectedInput}
         />
-        {renderInputGroup(props.sourceValue, "source")}
+        <MixedInputGroup
+          name={name}
+          position="source"
+          setSourceValue={props.setSourceValue}
+          value={props.sourceValue}
+        />
       </FormInputGroup>
     </FormRowWrapper>
   );
@@ -126,4 +64,98 @@ interface CustomFieldsPropertyRowProps {
 
   /** The custom field value for the source performer. */
   sourceValue: CustomFieldValue;
+}
+
+/* ---------------------------------------------------------------------------------------------- */
+/*                                    MixedInputGroup component                                   */
+/* ---------------------------------------------------------------------------------------------- */
+
+const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
+  const isReadOnly =
+    props.position === "destination" || props.setSourceValue === undefined;
+  switch (typeof props.value) {
+    case "boolean":
+      /** On change handler for the source input. */
+      const handleBooleanSourceChange:
+        | React.ChangeEventHandler<HTMLInputElement>
+        | undefined = isReadOnly
+        ? undefined
+        : () => {
+            if (props.setSourceValue) props.setSourceValue(!props.value);
+          };
+
+      return (
+        <div className="form-check ml-3">
+          <input
+            checked={props.value}
+            className="form-check-input position-static"
+            id={props.position + "-" + props.name}
+            name={props.position + "-" + props.name}
+            onChange={handleBooleanSourceChange}
+            type="checkbox"
+            value={props.value.toString()}
+          />
+        </div>
+      );
+    case "number":
+      /** On change handler for the source input. */
+      const handleNumberSourceChange:
+        | React.ChangeEventHandler<HTMLInputElement>
+        | undefined = isReadOnly
+        ? undefined
+        : (e) => {
+            if (props.setSourceValue) props.setSourceValue(+e.target.value);
+          };
+
+      return (
+        <input
+          className="bg-secondary text-white border-secondary form-control"
+          name={props.position + "-" + props.name}
+          onChange={handleNumberSourceChange}
+          readOnly={isReadOnly}
+          type="number"
+          value={props.value}
+        />
+      );
+
+    case "undefined":
+      return null;
+    default:
+      // Treat all other types as a string
+      const stringValue = JSON.stringify(props.value);
+
+      /** On change handler for the source input. */
+      const handleStringSourceChange:
+        | React.ChangeEventHandler<HTMLInputElement>
+        | undefined = isReadOnly
+        ? undefined
+        : (e) => {
+            if (props.setSourceValue) props.setSourceValue(e.target.value);
+          };
+
+      return (
+        <input
+          className="bg-secondary text-white border-secondary form-control"
+          name={props.position + "-" + props.name}
+          onChange={handleStringSourceChange}
+          readOnly={isReadOnly}
+          value={stringValue}
+        />
+      );
+  }
+};
+
+interface MixedInputGroupProps {
+  /** The name attribute value */
+  name: string;
+
+  /** The custom field value for the position performer. */
+  position: PerformerPosition;
+
+  /** Sets the value of the source input. If not provided, the input is marked
+   * as read-only. */
+  setSourceValue?: CustomFieldsPropertyRowProps["setSourceValue"];
+
+  /** The custom field value for the position performer. */
+  value: CustomFieldValue;
 }
