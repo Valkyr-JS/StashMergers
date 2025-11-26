@@ -32,6 +32,7 @@ import { Modal } from "react-bootstrap";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { useIntl } from "react-intl";
 import SharedCheckboxRow from "./form/SharedCheckboxRow";
+import CustomFieldsRow from "./form/CustomFieldsRow";
 
 const { PluginApi } = window;
 const { Icon } = PluginApi.components;
@@ -1215,6 +1216,13 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPStashIDs}
               sourceIDs={pStashIDs}
               stashBoxes={props.stashBoxes}
+            />
+            <CustomFieldsRow
+              destinationValues={destinationCustomFieldsValues}
+              labels={customFieldLabels}
+              selectedInputs={selectedCustomFields}
+              setSourceValues={setSourceCustomFields}
+              sourceValues={sourceCustomFields}
             />
           </form>
         </div>

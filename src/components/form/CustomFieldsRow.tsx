@@ -8,6 +8,20 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
   const intl = useIntl();
 
+  const handleUpdateSource = (value: CustomFieldValue, index: number) => {
+    const updatedSourceValues = props.sourceValues.map((v, i) =>
+      i === index ? value : v
+    );
+    props.setSourceValues(updatedSourceValues);
+  };
+
+  const handleUpdateSelected = (position: PerformerPosition, index: number) => {
+    const updatedSelectedPositions = props.selectedInputs.map((p, i) =>
+      i === index ? position : p
+    );
+    props.setSourceValues(updatedSelectedPositions);
+  };
+
   return (
     <>
       <div className="px-3 pt-3 row">
@@ -16,11 +30,41 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
           <h5>{intl.formatMessage({ id: "custom_fields.title" })}</h5>
         </div>
       </div>
+      {props.labels.map((label, i) => (
+        <CustomFieldsPropertyRow
+          destinationValue={props.destinationValues[i] ?? null}
+          index={i}
+          label={label}
+          selectedInput={props.selectedInputs[i] ?? "source"}
+          sourceValue={props.sourceValues[i] ?? null}
+          setSourceValue={handleUpdateSource}
+          setSelectedInput={handleUpdateSelected}
+        />
+      ))}
     </>
   );
 };
 
-interface CustomFieldsRowProps {}
+export default CustomFieldsRow;
+
+interface CustomFieldsRowProps {
+  /** A pre-ordered array of the destination performer's custom field property
+   * values. */
+  destinationValues: CustomFieldValue[];
+
+  /** A pre-ordered array of the custom field property keys. */
+  labels: string[];
+
+  /** Dictates whether the destination or source value should be used on update. */
+  selectedInputs: PerformerPosition[];
+
+  /** Sets the array of values of the source inputs. */
+  setSourceValues: React.Dispatch<React.SetStateAction<CustomFieldValue[]>>;
+
+  /** A pre-ordered array of the source performer's custom field property
+   * values. */
+  sourceValues: CustomFieldValue[];
+}
 
 /* ---------------------------------------------------------------------------------------------- */
 /*                                CustomFieldsPropertyRow component                               */
@@ -31,15 +75,23 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
 ) => {
   const name = props.label.toLowerCase().split(" ").join("-");
 
+  const [selectedInput, setSelectedInput] = React.useState(props.selectedInput);
+
+  React.useEffect(
+    () => props.setSelectedInput(selectedInput, props.index),
+    [selectedInput]
+  );
+
   return (
     <FormRowWrapper label={props.label}>
       <FormInputGroup>
         <SelectInputButton
           performerPosition="destination"
-          selected={props.selectedInput === "destination"}
-          setSelected={props.setSelectedInput}
+          selected={selectedInput === "destination"}
+          setSelected={setSelectedInput}
         />
         <MixedInputGroup
+          index={props.index}
           name={name}
           position="destination"
           value={props.destinationValue}
@@ -48,10 +100,11 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
       <FormInputGroup>
         <SelectInputButton
           performerPosition="source"
-          selected={props.selectedInput === "source"}
-          setSelected={props.setSelectedInput}
+          selected={selectedInput === "source"}
+          setSelected={setSelectedInput}
         />
         <MixedInputGroup
+          index={props.index}
           name={name}
           position="source"
           setSourceValue={props.setSourceValue}
@@ -66,6 +119,9 @@ interface CustomFieldsPropertyRowProps {
   /** The custom field value for the destination performer. */
   destinationValue: CustomFieldValue;
 
+  /** The zero-based index of the custom fields row. */
+  index: number;
+
   /** The row label. */
   label: string;
 
@@ -73,11 +129,11 @@ interface CustomFieldsPropertyRowProps {
   selectedInput: PerformerPosition;
 
   /** Sets whether the destination or source value should be used on update. */
-  setSelectedInput: React.Dispatch<React.SetStateAction<PerformerPosition>>;
+  setSelectedInput: (position: PerformerPosition, index: number) => void;
 
   /** Sets the value of the source input. If not provided, the input is marked
    * as read-only. */
-  setSourceValue: React.Dispatch<React.SetStateAction<CustomFieldValue>>;
+  setSourceValue?: (value: CustomFieldValue, index: number) => void;
 
   /** The custom field value for the source performer. */
   sourceValue: CustomFieldValue;
@@ -98,7 +154,8 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
         | undefined = isReadOnly
         ? undefined
         : () => {
-            if (props.setSourceValue) props.setSourceValue(!props.value);
+            if (props.setSourceValue)
+              props.setSourceValue(!props.value, props.index);
           };
 
       return (
@@ -121,7 +178,8 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
         | undefined = isReadOnly
         ? undefined
         : (e) => {
-            if (props.setSourceValue) props.setSourceValue(+e.target.value);
+            if (props.setSourceValue)
+              props.setSourceValue(+e.target.value, props.index);
           };
 
       return (
@@ -148,7 +206,7 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
         ? undefined
         : (e) => {
             if (props.setSourceValue)
-              props.setSourceValue(JSON.parse(e.target.value));
+              props.setSourceValue(JSON.parse(e.target.value), props.index);
           };
 
       return (
@@ -164,6 +222,9 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
 };
 
 interface MixedInputGroupProps {
+  /** The zero-based index of the custom fields row. */
+  index: number;
+
   /** The name attribute value */
   name: string;
 
