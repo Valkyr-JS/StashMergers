@@ -473,21 +473,54 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /* ---------------------------------------- Custom fields --------------------------------------- */
 
-  /**
-   * Custom fields are different to others as they can contain a mix of selected
-   * positions. Before setting the initial states, both destination and source
-   * objects need to be converted to arrays and compared so that fields with
-   * matching keys are linked.
-   */
+  // Custom fields are different to others as they can contain a mix of selected
+  // positions. Before setting the initial states, both destination and source
+  // objects need to be converted to arrays and compared so that fields with
+  // matching keys are linked.
   const destinationCustomFieldsValues: CustomFieldValue[] = [];
-
   const sourceCustomFieldsValues: CustomFieldValue[] = [];
 
-  const customFieldLabels: string[] = [];
+  // Create a list of unique custom field property keys
+  const destinationCustomFieldKeys = Object.keys(
+    destinationPerformer.custom_fields
+  );
+  const sourceCustomFieldKeys = Object.keys(sourcePerformer.custom_fields);
+  const customFieldLabels: string[] = [
+    ...new Set([
+      ...destinationCustomFieldKeys,
+      ...Object.keys(sourcePerformer.custom_fields),
+    ]),
+  ];
 
-  // The selected position of each field.
-  const [selectedCustomFields, setSelectedCustomFields] =
-    React.useState<PerformerPosition[]>();
+  // Loop through each custom field label and apply the value for destination
+  // and source performer values to their respective arrays.
+  for (let i = 0; i < customFieldLabels.length; i++) {
+    const key = customFieldLabels[i];
+
+    // Destination performer
+    destinationCustomFieldsValues.push(
+      destinationCustomFieldKeys.includes(key)
+        ? destinationPerformer.custom_fields[key]
+        : null
+    );
+
+    // Source performer
+    sourceCustomFieldsValues.push(
+      sourceCustomFieldKeys.includes(key)
+        ? sourcePerformer.custom_fields[key]
+        : null
+    );
+  }
+
+  // The selected position of each field. Default to "destination" unless it is
+  // null.
+  const [selectedCustomFields, setSelectedCustomFields] = React.useState<
+    PerformerPosition[]
+  >(
+    destinationCustomFieldsValues.map((v) =>
+      v === null ? "source" : "destination"
+    )
+  );
 
   // The value of each source custom field.
   const [sourceCustomFields, setSourceCustomFields] = React.useState<
