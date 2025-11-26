@@ -8,6 +8,8 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
   const intl = useIntl();
 
+  console.log("CustomFieldsRowProps: ", props)
+
   const handleUpdateSource = (value: CustomFieldValue, index: number) => {
     const updatedSourceValues = props.sourceValues.map((v, i) =>
       i === index ? value : v
