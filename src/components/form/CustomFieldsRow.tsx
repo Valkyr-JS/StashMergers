@@ -147,7 +147,8 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
         | undefined = isReadOnly
         ? undefined
         : (e) => {
-            if (props.setSourceValue) props.setSourceValue(e.target.value);
+            if (props.setSourceValue)
+              props.setSourceValue(JSON.parse(e.target.value));
           };
 
       return (
