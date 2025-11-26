@@ -486,10 +486,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
   );
   const sourceCustomFieldKeys = Object.keys(sourcePerformer.custom_fields);
   const customFieldLabels: string[] = [
-    ...new Set([
-      ...destinationCustomFieldKeys,
-      ...Object.keys(sourcePerformer.custom_fields),
-    ]),
+    ...new Set([...destinationCustomFieldKeys, ...sourceCustomFieldKeys]),
   ];
 
   // Loop through each custom field label and apply the value for destination
