@@ -63,6 +63,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     career_length,
     circumcised,
     country,
+    custom_fields,
     death_date,
     details,
     disambiguation,
@@ -469,6 +470,34 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   const [pStashIDs, setPStashIDs] =
     React.useState<Performer["stash_ids"]>(stash_ids);
+
+  /* ---------------------------------------- Custom fields --------------------------------------- */
+
+  /**
+   * Custom fields are different to others as they can contain a mix of selected
+   * positions. Before setting the initial states, both destination and source
+   * objects need to be converted to arrays and compared so that fields with
+   * matching keys are linked.
+   */
+  const destinationCustomFieldsValues: CustomFieldValue[] = [];
+
+  const sourceCustomFieldsValues: CustomFieldValue[] = [];
+
+  const customFieldLabels: string[] = [];
+
+  // The selected position of each field.
+  const [selectedCustomFields, setSelectedCustomFields] =
+    React.useState<PerformerPosition[]>();
+
+  // The value of each source custom field.
+  const [sourceCustomFields, setSourceCustomFields] = React.useState<
+    CustomFieldValue[]
+  >(sourceCustomFieldsValues);
+
+  // The final, recompiled custom fields object.
+  const [pCustomFields, setPCustomFields] = React.useState<
+    Performer["custom_fields"]
+  >({});
 
   /* ------------------------------------------- General ------------------------------------------ */
 

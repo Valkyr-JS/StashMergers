@@ -62,8 +62,6 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
   );
 };
 
-type CustomFieldValue = unknown;
-
 interface CustomFieldsPropertyRowProps {
   /** The custom field value for the destination performer. */
   destinationValue: CustomFieldValue;
