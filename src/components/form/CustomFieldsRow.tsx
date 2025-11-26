@@ -1,7 +1,26 @@
 import React from "react";
+import { useIntl } from "react-intl";
 import FormRowWrapper from "./FormRowWrapper";
 import FormInputGroup from "./FormInputGroup";
 import SelectInputButton from "./SelectInputButton";
+
+const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
+
+  return (
+    <>
+      <div className="px-3 pt-3 row">
+        <div className="col-lg-3" />
+        <div className="col-lg-9">
+          <h5>{intl.formatMessage({ id: "custom_fields.title" })}</h5>
+        </div>
+      </div>
+    </>
+  );
+};
+
+interface CustomFieldsRowProps {}
 
 /* ---------------------------------------------------------------------------------------------- */
 /*                                CustomFieldsPropertyRow component                               */
