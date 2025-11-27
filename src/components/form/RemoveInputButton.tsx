@@ -6,7 +6,7 @@ const { Icon } = window.PluginApi.components;
 const RemoveInputButton: React.FC<RemoveInputButtonProps> = (props) => {
   // Component
   const Button = () => (
-    <button type="button" className="btn btn-danger" onClick={props.onClick}>
+    <button type="button" {...props} className="btn btn-danger">
       <Icon icon={faMinus} />
     </button>
   );
@@ -22,10 +22,12 @@ const RemoveInputButton: React.FC<RemoveInputButtonProps> = (props) => {
 
 export default RemoveInputButton;
 
-interface RemoveInputButtonProps {
+interface RemoveInputButtonProps
+  extends React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
   /** If `true`, wraps the button in a class element to style it as linked to an
    * input. */
   appended?: boolean;
-
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
 }

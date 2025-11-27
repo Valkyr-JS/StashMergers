@@ -1,8 +1,8 @@
 import React from "react";
 import { useIntl } from "react-intl";
-import FormRowWrapper from "./FormRowWrapper";
 import FormInputGroup from "./FormInputGroup";
 import SelectInputButton from "./SelectInputButton";
+import RemoveInputButton from "./RemoveInputButton";
 
 const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
@@ -78,39 +78,59 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
 ) => {
   const name = props.label.toLowerCase().split(" ").join("-");
 
+  const removeButtonLabel = `Remove ${props.label} from the merged custom fields`;
+
   const handleSelectInput = (position: PerformerPosition) =>
     props.setSelectedInput(position, props.index);
 
+  // TODO
+  const handleRemoveField = () => {
+    console.log("removed - TODO!!");
+  };
+
   return (
-    <FormRowWrapper label={props.label}>
-      <FormInputGroup>
-        <SelectInputButton
-          performerPosition="destination"
-          selected={props.selectedInput === "destination"}
-          setSelected={() => handleSelectInput("destination")}
+    <div className="px-3 pt-3 row">
+      <div className="col-form-label col-lg-3">
+        <label className="form-label">{props.label}</label>
+      </div>
+      <div className="col-lg-8">
+        <div className="row">
+          <FormInputGroup>
+            <SelectInputButton
+              performerPosition="destination"
+              selected={props.selectedInput === "destination"}
+              setSelected={() => handleSelectInput("destination")}
+            />
+            <MixedInputGroup
+              index={props.index}
+              name={name}
+              position="destination"
+              value={props.destinationValue}
+            />
+          </FormInputGroup>
+          <FormInputGroup>
+            <SelectInputButton
+              performerPosition="source"
+              selected={props.selectedInput === "source"}
+              setSelected={() => handleSelectInput("source")}
+            />
+            <MixedInputGroup
+              index={props.index}
+              name={name}
+              position="source"
+              setSourceValue={props.setSourceValue}
+              value={props.sourceValue}
+            />
+          </FormInputGroup>
+        </div>
+      </div>
+      <div className="col-lg-1">
+        <RemoveInputButton
+          aria-label={removeButtonLabel}
+          onClick={handleRemoveField}
         />
-        <MixedInputGroup
-          index={props.index}
-          name={name}
-          position="destination"
-          value={props.destinationValue}
-        />
-      </FormInputGroup>
-      <FormInputGroup>
-        <SelectInputButton
-          performerPosition="source"
-          selected={props.selectedInput === "source"}
-          setSelected={() => handleSelectInput("source")}
-        />
-        <MixedInputGroup
-          index={props.index}
-          name={name}
-          position="source"
-          setSourceValue={props.setSourceValue}
-          value={props.sourceValue}
-        />
-      </FormInputGroup>
-    </FormRowWrapper>
+      </div>
+    </div>
   );
 };
 
