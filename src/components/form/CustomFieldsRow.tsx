@@ -8,11 +8,9 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
   const intl = useIntl();
 
-  console.log("CustomFieldsRowProps: ", props);
-
-  const handleUpdateSource = (value: CustomFieldValue, index: number) => {
+  const handleUpdateSource = (val: CustomFieldValue, index: number) => {
     const updatedSourceValues = props.sourceValues.map((v, i) =>
-      i === index ? value : v
+      i === index ? val : v
     );
     props.setSourceValues(updatedSourceValues);
   };
@@ -21,7 +19,7 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
     const updatedSelectedPositions = props.selectedInputs.map((p, i) =>
       i === index ? position : p
     );
-    props.setSourceValues(updatedSelectedPositions);
+    props.setSelectedInputs(updatedSelectedPositions);
   };
 
   return (
@@ -59,6 +57,9 @@ interface CustomFieldsRowProps {
 
   /** Dictates whether the destination or source value should be used on update. */
   selectedInputs: PerformerPosition[];
+
+  /** Sets the array of performer positions for the inputs. */
+  setSelectedInputs: React.Dispatch<React.SetStateAction<PerformerPosition[]>>;
 
   /** Sets the array of values of the source inputs. */
   setSourceValues: React.Dispatch<React.SetStateAction<CustomFieldValue[]>>;

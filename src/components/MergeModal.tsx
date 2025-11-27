@@ -1214,8 +1214,9 @@ const MergeModal: React.FC<MergeModalProps> = ({
               destinationValues={destinationCustomFieldsValues}
               labels={customFieldLabels}
               selectedInputs={selectedCustomFields}
+              setSelectedInputs={setSelectedCustomFields}
               setSourceValues={setSourceCustomFields}
-              sourceValues={sourceCustomFieldsValues}
+              sourceValues={sourceCustomFields}
             />
           </form>
         </div>
