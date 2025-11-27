@@ -563,27 +563,8 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPImagePath(image_path);
     setPIgnoreAutoTag(ignore_auto_tag);
     setPStashIDs(stash_ids);
-
-    // Reset custom fields final object and source values array.
-    setSourceCustomFields([]);
-    setPCustomFields({});
-    for (let i = 0; i < customFieldLabels.length; i++) {
-      const key = customFieldLabels[i];
-
-      // Source performer
-      setSourceCustomFields([
-        ...sourceCustomFields,
-        sourceCustomFieldKeys.includes(key) ? custom_fields[key] : undefined,
-      ]);
-
-      // Compiled object
-      setPCustomFields({
-        ...pCustomFields,
-        [key]: destinationCustomFieldKeys.includes(key)
-          ? destinationPerformer.custom_fields[key]
-          : custom_fields[key],
-      });
-    }
+    setSourceCustomFields(sourceCustomFieldsValues);
+    setPCustomFields(mappedCustomFields);
 
     // Reset selected position
     setSelectedName("source");

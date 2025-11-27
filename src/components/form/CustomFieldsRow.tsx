@@ -78,20 +78,16 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
 ) => {
   const name = props.label.toLowerCase().split(" ").join("-");
 
-  const [selectedInput, setSelectedInput] = React.useState(props.selectedInput);
-
-  React.useEffect(
-    () => props.setSelectedInput(selectedInput, props.index),
-    [selectedInput]
-  );
+  const handleSelectInput = (position: PerformerPosition) =>
+    props.setSelectedInput(position, props.index);
 
   return (
     <FormRowWrapper label={props.label}>
       <FormInputGroup>
         <SelectInputButton
           performerPosition="destination"
-          selected={selectedInput === "destination"}
-          setSelected={setSelectedInput}
+          selected={props.selectedInput === "destination"}
+          setSelected={() => handleSelectInput("destination")}
         />
         <MixedInputGroup
           index={props.index}
@@ -103,8 +99,8 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
       <FormInputGroup>
         <SelectInputButton
           performerPosition="source"
-          selected={selectedInput === "source"}
-          setSelected={setSelectedInput}
+          selected={props.selectedInput === "source"}
+          setSelected={() => handleSelectInput("source")}
         />
         <MixedInputGroup
           index={props.index}
