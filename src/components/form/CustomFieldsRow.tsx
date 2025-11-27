@@ -22,6 +22,13 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
     props.setSelectedInputs(updatedSelectedPositions);
   };
 
+  const handleRemoveField = (index: number) => {
+    const updatedFieldsToRemove = props.fieldsToRemove.map((r, i) =>
+      i === index ? true : r
+    );
+    props.setFieldsToRemove(updatedFieldsToRemove);
+  };
+
   return (
     <>
       <div className="px-3 pt-3 row">
@@ -39,6 +46,8 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
           sourceValue={props.sourceValues[i]}
           setSourceValue={handleUpdateSource}
           setSelectedInput={handleUpdateSelected}
+          setWillRemove={handleRemoveField}
+          willRemove={props.fieldsToRemove[i]}
         />
       ))}
     </>
@@ -52,11 +61,18 @@ interface CustomFieldsRowProps {
    * values. */
   destinationValues: CustomFieldValue[];
 
+  /** A pre-ordered array of booleans indicating whether a field should be
+   * removed from the final merge. */
+  fieldsToRemove: boolean[];
+
   /** A pre-ordered array of the custom field property keys. */
   labels: string[];
 
   /** Dictates whether the destination or source value should be used on update. */
   selectedInputs: PerformerPosition[];
+
+  /** Sets the array of fields to be removed on merge. */
+  setFieldsToRemove: React.Dispatch<React.SetStateAction<boolean[]>>;
 
   /** Sets the array of performer positions for the inputs. */
   setSelectedInputs: React.Dispatch<React.SetStateAction<PerformerPosition[]>>;
@@ -76,6 +92,8 @@ interface CustomFieldsRowProps {
 const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
   props
 ) => {
+  if (props.willRemove) return null;
+
   const name = props.label.toLowerCase().split(" ").join("-");
 
   const removeButtonLabel = `Remove ${props.label} from the merged custom fields`;
@@ -83,10 +101,7 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
   const handleSelectInput = (position: PerformerPosition) =>
     props.setSelectedInput(position, props.index);
 
-  // TODO
-  const handleRemoveField = () => {
-    console.log("removed - TODO!!");
-  };
+  const handleRemoveField = () => props.setWillRemove(props.index);
 
   return (
     <div className="px-3 pt-3 row">
@@ -154,8 +169,14 @@ interface CustomFieldsPropertyRowProps {
    * as read-only. */
   setSourceValue?: (value: CustomFieldValue, index: number) => void;
 
+  /** Marks the field for removal on merge. */
+  setWillRemove: (index: number) => void;
+
   /** The custom field value for the source performer. */
   sourceValue: CustomFieldValue;
+
+  /** Dictates whether the field has been marked for removal on merge. */
+  willRemove: boolean;
 }
 
 /* ---------------------------------------------------------------------------------------------- */

@@ -521,6 +521,11 @@ const MergeModal: React.FC<MergeModalProps> = ({
     CustomFieldValue[]
   >(sourceCustomFieldsValues);
 
+  // Which fields have been marked for removal.
+  const [fieldsToRemove, setFieldsToRemove] = React.useState(
+    destinationCustomFieldsValues.map(() => false)
+  );
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   /** Resets all fields to their original state. */
@@ -586,6 +591,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
     // Reset remaining
     setAddNameToAliasList(addNameToAliasListDefaultValue);
+    setFieldsToRemove(destinationCustomFieldsValues.map(() => false));
   };
 
   // Updates on source performer change
@@ -1198,8 +1204,10 @@ const MergeModal: React.FC<MergeModalProps> = ({
             />
             <CustomFieldsRow
               destinationValues={destinationCustomFieldsValues}
+              fieldsToRemove={fieldsToRemove}
               labels={customFieldLabels}
               selectedInputs={selectedCustomFields}
+              setFieldsToRemove={setFieldsToRemove}
               setSelectedInputs={setSelectedCustomFields}
               setSourceValues={setSourceCustomFields}
               sourceValues={sourceCustomFields}
