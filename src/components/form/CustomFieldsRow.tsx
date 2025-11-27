@@ -149,30 +149,6 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
   const isReadOnly =
     props.position === "destination" || props.setSourceValue === undefined;
   switch (typeof props.value) {
-    case "boolean":
-      /** On change handler for the source input. */
-      const handleBooleanSourceChange:
-        | React.ChangeEventHandler<HTMLInputElement>
-        | undefined = isReadOnly
-        ? undefined
-        : () => {
-            if (props.setSourceValue)
-              props.setSourceValue(!props.value, props.index);
-          };
-
-      return (
-        <div className="form-check ml-3">
-          <input
-            checked={props.value}
-            className="form-check-input position-static"
-            id={props.position + "-" + props.name}
-            name={props.position + "-" + props.name}
-            onChange={handleBooleanSourceChange}
-            type="checkbox"
-            value={props.value.toString()}
-          />
-        </div>
-      );
     case "number":
       /** On change handler for the source input. */
       const handleNumberSourceChange:
