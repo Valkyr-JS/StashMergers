@@ -645,13 +645,17 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
     for (let i = 0; i < customFieldLabels.length; i++) {
       const key = customFieldLabels[i];
-      const value =
-        selectedCustomFields[i] === "source"
-          ? sourceCustomFields[i]
-          : destinationCustomFieldsValues[i];
 
-      // Add the property to the custom fields object unless it is undefined.
-      if (typeof value !== "undefined") mappedCustomFields[key] = value;
+      // Only add if the field is not marked for removal
+      if (!fieldsToRemove[i]) {
+        const value =
+          selectedCustomFields[i] === "source"
+            ? sourceCustomFields[i]
+            : destinationCustomFieldsValues[i];
+
+        // Add the property to the custom fields object unless it is undefined.
+        if (typeof value !== "undefined") mappedCustomFields[key] = value;
+      }
     }
 
     const customFieldsInput: CustomFieldsInput = {
