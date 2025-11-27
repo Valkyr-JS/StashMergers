@@ -178,8 +178,12 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
         </code>
       );
     default:
-      // Treat all other types as a string
-      const stringValue = JSON.stringify(props.value);
+      // If the value is not a string, convert it to one. Don't convert values
+      // that are already strings, to avoid double-quotes in the input.
+      const stringValue =
+        typeof props.value === "string"
+          ? props.value
+          : JSON.stringify(props.value);
 
       /** On change handler for the source input. */
       const handleStringSourceChange:
@@ -187,8 +191,14 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
         | undefined = isReadOnly
         ? undefined
         : (e) => {
+            // Convert the value back from a string if it wasn't one previously.
+            const updatedValue =
+              typeof props.value === "string"
+                ? e.target.value
+                : JSON.parse(e.target.value);
+
             if (props.setSourceValue)
-              props.setSourceValue(JSON.parse(e.target.value), props.index);
+              props.setSourceValue(updatedValue, props.index);
           };
 
       return (
