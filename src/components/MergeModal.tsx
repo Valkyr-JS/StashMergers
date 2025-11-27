@@ -500,12 +500,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
     destinationCustomFieldsValues.push(
       destinationCustomFieldKeys.includes(key)
         ? destinationPerformer.custom_fields[key]
-        : null
+        : undefined
     );
 
     // Source performer
     sourceCustomFieldsValues.push(
-      sourceCustomFieldKeys.includes(key) ? custom_fields[key] : null
+      sourceCustomFieldKeys.includes(key) ? custom_fields[key] : undefined
     );
 
     // Compiled object
@@ -515,12 +515,12 @@ const MergeModal: React.FC<MergeModalProps> = ({
   }
 
   // The selected position of each field. Default to "destination" unless it is
-  // null.
+  // undefined.
   const [selectedCustomFields, setSelectedCustomFields] = React.useState<
     PerformerPosition[]
   >(
     destinationCustomFieldsValues.map((v) =>
-      v === null ? "source" : "destination"
+      v === undefined ? "source" : "destination"
     )
   );
 
@@ -573,7 +573,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
       // Source performer
       setSourceCustomFields([
         ...sourceCustomFields,
-        sourceCustomFieldKeys.includes(key) ? custom_fields[key] : null,
+        sourceCustomFieldKeys.includes(key) ? custom_fields[key] : undefined,
       ]);
 
       // Compiled object
@@ -613,7 +613,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedStashIDs(stash_ids.length ? "source" : "destination");
     setSelectedCustomFields(
       destinationCustomFieldsValues.map((v) =>
-        v === null ? "source" : "destination"
+        v === undefined ? "source" : "destination"
       )
     );
 

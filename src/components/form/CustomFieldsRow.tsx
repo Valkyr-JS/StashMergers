@@ -8,7 +8,7 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
   // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
   const intl = useIntl();
 
-  console.log("CustomFieldsRowProps: ", props)
+  console.log("CustomFieldsRowProps: ", props);
 
   const handleUpdateSource = (value: CustomFieldValue, index: number) => {
     const updatedSourceValues = props.sourceValues.map((v, i) =>
@@ -34,11 +34,11 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
       </div>
       {props.labels.map((label, i) => (
         <CustomFieldsPropertyRow
-          destinationValue={props.destinationValues[i] ?? null}
+          destinationValue={props.destinationValues[i]}
           index={i}
           label={label}
           selectedInput={props.selectedInputs[i] ?? "source"}
-          sourceValue={props.sourceValues[i] ?? null}
+          sourceValue={props.sourceValues[i]}
           setSourceValue={handleUpdateSource}
           setSelectedInput={handleUpdateSelected}
         />
@@ -146,6 +146,9 @@ interface CustomFieldsPropertyRowProps {
 /* ---------------------------------------------------------------------------------------------- */
 
 const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
+  // https://github.com/stashapp/stash/blob/develop/ui/v2.5/src/locales/en-GB.json
+  const intl = useIntl();
+
   const isReadOnly =
     props.position === "destination" || props.setSourceValue === undefined;
   switch (typeof props.value) {
@@ -196,7 +199,11 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
       );
 
     case "undefined":
-      return null;
+      return (
+        <code className="bg-secondary text-white border-secondary form-control">
+          {intl.formatMessage({ id: "none" })}
+        </code>
+      );
     default:
       // Treat all other types as a string
       const stringValue = JSON.stringify(props.value);
