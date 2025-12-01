@@ -10,7 +10,11 @@ const prodConfig = {
   plugins: [
     ...common.plugins,
     postcss({ extract: pluginID + ".css", minimize: true, sourceMap: false }),
-    terser()
+    terser({
+      compress: {
+        drop_console: true
+      }
+    })
   ],
 };
 

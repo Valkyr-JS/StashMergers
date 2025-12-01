@@ -8,12 +8,12 @@
 ## Features
 
 - Merge duplicate performers whilst selecting which data you want to keep from each.
-- Merge lists of aliases, URLs, and tags with a single click.
+- Merge lists of aliases, URLs, custom fields and tags with a single click.
 - A familiar UI based on the Stash scraper dialog box.
 - Localization support where possible\*
-- _Coming soon_ - support for merging studios
+- _Planned_ - support for merging studios
 
-\* Where possible, Stash Mergers references the localization file for the user's selected language in Stash. In some places, e.g. some warning messages, localization options aren't available so they are hardcoded in English.
+\* Stash Mergers references the localization file for the user's selected language in Stash. In some places, e.g. some warning messages, localization options aren't available so they are hardcoded in English.
 
 ### Known Issues
 
