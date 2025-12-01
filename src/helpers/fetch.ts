@@ -24,6 +24,7 @@ export const fetchPerformerData = async (
       career_length
       circumcised
       country
+      custom_fields
       death_date
       details
       disambiguation

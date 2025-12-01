@@ -32,6 +32,7 @@ import { Modal } from "react-bootstrap";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { useIntl } from "react-intl";
 import SharedCheckboxRow from "./form/SharedCheckboxRow";
+import CustomFieldsRow from "./form/CustomFieldsRow";
 
 const { PluginApi } = window;
 const { Icon } = PluginApi.components;
@@ -63,6 +64,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     career_length,
     circumcised,
     country,
+    custom_fields,
     death_date,
     details,
     disambiguation,
@@ -236,8 +238,6 @@ const MergeModal: React.FC<MergeModalProps> = ({
 
   /** Handler for converting the dropdown country name to a country ISO */
   const handleChangeCountrySelect = (v: string) => {
-    console.log(v);
-    console.log(getISOByCountry(v, intl.locale));
     setPCountry(!!v ? getISOByCountry(v, intl.locale) : "");
   };
 
@@ -470,6 +470,62 @@ const MergeModal: React.FC<MergeModalProps> = ({
   const [pStashIDs, setPStashIDs] =
     React.useState<Performer["stash_ids"]>(stash_ids);
 
+  /* ---------------------------------------- Custom fields --------------------------------------- */
+
+  // Custom fields are different to others as they can contain a mix of selected
+  // positions. Before setting the initial states, both destination and source
+  // objects need to be converted to arrays and compared so that fields with
+  // matching keys are linked.
+  const destinationCustomFieldsValues: CustomFieldValue[] = [];
+  const sourceCustomFieldsValues: CustomFieldValue[] = [];
+
+  // Create a list of unique custom field property keys
+  const destinationCustomFieldKeys = Object.keys(
+    destinationPerformer.custom_fields
+  );
+  const sourceCustomFieldKeys = Object.keys(custom_fields);
+  const customFieldLabels: string[] = [
+    ...new Set([...destinationCustomFieldKeys, ...sourceCustomFieldKeys]),
+  ];
+
+  // Loop through each custom field label and apply the value for destination
+  // and source performer values to their respective arrays.
+  for (let i = 0; i < customFieldLabels.length; i++) {
+    const key = customFieldLabels[i];
+
+    // Destination performer
+    destinationCustomFieldsValues.push(
+      destinationCustomFieldKeys.includes(key)
+        ? destinationPerformer.custom_fields[key]
+        : undefined
+    );
+
+    // Source performer
+    sourceCustomFieldsValues.push(
+      sourceCustomFieldKeys.includes(key) ? custom_fields[key] : undefined
+    );
+  }
+
+  // The selected position of each field. Default to "destination" unless it is
+  // undefined.
+  const [selectedCustomFields, setSelectedCustomFields] = React.useState<
+    PerformerPosition[]
+  >(
+    destinationCustomFieldsValues.map((v) =>
+      v === undefined ? "source" : "destination"
+    )
+  );
+
+  // The value of each source custom field.
+  const [sourceCustomFields, setSourceCustomFields] = React.useState<
+    CustomFieldValue[]
+  >(sourceCustomFieldsValues);
+
+  // Which fields have been marked for removal.
+  const [fieldsToRemove, setFieldsToRemove] = React.useState(
+    destinationCustomFieldsValues.map(() => false)
+  );
+
   /* ------------------------------------------- General ------------------------------------------ */
 
   /** Resets all fields to their original state. */
@@ -499,6 +555,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setPImagePath(image_path);
     setPIgnoreAutoTag(ignore_auto_tag);
     setPStashIDs(stash_ids);
+    setSourceCustomFields(sourceCustomFieldsValues);
 
     // Reset selected position
     setSelectedName("source");
@@ -526,9 +583,15 @@ const MergeModal: React.FC<MergeModalProps> = ({
     setSelectedImagePath(image_path ? "source" : "destination");
     setSelectedIgnoreAutoTag(ignore_auto_tag ? "source" : "destination");
     setSelectedStashIDs(stash_ids.length ? "source" : "destination");
+    setSelectedCustomFields(
+      destinationCustomFieldsValues.map((v) =>
+        v === undefined ? "source" : "destination"
+      )
+    );
 
     // Reset remaining
     setAddNameToAliasList(addNameToAliasListDefaultValue);
+    setFieldsToRemove(destinationCustomFieldsValues.map(() => false));
   };
 
   // Updates on source performer change
@@ -575,6 +638,30 @@ const MergeModal: React.FC<MergeModalProps> = ({
     if (addNameToAliasList && !processedAliasList.includes(unselectedName))
       processedAliasList.push(unselectedName);
 
+    // Create the new custom fields object
+    const mappedCustomFields: {
+      [key: string]: CustomFieldValue;
+    } = {};
+
+    for (let i = 0; i < customFieldLabels.length; i++) {
+      const key = customFieldLabels[i];
+
+      // Only add if the field is not marked for removal
+      if (!fieldsToRemove[i]) {
+        const value =
+          selectedCustomFields[i] === "source"
+            ? sourceCustomFields[i]
+            : destinationCustomFieldsValues[i];
+
+        // Add the property to the custom fields object unless it is undefined.
+        if (typeof value !== "undefined") mappedCustomFields[key] = value;
+      }
+    }
+
+    const customFieldsInput: CustomFieldsInput = {
+      full: mappedCustomFields,
+    };
+
     // Get the updated data
     const updatedData: PerformerUpdateInput = {
       id: destinationPerformer.id,
@@ -599,6 +686,7 @@ const MergeModal: React.FC<MergeModalProps> = ({
           : destinationPerformer.circumcised,
       country:
         selectedCountry === "source" ? pCountry : destinationPerformer.country,
+      custom_fields: customFieldsInput,
       death_date:
         selectedDeathDate === "source"
           ? !!pDeathDate
@@ -1117,6 +1205,16 @@ const MergeModal: React.FC<MergeModalProps> = ({
               setSourceValue={setPStashIDs}
               sourceIDs={pStashIDs}
               stashBoxes={props.stashBoxes}
+            />
+            <CustomFieldsRow
+              destinationValues={destinationCustomFieldsValues}
+              fieldsToRemove={fieldsToRemove}
+              labels={customFieldLabels}
+              selectedInputs={selectedCustomFields}
+              setFieldsToRemove={setFieldsToRemove}
+              setSelectedInputs={setSelectedCustomFields}
+              setSourceValues={setSourceCustomFields}
+              sourceValues={sourceCustomFields}
             />
           </form>
         </div>

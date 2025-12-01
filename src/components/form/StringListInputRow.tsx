@@ -193,7 +193,7 @@ const StringListInputItem: React.FC<StringListInputItemProps> = (props) => {
   // Only render the remove item button on the source side.
   const removeButton =
     props.position === "source" ? (
-      <RemoveInputButton onClick={handleOnClick} />
+      <RemoveInputButton appended onClick={handleOnClick} />
     ) : null;
 
   return (

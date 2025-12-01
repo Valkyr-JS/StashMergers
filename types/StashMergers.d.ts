@@ -16,3 +16,5 @@ interface IImageProp {
   src: HTMLImageElement["src"];
   alt?: HTMLImageElement["alt"];
 }
+
+type CustomFieldValue = unknown;
