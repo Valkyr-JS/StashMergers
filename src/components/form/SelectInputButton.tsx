@@ -20,6 +20,7 @@ const SelectInputButton: React.FC<SelectInputButtonProps> = (props) => {
       <button
         type="button"
         className="btn btn-secondary"
+        disabled={props.disabled}
         onClick={handleButtonClick}
       >
         <Icon icon={iconType} className={iconClasses} />
@@ -31,7 +32,9 @@ const SelectInputButton: React.FC<SelectInputButtonProps> = (props) => {
 export default SelectInputButton;
 
 interface SelectInputButtonProps {
-  /** Denotes if the field has been marked as the  */
+  /** Denotes if the button has been marked as disabled.  */
+  disabled?: boolean;
+
   selected: boolean;
 
   performerPosition: PerformerPosition;

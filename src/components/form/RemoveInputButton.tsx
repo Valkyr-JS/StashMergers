@@ -1,13 +1,19 @@
 import React from "react";
-import { faMinus } from "@fortawesome/free-solid-svg-icons";
+import { default as cx } from "classnames";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const { Icon } = window.PluginApi.components;
 
 const RemoveInputButton: React.FC<RemoveInputButtonProps> = (props) => {
+  const classes = cx("btn", {
+    "btn-danger": !props.toggleState,
+    "btn-success": props.toggleState,
+  });
+
   // Component
   const Button = () => (
-    <button type="button" {...props} className="btn btn-danger">
-      <Icon icon={faMinus} />
+    <button type="button" {...props} className={classes}>
+      <Icon icon={props.toggleState ? faPlus : faMinus} />
     </button>
   );
 
@@ -30,4 +36,7 @@ interface RemoveInputButtonProps
   /** If `true`, wraps the button in a class element to style it as linked to an
    * input. */
   appended?: boolean;
+
+  /** Sets the toggle state of the button re-add. */
+  toggleState?: boolean;
 }

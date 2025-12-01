@@ -22,9 +22,9 @@ const CustomFieldsRow: React.FC<CustomFieldsRowProps> = (props) => {
     props.setSelectedInputs(updatedSelectedPositions);
   };
 
-  const handleRemoveField = (index: number) => {
+  const handleRemoveField = (value: boolean, index: number) => {
     const updatedFieldsToRemove = props.fieldsToRemove.map((r, i) =>
-      i === index ? true : r
+      i === index ? value : r
     );
     props.setFieldsToRemove(updatedFieldsToRemove);
   };
@@ -92,19 +92,28 @@ interface CustomFieldsRowProps {
 const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
   props
 ) => {
-  if (props.willRemove) return null;
-
   const name = props.label.toLowerCase().split(" ").join("-");
 
-  const removeButtonLabel = `Remove ${props.label} from the merged custom fields`;
+  /* ----------------------------------- Toggle remove property ----------------------------------- */
+
+  const removeButtonLabel = `${props.willRemove ? "Don't remove" : "Remove"} ${
+    props.label
+  } from the merged custom fields`;
+
+  const styles: React.CSSProperties = {
+    backgroundColor: props.willRemove ? "#00000025" : undefined,
+  };
 
   const handleSelectInput = (position: PerformerPosition) =>
     props.setSelectedInput(position, props.index);
 
-  const handleRemoveField = () => props.setWillRemove(props.index);
+  const handleRemoveField = () =>
+    props.setWillRemove(!props.willRemove, props.index);
+
+  /* ------------------------------------------ Component ----------------------------------------- */
 
   return (
-    <div className="px-3 pt-3 row">
+    <div className="px-3 pt-3 row" style={styles}>
       <div className="col-form-label col-lg-3">
         <label className="form-label">{props.label}</label>
       </div>
@@ -112,11 +121,13 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
         <div className="row">
           <FormInputGroup>
             <SelectInputButton
+              disabled={props.willRemove}
               performerPosition="destination"
               selected={props.selectedInput === "destination"}
               setSelected={() => handleSelectInput("destination")}
             />
             <MixedInputGroup
+              disabled={props.willRemove}
               index={props.index}
               name={name}
               position="destination"
@@ -125,11 +136,13 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
           </FormInputGroup>
           <FormInputGroup>
             <SelectInputButton
+              disabled={props.willRemove}
               performerPosition="source"
               selected={props.selectedInput === "source"}
               setSelected={() => handleSelectInput("source")}
             />
             <MixedInputGroup
+              disabled={props.willRemove}
               index={props.index}
               name={name}
               position="source"
@@ -141,8 +154,9 @@ const CustomFieldsPropertyRow: React.FC<CustomFieldsPropertyRowProps> = (
       </div>
       <div className="col-lg-1">
         <RemoveInputButton
-          aria-label={removeButtonLabel}
           onClick={handleRemoveField}
+          title={removeButtonLabel}
+          toggleState={props.willRemove}
         />
       </div>
     </div>
@@ -170,7 +184,7 @@ interface CustomFieldsPropertyRowProps {
   setSourceValue?: (value: CustomFieldValue, index: number) => void;
 
   /** Marks the field for removal on merge. */
-  setWillRemove: (index: number) => void;
+  setWillRemove: (value: boolean, index: number) => void;
 
   /** The custom field value for the source performer. */
   sourceValue: CustomFieldValue;
@@ -204,6 +218,7 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
       return (
         <input
           className="bg-secondary text-white border-secondary form-control"
+          disabled={props.disabled}
           name={props.position + "-" + props.name}
           onChange={handleNumberSourceChange}
           readOnly={isReadOnly}
@@ -245,6 +260,7 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
       return (
         <input
           className="bg-secondary text-white border-secondary form-control"
+          disabled={props.disabled}
           name={props.position + "-" + props.name}
           onChange={handleStringSourceChange}
           readOnly={isReadOnly}
@@ -255,6 +271,9 @@ const MixedInputGroup: React.FC<MixedInputGroupProps> = (props) => {
 };
 
 interface MixedInputGroupProps {
+  /** Denotes if the button has been marked as disabled.  */
+  disabled: boolean;
+
   /** The zero-based index of the custom fields row. */
   index: number;
 
